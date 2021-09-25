@@ -10,6 +10,12 @@ import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 object Carousel : Subsystem {
+    const val CAROUSEL_CIRCUMFERENCE = 15.0 * Math.PI
+    const val COUNTS_PER_MOTOR_REV = 537.6
+    const val WHEEL_DIAMETER = 4.0
+    const val COUNTS_PER_INCH = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER * Math.PI)
+    const val CAROUSEL_ROTATION_COUNTS = (CAROUSEL_CIRCUMFERENCE * (400.0/360.0) * COUNTS_PER_INCH).toInt()
+
     @JvmField
     var CAROUSEL_NAME = "carousel"
     @JvmField
@@ -26,6 +32,8 @@ object Carousel : Subsystem {
             1 else -1) * CAROUSEL_SPEED)
     val stop: AtomicCommand
         get() = powerCarousel(0.0)
+    val fullRotation: AtomicCommand
+        get() = FullRotation()
 
     private lateinit var motor: DcMotorEx
 
@@ -35,7 +43,19 @@ object Carousel : Subsystem {
     }
 
     fun powerCarousel(power: Double) = CustomCommand(_start = {
+        motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
         motor.power = power
         on = power != 0.0
     })
+
+    class FullRotation : AtomicCommand() {
+        override val _isDone
+            get() = !motor.isBusy
+
+        override fun start() {
+            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
+            motor.targetPosition = CAROUSEL_ROTATION_COUNTS
+            motor.power = CAROUSEL_SPEED
+        }
+    }
 }
