@@ -29,7 +29,7 @@ object ObjectDetection {
 
     private var tfod: TFObjectDetector? = null
 
-    val position: ObjectPosition = ObjectPosition.UNKNOWN
+    var position: ObjectPosition = ObjectPosition.UNKNOWN
 
     val detect: AtomicCommand
         get() = DetectCommand()
@@ -72,7 +72,6 @@ object ObjectDetection {
                 // the last time that call was made.
                 val updatedRecognitions = tfod!!.updatedRecognitions
                 val cameraWidth = 1024 // CHANGE TO CAMERA DIMENSIONS
-                var elementPos = ObjectPosition.UNKNOWN
                 if (updatedRecognitions != null) {
                     val markerRecognitions = mutableListOf<Recognition>()
                     for(recognition in updatedRecognitions) {
@@ -96,7 +95,7 @@ object ObjectDetection {
                                 right = true
                             }
                         }
-                        elementPos = if(left && middle) {
+                        position = if(left && middle) {
                             ObjectPosition.RIGHT
                         } else if(left && right) {
                             ObjectPosition.MIDDLE
