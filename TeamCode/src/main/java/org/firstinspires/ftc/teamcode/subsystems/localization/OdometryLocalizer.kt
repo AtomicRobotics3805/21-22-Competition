@@ -32,7 +32,6 @@ class OdometryLocalizer : ThreeTrackingWheelLocalizer(listOf(
     val frontEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LB"))
 
     init {
-        // FINISHED: reverse any encoders using Encoder.setDirection(Encoder.Direction.REVERSE)
         if (Constants.RIGHT_REVERSED) rightEncoder.direction = Encoder.Direction.REVERSE
         if (Constants.LEFT_REVERSED) leftEncoder.direction = Encoder.Direction.REVERSE
         if (Constants.FRONT_REVERSED) frontEncoder.direction = Encoder.Direction.REVERSE
@@ -47,7 +46,7 @@ class OdometryLocalizer : ThreeTrackingWheelLocalizer(listOf(
     }
 
     override fun getWheelVelocities(): List<Double> {
-        // FINISHED: If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
+        // If your encoder velocity can exceed 32767 counts / second (such as the REV Through Bore and other
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
         //  compensation method
         return listOf(
