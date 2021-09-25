@@ -98,7 +98,6 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
     fun initialize() {
         hardwareMap = opMode.hardwareMap
 
-        // FINISHED: adjust the names of the following hardware devices to match your configuration
         imu = hardwareMap.get(BNO055IMU::class.java, "imu")
         val parameters = BNO055IMU.Parameters()
         parameters.angleUnit = BNO055IMU.AngleUnit.RADIANS
@@ -125,7 +124,7 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
 
         motors = listOf(leftFront, leftRear, rightRear, rightFront)
 
-        // FINISHED: if your hub is mounted vertically, remap the IMU axes so that the z-axis points
+        // if your hub is mounted vertically, remap the IMU axes so that the z-axis points
         // upward (normal to the floor) using a command like the following:
         // BNO055IMUUtil.remapAxes(imu, AxesOrder.XYZ, AxesSigns.NPN);
         for (motor in motors) {
@@ -144,14 +143,11 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
             setPIDFCoefficients(RunMode.RUN_USING_ENCODER, Constants.MOTOR_VELO_PID)
         }
 
-        // FINISHED: reverse any motors using DcMotor.setDirection()
         leftRear.direction = DcMotorSimple.Direction.REVERSE
         leftFront.direction = DcMotorSimple.Direction.REVERSE
 
-        // FINISHED: if desired, use setLocalizer() to change the localization method
-        // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
         localizer = OdometryLocalizer()
-        VuforiaLocalizer.initialize()
+        //VuforiaLocalizer.initialize()
 
         CommandScheduler.registerSubsystems(this)
 
