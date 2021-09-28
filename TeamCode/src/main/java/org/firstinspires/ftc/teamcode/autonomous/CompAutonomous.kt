@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.teleop
+package org.firstinspires.ftc.teamcode.autonomous
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
 @TeleOp(name = "Competition Testing")
-class CompTeleOp: LinearOpMode() {
+class CompAutonomous: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
 
@@ -21,12 +21,11 @@ class CompTeleOp: LinearOpMode() {
         Bucket.initialize()
         Carousel.initialize()
         Intake.initialize()
-        Controls.registerGamepads()
+
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
+        CommandScheduler.commands += AutoRoutines.parkRoutine
 
         waitForStart()
-
-        Controls.registerCommands()
 
         while (opModeIsActive()) {
             CommandScheduler.run()

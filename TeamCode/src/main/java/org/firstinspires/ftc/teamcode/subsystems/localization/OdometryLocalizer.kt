@@ -3,8 +3,14 @@ package org.firstinspires.ftc.teamcode.subsystems.localization
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer
+import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.Constants.opMode
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer.Constants.PARALLEL_X
+import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer.Constants.PARALLEL_Y
+import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer.Constants.PERPENDICULAR_X
+import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer.Constants.PERPENDICULAR_Y
 import org.firstinspires.ftc.teamcode.util.roadrunner.Encoder
 
 /*
@@ -22,26 +28,30 @@ import org.firstinspires.ftc.teamcode.util.roadrunner.Encoder
 */
 
 @Config
-class OdometryLocalizer : ThreeTrackingWheelLocalizer(listOf(
-        Pose2d(0.0, Constants.LATERAL_DISTANCE / 2, 0.0),  // left
-        Pose2d(0.0, -Constants.LATERAL_DISTANCE / 2, 0.0),  // right
-        Pose2d(Constants.FORWARD_OFFSET, 0.0, Math.toRadians(90.0)) // front
+class OdometryLocalizer : TwoTrackingWheelLocalizer(listOf(
+        Pose2d(PARALLEL_X, PARALLEL_Y, 0.0),
+        Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90.0))
 )) {
-    val leftEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LF"))
-    val rightEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "RF"))
-    val frontEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LB"))
+    val perpendicularEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LF"))
+    val parallelEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "RF"))
 
     init {
-        if (Constants.RIGHT_REVERSED) rightEncoder.direction = Encoder.Direction.REVERSE
-        if (Constants.LEFT_REVERSED) leftEncoder.direction = Encoder.Direction.REVERSE
-        if (Constants.FRONT_REVERSED) frontEncoder.direction = Encoder.Direction.REVERSE
+        if (Constants.PERPENDICULAR_REVERSED) perpendicularEncoder.direction = Encoder.Direction.REVERSE
+        if (Constants.PARALLEL_REVERSED) parallelEncoder.direction = Encoder.Direction.REVERSE
+    }
+
+    override fun getHeading(): Double {
+        return MecanumDrive.rawExternalHeading
+    }
+
+    override fun getHeadingVelocity(): Double? {
+        return MecanumDrive.getExternalHeadingVelocity()
     }
 
     override fun getWheelPositions(): List<Double> {
         return listOf(
-                encoderTicksToInches(leftEncoder.currentPosition.toDouble()) * Constants.X_MULTIPLIER,
-                encoderTicksToInches(rightEncoder.currentPosition.toDouble()) * Constants.X_MULTIPLIER,
-                encoderTicksToInches(frontEncoder.currentPosition.toDouble()) * Constants.Y_MULTIPLIER
+                encoderTicksToInches(perpendicularEncoder.currentPosition.toDouble()) * Constants.X_MULTIPLIER,
+                encoderTicksToInches(parallelEncoder.currentPosition.toDouble()) * Constants.Y_MULTIPLIER
         )
     }
 
@@ -50,9 +60,8 @@ class OdometryLocalizer : ThreeTrackingWheelLocalizer(listOf(
         //  competing magnetic encoders), change Encoder.getRawVelocity() to Encoder.getCorrectedVelocity() to enable a
         //  compensation method
         return listOf(
-                encoderTicksToInches(leftEncoder.rawVelocity) * Constants.X_MULTIPLIER,
-                encoderTicksToInches(rightEncoder.rawVelocity) * Constants.X_MULTIPLIER,
-                encoderTicksToInches(frontEncoder.rawVelocity) * Constants.Y_MULTIPLIER
+                encoderTicksToInches(perpendicularEncoder.rawVelocity) * Constants.X_MULTIPLIER,
+                encoderTicksToInches(parallelEncoder.rawVelocity) * Constants.Y_MULTIPLIER
         )
     }
 
@@ -64,22 +73,24 @@ class OdometryLocalizer : ThreeTrackingWheelLocalizer(listOf(
         @JvmField
         var TICKS_PER_REV = 2400.0
         @JvmField
-        var WHEEL_RADIUS = 1.5 // in
+        var WHEEL_RADIUS = 17.5 * 0.03937 // in
         @JvmField
         var GEAR_RATIO = 1.0 // output (wheel) speed / input (encoder) speed
         @JvmField
-        var LATERAL_DISTANCE = 17.3 // in; distance between the left and right wheels
+        var PARALLEL_X = 0.0 // in; forward offset of the parallel wheel
         @JvmField
-        var FORWARD_OFFSET = -3.6 // in; offset of the lateral wheel
+        var PARALLEL_Y = 0.0 // in; left offset of the parallel wheel
         @JvmField
-        var LEFT_REVERSED = true
+        var PERPENDICULAR_X = 0.0 // in; forward offset of the perpendicular wheel
         @JvmField
-        var RIGHT_REVERSED = true
+        var PERPENDICULAR_Y = 0.0 // in; left offset of the perpendicular wheel
         @JvmField
-        var FRONT_REVERSED = true
+        var PARALLEL_REVERSED = true
         @JvmField
-        var X_MULTIPLIER = 1.04
+        var PERPENDICULAR_REVERSED = true
         @JvmField
-        var Y_MULTIPLIER = 1.062
+        var X_MULTIPLIER = 1.0
+        @JvmField
+        var Y_MULTIPLIER = 1.0
     }
 }
