@@ -39,7 +39,9 @@ object Carousel : Subsystem {
 
     fun initialize() {
         motor = opMode.hardwareMap.get(DcMotorEx::class.java, CAROUSEL_NAME)
+        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        motor.direction = DcMotorSimple.Direction.REVERSE
     }
 
     fun powerCarousel(power: Double) = CustomCommand(_start = {

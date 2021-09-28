@@ -23,8 +23,8 @@ object TrajectoryFactory {
             .splineToSplineHeading(Pose2d(-12.0, 42.0, 270.0.toRadians), 320.0.toRadians)
             .build()
 
-    val hubToPark = MecanumDrive.trajectoryBuilder(carouselToHub.trajectory.end(), true)
-            .splineTo(Vector2d(40.0, 52.0), 0.0.toRadians)
+    val hubToPark = MecanumDrive.trajectoryBuilder(carouselToHub.trajectory.end(), carouselToHub.trajectory.end().heading + 100.0.toRadians)
+            .splineTo(Vector2d(40.0, 52.0), 10.0.toRadians)
             .build()
 
     val carouselToPark = MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading)

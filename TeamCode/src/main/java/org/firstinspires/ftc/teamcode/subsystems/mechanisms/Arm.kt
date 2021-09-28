@@ -12,9 +12,9 @@ object Arm : Subsystem {
     @JvmField
     var ARM_NAME = "arm"
     @JvmField
-    var ARM_SPEED = 0.5
+    var ARM_SPEED = 1.0
     @JvmField
-    var ARM_POSITION_HIGH = 0.0 // in
+    var ARM_POSITION_HIGH = 22.0 // in
     @JvmField
     var ARM_POSITION_MEDIUM = 0.0 // in
     @JvmField
@@ -34,6 +34,8 @@ object Arm : Subsystem {
         get() = moveArmToPosition((ARM_POSITION_HIGH * COUNTS_PER_INCH).toInt())
     val start: AtomicCommand
         get() = powerArm(ARM_SPEED)
+    val reverse: AtomicCommand
+        get() = powerArm(-ARM_SPEED)
     val stop: AtomicCommand
         get() = halt()
 
@@ -41,13 +43,14 @@ object Arm : Subsystem {
 
     fun initialize() {
         motor = opMode.hardwareMap.get(DcMotorEx::class.java, ARM_NAME)
+        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
     fun halt() = CustomCommand(_start = {
-        motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-        motor.targetPosition = motor.currentPosition
-        motor.power = ARM_SPEED
+        //motor.mode = DcMotor.RunMode.RUN_TO_POSITION
+        //motor.targetPosition = motor.currentPosition
+        motor.power = 0.0
     })
 
     fun powerArm(speed: Double) = CustomCommand(_start = {
