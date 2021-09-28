@@ -146,7 +146,7 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
         leftRear.direction = DcMotorSimple.Direction.REVERSE
         leftFront.direction = DcMotorSimple.Direction.REVERSE
 
-        localizer = OdometryLocalizer()
+        //localizer = OdometryLocalizer()
         //VuforiaLocalizer.initialize()
 
         CommandScheduler.registerSubsystems(this)
