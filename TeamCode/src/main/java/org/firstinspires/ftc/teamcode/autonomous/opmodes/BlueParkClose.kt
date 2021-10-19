@@ -24,6 +24,7 @@ class BlueParkClose: LinearOpMode() {
         Bucket.initialize()
         Carousel.initialize()
         Intake.initialize()
+        TrajectoryFactory.initializeTrajectories()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.commands += AutoRoutines.parkCloseRoutine
