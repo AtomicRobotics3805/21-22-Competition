@@ -161,9 +161,9 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
         if (Constants.POSE_HISTORY_LIMIT > -1 && poseHistory.size > Constants.POSE_HISTORY_LIMIT) {
             poseHistory.removeFirst()
         }
-        VuforiaLocalizer.update()
-        telemetry.addData("Odometry Position", poseEstimate)
-        telemetry.addData("Vuforia Position", VuforiaLocalizer.poseEstimate)
+        //VuforiaLocalizer.update()
+        //telemetry.addData("Odometry Position", poseEstimate)
+        //telemetry.addData("Vuforia Position", VuforiaLocalizer.poseEstimate)
         telemetry.update()
         /*
         val packet = TelemetryPacket()
@@ -307,10 +307,10 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
          * These are motor constants that should be listed online for your motors.
          */
         @JvmField
-        var TICKS_PER_REV = 560.0
+        var TICKS_PER_REV = 537.7 // 5203 312 RPM
 
         @JvmField
-        var MAX_RPM = 435.0
+        var MAX_RPM = 312.0
 
         /*
          * Set runUsingEncoder to true to enable built-in hub velocity control using drive encoders.
@@ -322,10 +322,10 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
          */
 
         @JvmField
-        var MOTOR_VELO_PID = PIDFCoefficients(0.0, 0.0, 0.0, 12.225)
+        var MOTOR_VELO_PID = PIDFCoefficients(0.0, 0.0, 0.0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV))
 
         @JvmField
-        var IS_RUN_USING_ENCODER = false
+        var IS_RUN_USING_ENCODER = true
 
         /*
          * These are physical constants that can be determined from your robot (including the track
@@ -340,10 +340,10 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
         var WHEEL_RADIUS = 2.0 // in
 
         @JvmField
-        var GEAR_RATIO = 0.5 // output (wheel) speed / input (motor) speed
+        var GEAR_RATIO = 1.0 // output (wheel) speed / input (motor) speed
 
         @JvmField
-        var TRACK_WIDTH = 23.0 // in
+        var TRACK_WIDTH = 17.0 // in
 
         /*
          * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -353,13 +353,13 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
          */
 
         @JvmField
-        var kV = 0.0245
+        var kV = rpmToVelocity(MAX_RPM)
 
         @JvmField
-        var kA = 0.0035
+        var kA = 0.0
 
         @JvmField
-        var kStatic = 0.01
+        var kStatic = 0.0
 
         /*
          * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -371,16 +371,16 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
          */
 
         @JvmField
-        var MAX_VEL = 36.5
+        var MAX_VEL = 50.0
 
         @JvmField
-        var MAX_ACCEL = 36.5
+        var MAX_ACCEL = 30.0
 
         @JvmField
-        var MAX_ANG_VEL = Math.toRadians(40.0)
+        var MAX_ANG_VEL = Math.toRadians(180.0)
 
         @JvmField
-        var MAX_ANG_ACCEL = Math.toRadians(40.0)
+        var MAX_ANG_ACCEL = Math.toRadians(180.0)
 
         /*
          * These values are used solely with Mecanum Drives to adjust the kinematics functions that

@@ -4,6 +4,7 @@ import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer
 import org.firstinspires.ftc.robotcore.external.tfod.Recognition
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector
+import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 
 object ObjectDetection {
@@ -107,6 +108,8 @@ object ObjectDetection {
                     }
                 }
             }
+            opMode.telemetry.addData("Object Position", position)
+            opMode.telemetry.update()
         }
 
         override fun done(interrupted: Boolean) {
