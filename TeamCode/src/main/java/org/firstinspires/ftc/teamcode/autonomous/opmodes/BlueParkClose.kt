@@ -1,8 +1,9 @@
-package org.firstinspires.ftc.teamcode.autonomous
+package org.firstinspires.ftc.teamcode.autonomous.opmodes
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Arm
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Bucket
@@ -10,11 +11,11 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Carousel
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
-@Suppress("unused")
-@TeleOp(name = "Competition Testing")
-class CompAutonomous: LinearOpMode() {
+@Autonomous(group = "Blue", name = "Blue Park Close")
+class BlueParkClose: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
+        Constants.color = Constants.Color.BLUE
 
         MecanumDrive.initialize()
         Arm.initialize()
@@ -23,7 +24,7 @@ class CompAutonomous: LinearOpMode() {
         Intake.initialize()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
-        CommandScheduler.commands += AutoRoutines.parkRoutine
+        CommandScheduler.commands += AutoRoutines.parkCloseRoutine
 
         waitForStart()
 

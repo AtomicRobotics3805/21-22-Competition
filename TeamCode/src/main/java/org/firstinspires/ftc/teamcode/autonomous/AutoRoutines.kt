@@ -12,7 +12,14 @@ import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Suppress("Unused")
 object AutoRoutines {
-    private val startPose = Pose2d()
+    val parkCloseRoutine: AtomicCommand
+        get() = sequential {
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToParkClose)
+        }
+    val parkFarRoutine: AtomicCommand
+        get() = sequential {
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToParkFar)
+        }
 
     val carouselRoutine: AtomicCommand
         get() = sequential {
@@ -21,21 +28,29 @@ object AutoRoutines {
             +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToPark)
         }
 
-    val hubRoutine: AtomicCommand
+    val hubFrontRoutine: AtomicCommand
         get() = sequential {
-            +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
-            +Carousel.fullRotation
-            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHub)
-            +Arm.toHigh
-            +Bucket.drop
-            +parallel {
-                +Bucket.up
-                +MecanumDrive.followTrajectory(TrajectoryFactory.hubToPark)
-            }
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubFront)
+            //TODO: Deposit preloaded freight
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubFrontToPark)
+        }
+    val hubTopParkInRoutine: AtomicCommand
+        get() = sequential {
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubTop)
+            //TODO: Deposit preloaded freight
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubTopToParkIn)
+        }
+    val hubTopParkOutRoutine: AtomicCommand
+        get() = sequential {
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubTop)
+            //TODO: Deposit preloaded freight
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubTopToParkOut)
         }
 
-    val parkRoutine: AtomicCommand
+    val carouselHubRoutine: AtomicCommand
         get() = sequential {
-            +MecanumDrive.followTrajectory(TrajectoryFactory.startToPark)
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubTop)
+            //TODO: Deposit preloaded freight
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubTopToParkOut)
         }
 }
