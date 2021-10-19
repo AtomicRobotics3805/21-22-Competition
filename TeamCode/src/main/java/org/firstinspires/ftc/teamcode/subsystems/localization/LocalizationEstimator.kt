@@ -18,6 +18,9 @@ import java.util.function.BiFunction
 
 /**
  * @author FRC Team Spartronics4915
+ *
+ * This file has been altered to work in Kotlin and with the newest
+ * wpilib versions, but the original creator is Spartronics4915
  */
 /*
 object LocalizationEstimator : Localizer {
