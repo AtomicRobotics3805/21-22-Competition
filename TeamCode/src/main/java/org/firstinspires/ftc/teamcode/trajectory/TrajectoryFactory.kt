@@ -10,11 +10,11 @@ import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectory
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 @Config
 object TrajectoryFactory {
-    private lateinit var carouselStartPose: Pose2d
-    private lateinit var farParkStartPose: Pose2d
-    private lateinit var closeParkStartPose: Pose2d
-    private lateinit var hubFrontStartPose: Pose2d
-    private lateinit var hubTopStartPose: Pose2d
+    lateinit var carouselStartPose: Pose2d
+    lateinit var farParkStartPose: Pose2d
+    lateinit var closeParkStartPose: Pose2d
+    lateinit var hubFrontStartPose: Pose2d
+    lateinit var hubTopStartPose: Pose2d
 
     lateinit var startToHubFront: ParallelTrajectory
     lateinit var startToHubTop: ParallelTrajectory
