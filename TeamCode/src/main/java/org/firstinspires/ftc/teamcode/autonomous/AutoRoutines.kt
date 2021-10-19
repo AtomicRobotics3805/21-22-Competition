@@ -53,4 +53,21 @@ object AutoRoutines {
             //TODO: Deposit preloaded freight
             +MecanumDrive.followTrajectory(TrajectoryFactory.hubTopToParkOut)
         }
+
+    val carouselHubBottomParkInRoutine: AtomicCommand
+        get() = sequential {
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+            +Carousel.fullRotation
+            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+            //TODO: Deposit preloaded freight
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToParkIn)
+        }
+    val carouselHubBottomParkOutRoutine: AtomicCommand
+        get() = sequential {
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+            +Carousel.fullRotation
+            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+            //TODO: Deposit preloaded freight
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToParkOut)
+        }
 }
