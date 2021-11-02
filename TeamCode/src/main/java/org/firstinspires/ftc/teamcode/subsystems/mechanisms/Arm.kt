@@ -32,6 +32,8 @@ object Arm : Subsystem {
         get() = moveArmToPosition((ARM_POSITION_MEDIUM * COUNTS_PER_INCH).toInt())
     val toHigh: AtomicCommand
         get() = moveArmToPosition((ARM_POSITION_HIGH * COUNTS_PER_INCH).toInt())
+    val toStart: AtomicCommand
+        get() = moveArmToPosition(0)
     val start: AtomicCommand
         get() = powerArm(ARM_SPEED)
     val reverse: AtomicCommand

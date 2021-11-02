@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Carousel
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.util.CommandGamepad
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
+import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 object Controls {
     private val gamepad1 = CommandGamepad(opMode.gamepad1)
@@ -29,5 +30,12 @@ object Controls {
         gamepad1.dpadDown.pressed.command = { Arm.reverse }
         gamepad1.dpadDown.released.command = { Arm.stop }
         gamepad1.dpadRight.pressed.command = { Arm.toHigh }
+        gamepad1.dpadLeft.pressed.command = { Arm.toStart }
+        gamepad1.leftBumper.pressed.command = { sequential {
+            +Arm.toHigh
+            +Bucket.drop
+            +Arm.toStart
+            +Bucket.up
+        } }
     }
 }
