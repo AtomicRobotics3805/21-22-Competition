@@ -22,7 +22,6 @@ object MB1220 {
             if (voltage < cmThreshold) {
                 freight = true
             }
-
         }
     }
 }

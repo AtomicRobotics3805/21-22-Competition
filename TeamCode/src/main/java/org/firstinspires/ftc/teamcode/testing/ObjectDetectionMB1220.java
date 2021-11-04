@@ -30,31 +30,64 @@
 package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
+@Autonomous(name="MB1220_OD", group="Linear Opmode")
 
-@Autonomous(name="MB1220", group="Linear Opmode")
-
-public class UltrasonicSensor extends LinearOpMode {
+public class ObjectDetectionMB1220 extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
-    AnalogInput MB1220;
+    AnalogInput mb1220;
+    Servo scanner;
     double voltage;
+    boolean position_a;
+    boolean position_b;
+    boolean position_c;
+
     @Override
     public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
+        mb1220 = hardwareMap.get(AnalogInput.class, "mb1220");
+        scanner = hardwareMap.get(Servo.class, "scanner");
 
-        MB1220 = hardwareMap.get(AnalogInput.class, "mb1220");
-
-        waitForStart();
         runtime.reset();
-        while (opModeIsActive()) {
-            voltage = MB1220.getVoltage();
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Voltage", voltage);
-            telemetry.update();
+        while (runtime.seconds() < 1) {
+            scanner.setPosition(0.9);
+        }
+        voltage = mb1220.getVoltage();
+        if (voltage <0.12) {
+            position_a = true;
+        }
+        runtime.reset();
+        while (runtime.seconds() < 1){
+            scanner.setPosition(0.79);
+        }
+        voltage = mb1220.getVoltage();
+        if (position_a == false) {
+            if (voltage < 0.15) {
+                position_b = true;
+            } else {
+                position_c = true;
+            }
+        }
+        waitForStart();
+
+            while (opModeIsActive()) {
+                telemetry.addData("Status", "Run Time: " + runtime.toString());
+                telemetry.addData("Position_A", position_a);
+                telemetry.addData("Position_B", position_b);
+                telemetry.addData("Position_C", position_c);
+                telemetry.addData("Voltage", voltage);
+                telemetry.update();
+            }
         }
     }
-}
+

@@ -31,30 +31,58 @@ package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
-@Autonomous(name="MB1220", group="Linear Opmode")
+@Autonomous(name="Sharp_IR", group="Linear Opmode")
 
-public class UltrasonicSensor extends LinearOpMode {
+public class Sharp_IR extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
-    AnalogInput MB1220;
+    AnalogInput mb1220;
+    Servo scanner;
     double voltage;
+    boolean position_a;
+    boolean position_b;
+    boolean position_c;
     @Override
     public void runOpMode() {
 
-        MB1220 = hardwareMap.get(AnalogInput.class, "mb1220");
+        mb1220 = hardwareMap.get(AnalogInput.class, "mb1220");
+        scanner = hardwareMap.get(Servo.class, "scanner");
 
         waitForStart();
-        runtime.reset();
-        while (opModeIsActive()) {
-            voltage = MB1220.getVoltage();
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Voltage", voltage);
-            telemetry.update();
+
+        if (opModeIsActive()) {
+            runtime.reset();
+            while (runtime.seconds() < 1) {
+                scanner.setPosition(0.9);
+            }
+            voltage = mb1220.getVoltage();
+            if (voltage > 0.015) {
+                position_a = true;
+            }
+            runtime.reset();
+            while (runtime.seconds() < 1){
+               scanner.setPosition(0.9);
+            }
+            voltage = mb1220.getVoltage();
+            if (voltage < 0.015 && position_a == false) {
+                position_b = true;
+            } else if (position_a == false) {
+                position_c = true;
+            }
+            while (opModeIsActive()) {
+                telemetry.addData("Position_A", position_a);
+                telemetry.addData("Position_B", position_b);
+                telemetry.addData("Position_C", position_c);
+                telemetry.addData("Voltage", voltage);
+                telemetry.update();
+            }
+        }
         }
     }
-}
+

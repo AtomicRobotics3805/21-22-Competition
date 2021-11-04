@@ -29,31 +29,60 @@
 
 package org.firstinspires.ftc.teamcode.testing;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.AnalogInput;
+import com.qualcomm.robotcore.util.Range;
+import com.qualcomm.robotcore.hardware.Servo;
 
 
-@Autonomous(name="MB1220", group="Linear Opmode")
+/**
+ * This file contains an minimal example of a Linear "OpMode". An OpMode is a 'program' that runs in either
+ * the autonomous or the teleop period of an FTC match. The names of OpModes appear on the menu
+ * of the FTC Driver Station. When an selection is made from the menu, the corresponding OpMode
+ * class is instantiated on the Robot Controller and executed.
+ *
+ * This particular OpMode just executes a basic Tank Drive Teleop for a two wheeled robot
+ * It includes all the skeletal structure that all linear OpModes contain.
+ *
+ * Use Android Studios to Copy this Class, and Paste it into your team's code folder with a new name.
+ * Remove or comment out the @Disabled line to add this opmode to the Driver Station OpMode list
+ */
 
-public class UltrasonicSensor extends LinearOpMode {
+@TeleOp(name="Servo", group="Linear Opmode")
+
+public class ServoTimothy extends LinearOpMode {
 
 
     private ElapsedTime runtime = new ElapsedTime();
-    AnalogInput MB1220;
-    double voltage;
+    private Servo arm;
+
     @Override
     public void runOpMode() {
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
 
-        MB1220 = hardwareMap.get(AnalogInput.class, "mb1220");
+        arm = hardwareMap.get(Servo.class, "arm");
+
 
         waitForStart();
         runtime.reset();
+
+
         while (opModeIsActive()) {
-            voltage = MB1220.getVoltage();
+                double position = 0.8 - gamepad1.left_stick_y;
+                if (position < 0){
+                    position = position * -1;
+                }
+                arm.setPosition(position);
+
+
+
+
+
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Voltage", voltage);
             telemetry.update();
         }
     }
