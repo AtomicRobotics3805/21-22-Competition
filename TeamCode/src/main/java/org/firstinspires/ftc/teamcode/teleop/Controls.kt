@@ -2,24 +2,21 @@ package org.firstinspires.ftc.teamcode.teleop
 
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Arm
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Bucket
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Carousel
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.util.CommandGamepad
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 object Controls {
-    private val gamepad1 = CommandGamepad(opMode.gamepad1)
-    private val gamepad2 = CommandGamepad(opMode.gamepad2)
+    val gamepad1 = CommandGamepad(opMode.gamepad1)
+    val gamepad2 = CommandGamepad(opMode.gamepad2)
 
     fun registerGamepads() {
         CommandScheduler.registerGamepads(gamepad1, gamepad2)
     }
 
     fun registerCommands() {
-        CommandScheduler.commands += MecanumDrive.driverControlled(opMode.gamepad1)
+        CommandScheduler.commandsToSchedule += MecanumDrive.driverControlled(opMode.gamepad1)
 
         gamepad1.a.pressed.command = { MecanumDrive.switchSpeed }
         gamepad1.x.pressed.command = { Carousel.switch }
@@ -37,5 +34,6 @@ object Controls {
             +Arm.toStart
             +Bucket.up
         } }
+        gamepad1.rightBumper.pressed.command = { DeadWheelServo.switch }
     }
 }
