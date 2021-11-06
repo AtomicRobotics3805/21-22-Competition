@@ -8,7 +8,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.roadrunner.control.PIDCoefficients
 import com.acmerobotics.roadrunner.control.PIDFController
 import com.acmerobotics.roadrunner.drive.DriveSignal
-import com.acmerobotics.roadrunner.drive.MecanumDrive
+import com.acmerobotics.roadrunner.drive.MecanumDrive as RoadRunnerMecanumDrive
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.kinematics.Kinematics
@@ -51,20 +51,20 @@ import kotlin.math.abs
 * Simple mecanum drive hardware implementation for REV hardware.
 */
 @Config
-object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV, Constants.TRACK_WIDTH), Subsystem {
+object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.0), Subsystem {
     val cameraLocationOnRobot: OpenGLMatrix
         get() = OpenGLMatrix
                 .translation(Constants.CAMERA_FORWARD_DISPLACEMENT, Constants.CAMERA_LEFT_DISPLACEMENT, Constants.CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES, 90f, 90f, 0f))
 
-    val velConstraint = MinVelocityConstraint(listOf(
+    val velConstraint: MinVelocityConstraint = MinVelocityConstraint(listOf(
             AngularVelocityConstraint(Constants.MAX_ANG_VEL),
             MecanumVelocityConstraint(Constants.MAX_VEL, Constants.TRACK_WIDTH)))
-    val accelConstraint = ProfileAccelerationConstraint(Constants.MAX_ACCEL)
+    val accelConstraint: ProfileAccelerationConstraint = ProfileAccelerationConstraint(Constants.MAX_ACCEL)
 
-    val follower = HolonomicPIDVAFollower(Constants.TRANSLATIONAL_PID, Constants.TRANSLATIONAL_PID, Constants.HEADING_PID,
+    val follower: HolonomicPIDVAFollower = HolonomicPIDVAFollower(Constants.TRANSLATIONAL_PID, Constants.TRANSLATIONAL_PID, Constants.HEADING_PID,
             Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5)
-    val turnController = PIDFController(Constants.HEADING_PID)
+    val turnController: PIDFController = PIDFController(Constants.HEADING_PID)
 
     val poseHistory: LinkedList<Pose2d> = LinkedList()
 
@@ -105,9 +105,9 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
 
         batteryVoltageSensor = hardwareMap.voltageSensor.iterator().next()
 
-        dashboard = FtcDashboard.getInstance()
-        dashboard.telemetryTransmissionInterval = 25
-        telemetry = MultipleTelemetry(opMode.telemetry, dashboard.telemetry)
+        //dashboard = FtcDashboard.getInstance()
+        //dashboard.telemetryTransmissionInterval = 25
+        telemetry = MultipleTelemetry(opMode.telemetry)
 
         turnController.setInputBounds(0.0, 2 * Math.PI)
 
@@ -146,10 +146,8 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
         leftRear.direction = DcMotorSimple.Direction.REVERSE
         leftFront.direction = DcMotorSimple.Direction.REVERSE
 
-        //localizer = OdometryLocalizer()
+        localizer = OdometryLocalizer()
         //VuforiaLocalizer.initialize()
-
-        CommandScheduler.registerSubsystems(this)
 
         poseEstimate = startPose
     }
@@ -325,7 +323,7 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
         var MOTOR_VELO_PID = PIDFCoefficients(0.0, 0.0, 0.0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV))
 
         @JvmField
-        var IS_RUN_USING_ENCODER = true
+        var IS_RUN_USING_ENCODER = false
 
         /*
          * These are physical constants that can be determined from your robot (including the track
@@ -343,7 +341,7 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
         var GEAR_RATIO = 1.0 // output (wheel) speed / input (motor) speed
 
         @JvmField
-        var TRACK_WIDTH = 17.0 // in
+        var TRACK_WIDTH = 18.0 // in
 
         /*
          * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -353,13 +351,13 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
          */
 
         @JvmField
-        var kV = rpmToVelocity(MAX_RPM)
+        var kV = 0.018
 
         @JvmField
-        var kA = 0.0
+        var kA = 0.0025
 
         @JvmField
-        var kStatic = 0.0
+        var kStatic = 0.01
 
         /*
          * These values are used to generate the trajectories for you robot. To ensure proper operation,
@@ -371,16 +369,16 @@ object MecanumDrive : MecanumDrive(Constants.kA, Constants.kStatic, Constants.kV
          */
 
         @JvmField
-        var MAX_VEL = 50.0
+        var MAX_VEL = 30.0
 
         @JvmField
         var MAX_ACCEL = 30.0
 
         @JvmField
-        var MAX_ANG_VEL = Math.toRadians(180.0)
+        var MAX_ANG_VEL = 3.54
 
         @JvmField
-        var MAX_ANG_ACCEL = Math.toRadians(180.0)
+        var MAX_ANG_ACCEL = Math.toRadians(60.0)
 
         /*
          * These values are used solely with Mecanum Drives to adjust the kinematics functions that
