@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.teleop
 
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Arm
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Bucket
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Carousel
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake
+import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
@@ -21,12 +19,14 @@ class CompTeleOp: LinearOpMode() {
         Bucket.initialize()
         Carousel.initialize()
         Intake.initialize()
+        DeadWheelServo.initialize()
         Controls.registerGamepads()
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
 
         waitForStart()
 
         Controls.registerCommands()
+        CommandScheduler.commandsToSchedule += DeadWheelServo.up
 
         while (opModeIsActive()) {
             CommandScheduler.run()
