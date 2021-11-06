@@ -10,18 +10,18 @@ import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 object Arm : Subsystem {
     @JvmField
-    var ARM_NAME = "arm"
+    var ARM_NAME = "lift"
     @JvmField
     var ARM_SPEED = 1.0
     @JvmField
-    var ARM_POSITION_HIGH = 22.0 // in
+    var ARM_POSITION_HIGH = 20.0 // in
     @JvmField
     var ARM_POSITION_MEDIUM = 0.0 // in
     @JvmField
     var ARM_POSITION_LOW = 0.0 // in
 
     private const val PULLEY_WIDTH = 2.0 // in
-    private const val COUNTS_PER_REV = 537.6
+    private const val COUNTS_PER_REV = 1612.8
     // higher value makes driven gear slower
     private const val DRIVE_GEAR_REDUCTION = 1.0
     private const val COUNTS_PER_INCH = COUNTS_PER_REV * DRIVE_GEAR_REDUCTION / (PULLEY_WIDTH * Math.PI)
