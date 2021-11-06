@@ -71,21 +71,21 @@ class OdometryLocalizer : TwoTrackingWheelLocalizer(listOf(
 
     object Constants {
         @JvmField
-        var TICKS_PER_REV = 2400.0
+        var TICKS_PER_REV = 8192
         @JvmField
-        var WHEEL_RADIUS = 17.5 * 0.03937 // in
+        var WHEEL_RADIUS = 0.688975 // in
         @JvmField
         var GEAR_RATIO = 1.0 // output (wheel) speed / input (encoder) speed
         @JvmField
-        var PARALLEL_X = 0.0 // in; forward offset of the parallel wheel
+        var PARALLEL_X = 5.6 // in; forward offset of the parallel wheel
         @JvmField
-        var PARALLEL_Y = 0.0 // in; left offset of the parallel wheel
+        var PARALLEL_Y = -2.0 // in; left offset of the parallel wheel
         @JvmField
-        var PERPENDICULAR_X = 0.0 // in; forward offset of the perpendicular wheel
+        var PERPENDICULAR_X = 5.6 // in; forward offset of the perpendicular wheel
         @JvmField
-        var PERPENDICULAR_Y = 0.0 // in; left offset of the perpendicular wheel
+        var PERPENDICULAR_Y = 1.0 // in; left offset of the perpendicular wheel
         @JvmField
-        var PARALLEL_REVERSED = true
+        var PARALLEL_REVERSED = false
         @JvmField
         var PERPENDICULAR_REVERSED = true
         @JvmField
