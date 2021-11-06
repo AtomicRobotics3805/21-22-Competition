@@ -13,7 +13,7 @@ class CommandGamepad(qualcommGamepad: Gamepad) {
         RELEASED
     }
 
-    private val gamepad = CustomGamepad(qualcommGamepad)
+    val gamepad = CustomGamepad(qualcommGamepad)
 
     val a = CommandButton(gamepad.a)
     val b = CommandButton(gamepad.b)
@@ -55,7 +55,7 @@ class CommandGamepad(qualcommGamepad: Gamepad) {
                 if(command != null && ((triggerType == TriggerType.DOWN && button.down) ||
                                 (triggerType == TriggerType.PRESSED && button.pressed) || 
                                 (triggerType == TriggerType.RELEASED && button.released))) {
-                    CommandScheduler.commands += command!!.invoke()
+                    CommandScheduler.commandsToSchedule += command!!.invoke()
                 }
             }
         }
