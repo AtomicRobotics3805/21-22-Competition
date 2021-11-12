@@ -35,5 +35,14 @@ object Controls {
             +Bucket.up
         } }
         gamepad1.rightBumper.pressed.command = { DeadWheelServo.switch }
+        gamepad1.leftBumper.pressed.command = { Cap.switch }
+        gamepad2.dpadRight.pressed.command = { Arm.toHigh }
+        gamepad2.dpadUp.pressed.command = { Arm.toMedium }
+        gamepad2.dpadLeft.pressed.command = { Arm.toLow }
+        gamepad2.dpadDown.pressed.command = { Arm.toStart }
+        gamepad2.x.pressed.command = { Bucket.up }
+        gamepad2.y.pressed.command = { Bucket.drop }
+        gamepad2.a.pressed.command = { BucketLatch.close }
+        gamepad2.b.pressed.command = { BucketLatch.open }
     }
 }

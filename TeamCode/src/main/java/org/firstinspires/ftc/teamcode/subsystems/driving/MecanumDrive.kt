@@ -27,8 +27,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
-import org.firstinspires.ftc.teamcode.Constants.opMode
-import org.firstinspires.ftc.teamcode.Constants.startPose
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer
 import org.firstinspires.ftc.teamcode.subsystems.localization.VuforiaLocalizer
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
@@ -37,6 +36,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.driving.DriverControlled
 import org.firstinspires.ftc.teamcode.util.commands.driving.FollowTrajectory
 import org.firstinspires.ftc.teamcode.util.commands.driving.Turn
+import org.firstinspires.ftc.teamcode.util.commands.driving.TurnRelative
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.util.inchesToMm
 import org.firstinspires.ftc.teamcode.util.kinematics.AtomicMecanumKinematics
@@ -51,20 +51,154 @@ import kotlin.math.abs
 * Simple mecanum drive hardware implementation for REV hardware.
 */
 @Config
-object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.0), Subsystem {
+object MecanumDrive : RoadRunnerMecanumDrive(0.019, 0.0025, 0.01, 18.0, 18.0, 1.46), Subsystem {
+
+    /*
+     * These are motor constants that should be listed online for your motors.
+     */
+    @JvmField
+    var TICKS_PER_REV = 537.7 // 5203 312 RPM
+
+    @JvmField
+    var MAX_RPM = 312.0
+
+    /*
+     * Set runUsingEncoder to true to enable built-in hub velocity control using drive encoders.
+     * Set this flag to false if drive encoders are not present and an alternative localization
+     * method is in use (e.g., tracking wheels).
+     *
+     * If using the built-in motor velocity PID, update motorVeloPID with the tuned coefficients
+     * from DriveVelocityPIDTuner.
+     */
+
+    @JvmField
+    var MOTOR_VELO_PID = PIDFCoefficients(0.0, 0.0, 0.0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV))
+
+    @JvmField
+    var IS_RUN_USING_ENCODER = false
+
+    /*
+     * These are physical constants that can be determined from your robot (including the track
+     * width; it will be tune empirically later although a rough estimate is important). Users are
+     * free to chose whichever linear distance unit they would like so long as it is consistently
+     * used. The default values were selected with inches in mind. Road runner uses radians for
+     * angular distances although most angular parameters are wrapped in Math.toRadians() for
+     * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from gearRatio.
+     */
+
+    @JvmField
+    var WHEEL_RADIUS = 2.0 // in
+
+    @JvmField
+    var GEAR_RATIO = 1.0 // output (wheel) speed / input (motor) speed
+
+    @JvmField
+    var TRACK_WIDTH = 18.0 // in
+
+    /*
+     * These are the feedforward parameters used to model the drive motor behavior. If you are using
+     * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive
+     * motor encoders or have elected not to use them for velocity control, these values should be
+     * empirically tuned.
+     */
+
+    @JvmField
+    var kV = 0.013
+
+    @JvmField
+    var kA = 0.0025
+
+    @JvmField
+    var kStatic = 0.01
+
+    /*
+     * These values are used to generate the trajectories for you robot. To ensure proper operation,
+     * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
+     * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start
+     * small and gradually increase them later after everything is working. The velocity and
+     * acceleration values are required, and the jerk values are optional (setting a jerk of 0.0
+     * forces acceleration-limited profiling). All distance units are inches.
+     */
+
+    @JvmField
+    var MAX_VEL = 52.0
+
+    @JvmField
+    var MAX_ACCEL = 45.0
+
+    @JvmField
+    var MAX_ANG_VEL = 2.0
+
+    @JvmField
+    var MAX_ANG_ACCEL = Math.toRadians(40.0)
+
+    /*
+     * These values are used solely with Mecanum Drives to adjust the kinematics functions that
+     * translate robot velocity to motor speeds. The only way to find these values is to tune and
+     * adjust them until they seem about right. They should be close to 1.0.
+     */
+
+    @JvmField
+    var LATERAL_MULTIPLIER = 1.46
+
+    @JvmField
+    var DRIFT_MULTIPLIER = 1.0
+
+    @JvmField
+    var DRIFT_TURN_MULTIPLIER = 1.0
+
+    /*
+     * These coefficients are used to adjust your location and heading when they don't match up with
+     * where you should be. The only way to get these values is through tuning, but generally P=8
+     * I=0 and D=0 are reasonable starting points.
+     */
+    @JvmField
+    var STARTING_TRANSLATIONAL_PID = PIDCoefficients(8.0, 0.0, 0.0)
+
+    @JvmField
+    var TRANSLATIONAL_PID = STARTING_TRANSLATIONAL_PID
+
+
+    @JvmField
+    var HEADING_PID = PIDCoefficients(8.0, 0.0, 0.0)
+
+    @JvmField
+    var VX_WEIGHT = 1.0
+
+    @JvmField
+    var VY_WEIGHT = 1.0
+
+    @JvmField
+    var OMEGA_WEIGHT = 1.0
+
+    @JvmField
+    var POSE_HISTORY_LIMIT = 100
+
+    @JvmField
+    var VUFORIA_KEY = " AZ2jk6P/////AAABmck8NCyjWkCGvLdpx9HZ1kxI2vQPDlzN9vJnqy69nXRjvoXgBCEWZasRnd1hFjBpRiSXw4G4JwDFsk3kNSVko2UkuCgbi/RsiODF76MtldIi6YZGfrRMZTICMKwTanuOysh4Cn9Xd9nZzCpDiLAPLsUtKoj/DdBUn0gJuARMglUPW7/qirgtk0xI232ttZpXhgh9ya8R8LxnH+UTCCFtEaQft2ru0Tv+30Un82gG1uEzcrMc/8F3lefedcOTrelPQx8xUD8cME9dj99b5oZWfM60b36/xdswhYF7pygskPtXCS28j81xWKHGNhr5s8xL91cbKOovDzdJYdfVIILZnL1sjdbtN8zW4mULOYHwO4ur"
+
+    @JvmField
+    var CAMERA_FORWARD_DISPLACEMENT = 8.5.inchesToMm.toFloat()
+
+    @JvmField
+    var CAMERA_VERTICAL_DISPLACEMENT = 9.9.inchesToMm.toFloat()
+
+    @JvmField
+    var CAMERA_LEFT_DISPLACEMENT = -5.0.inchesToMm.toFloat()
+
     val cameraLocationOnRobot: OpenGLMatrix
         get() = OpenGLMatrix
-                .translation(Constants.CAMERA_FORWARD_DISPLACEMENT, Constants.CAMERA_LEFT_DISPLACEMENT, Constants.CAMERA_VERTICAL_DISPLACEMENT)
+                .translation(CAMERA_FORWARD_DISPLACEMENT, CAMERA_LEFT_DISPLACEMENT, CAMERA_VERTICAL_DISPLACEMENT)
                 .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XZY, AngleUnit.DEGREES, 90f, 90f, 0f))
 
-    val velConstraint: MinVelocityConstraint = MinVelocityConstraint(listOf(
-            AngularVelocityConstraint(Constants.MAX_ANG_VEL),
-            MecanumVelocityConstraint(Constants.MAX_VEL, Constants.TRACK_WIDTH)))
-    val accelConstraint: ProfileAccelerationConstraint = ProfileAccelerationConstraint(Constants.MAX_ACCEL)
+    var velConstraint: MinVelocityConstraint = MinVelocityConstraint(listOf(
+            AngularVelocityConstraint(MAX_ANG_VEL),
+            MecanumVelocityConstraint(MAX_VEL, TRACK_WIDTH)))
+    val accelConstraint: ProfileAccelerationConstraint = ProfileAccelerationConstraint(MAX_ACCEL)
 
-    val follower: HolonomicPIDVAFollower = HolonomicPIDVAFollower(Constants.TRANSLATIONAL_PID, Constants.TRANSLATIONAL_PID, Constants.HEADING_PID,
+    var follower: HolonomicPIDVAFollower = HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
             Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5)
-    val turnController: PIDFController = PIDFController(Constants.HEADING_PID)
+    val turnController: PIDFController = PIDFController(HEADING_PID)
 
     val poseHistory: LinkedList<Pose2d> = LinkedList()
 
@@ -96,7 +230,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
         })
 
     fun initialize() {
-        hardwareMap = opMode.hardwareMap
+        hardwareMap = Constants.opMode.hardwareMap
 
         imu = hardwareMap.get(BNO055IMU::class.java, "imu")
         val parameters = BNO055IMU.Parameters()
@@ -107,7 +241,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
 
         //dashboard = FtcDashboard.getInstance()
         //dashboard.telemetryTransmissionInterval = 25
-        telemetry = MultipleTelemetry(opMode.telemetry)
+        telemetry = MultipleTelemetry(Constants.opMode.telemetry)
 
         turnController.setInputBounds(0.0, 2 * Math.PI)
 
@@ -133,14 +267,14 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
             motor.motorType = motorConfigurationType
         }
 
-        if (Constants.IS_RUN_USING_ENCODER) {
+        if (IS_RUN_USING_ENCODER) {
             setMode(RunMode.STOP_AND_RESET_ENCODER)
             setMode(RunMode.RUN_USING_ENCODER)
         }
         setZeroPowerBehavior(ZeroPowerBehavior.BRAKE)
 
-        if (Constants.IS_RUN_USING_ENCODER) {
-            setPIDFCoefficients(RunMode.RUN_USING_ENCODER, Constants.MOTOR_VELO_PID)
+        if (IS_RUN_USING_ENCODER) {
+            setPIDFCoefficients(RunMode.RUN_USING_ENCODER, MOTOR_VELO_PID)
         }
 
         leftRear.direction = DcMotorSimple.Direction.REVERSE
@@ -149,20 +283,21 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
         localizer = OdometryLocalizer()
         //VuforiaLocalizer.initialize()
 
-        poseEstimate = startPose
+        poseEstimate = Constants.startPose
     }
 
     override fun periodic() {
         updatePoseEstimate()
         val currentPose = poseEstimate
         poseHistory.add(currentPose)
-        if (Constants.POSE_HISTORY_LIMIT > -1 && poseHistory.size > Constants.POSE_HISTORY_LIMIT) {
+        if (POSE_HISTORY_LIMIT > -1 && poseHistory.size > POSE_HISTORY_LIMIT) {
             poseHistory.removeFirst()
         }
         //VuforiaLocalizer.update()
         //telemetry.addData("Odometry Position", poseEstimate)
         //telemetry.addData("Vuforia Position", VuforiaLocalizer.poseEstimate)
-        telemetry.update()
+        telemetry.addData("Position", poseEstimate)
+        //telemetry.update()
         /*
         val packet = TelemetryPacket()
         val fieldOverlay = packet.fieldOverlay()
@@ -182,14 +317,14 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
     fun driverControlled(gamepad: Gamepad): AtomicCommand = DriverControlled(gamepad)
     fun followTrajectory(trajectory: ParallelTrajectory): AtomicCommand = FollowTrajectory(trajectory)
     fun turn(angle: Double): AtomicCommand = Turn(angle)
-    fun turnRelative(angle: Double): AtomicCommand = Turn(angle + poseEstimate.heading)
+    fun turnRelative(angle: Double): AtomicCommand = TurnRelative(angle)
 
     fun encoderTicksToInches(ticks: Double): Double {
-        return Constants.WHEEL_RADIUS * 2 * Math.PI * Constants.GEAR_RATIO * ticks / Constants.TICKS_PER_REV
+        return WHEEL_RADIUS * 2 * Math.PI * GEAR_RATIO * ticks / TICKS_PER_REV
     }
 
     fun rpmToVelocity(rpm: Double): Double {
-        return rpm * Constants.GEAR_RATIO * 2 * Math.PI * Constants.WHEEL_RADIUS / 60.0
+        return rpm * GEAR_RATIO * 2 * Math.PI * WHEEL_RADIUS / 60.0
     }
 
     fun getMotorVelocityF(ticksPerSecond: Double): Double {
@@ -233,11 +368,11 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
         if ((abs(drivePower.x) + abs(drivePower.y)
                         + abs(drivePower.heading)) > 1) {
             // re-normalize the powers according to the weights
-            val denominator = Constants.VX_WEIGHT * abs(drivePower.x) + Constants.VY_WEIGHT * abs(drivePower.y) + Constants.OMEGA_WEIGHT * abs(drivePower.heading)
+            val denominator = VX_WEIGHT * abs(drivePower.x) + VY_WEIGHT * abs(drivePower.y) + OMEGA_WEIGHT * abs(drivePower.heading)
             vel = Pose2d(
-                    Constants.VX_WEIGHT * drivePower.x,
-                    Constants.VY_WEIGHT * drivePower.y,
-                    Constants.OMEGA_WEIGHT * drivePower.heading
+                    VX_WEIGHT * drivePower.x,
+                    VY_WEIGHT * drivePower.y,
+                    OMEGA_WEIGHT * drivePower.heading
             ).div(denominator)
         }
         setDrivePower(vel)
@@ -269,166 +404,33 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 18.0, 1.
     override fun setDriveSignal(driveSignal: DriveSignal) {
         val velocities = AtomicMecanumKinematics.robotToWheelVelocities(
                 driveSignal.vel,
-                Constants.TRACK_WIDTH,
-                Constants.TRACK_WIDTH,
-                Constants.LATERAL_MULTIPLIER,
-                Constants.DRIFT_MULTIPLIER,
-                Constants.DRIFT_TURN_MULTIPLIER
+                TRACK_WIDTH,
+                TRACK_WIDTH,
+                LATERAL_MULTIPLIER,
+                DRIFT_MULTIPLIER,
+                DRIFT_TURN_MULTIPLIER
         )
         val accelerations = AtomicMecanumKinematics.robotToWheelAccelerations(
                 driveSignal.accel,
-                Constants.TRACK_WIDTH,
-                Constants.TRACK_WIDTH,
-                Constants.LATERAL_MULTIPLIER,
-                Constants.DRIFT_MULTIPLIER,
-                Constants.DRIFT_TURN_MULTIPLIER
+                TRACK_WIDTH,
+                TRACK_WIDTH,
+                LATERAL_MULTIPLIER,
+                DRIFT_MULTIPLIER,
+                DRIFT_TURN_MULTIPLIER
         )
-        val powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, Constants.kV, Constants.kA, Constants.kStatic)
+        val powers = Kinematics.calculateMotorFeedforward(velocities, accelerations, kV, kA, kStatic)
         setMotorPowers(powers[0], powers[1], powers[2], powers[3])
     }
 
     override fun setDrivePower(drivePower: Pose2d) {
         val powers = AtomicMecanumKinematics.robotToWheelVelocities(
                 drivePower,
-                Constants.TRACK_WIDTH,
-                Constants.TRACK_WIDTH,
-                Constants.LATERAL_MULTIPLIER,
-                Constants.DRIFT_MULTIPLIER,
-                Constants.DRIFT_TURN_MULTIPLIER
+                TRACK_WIDTH,
+                TRACK_WIDTH,
+                LATERAL_MULTIPLIER,
+                DRIFT_MULTIPLIER,
+                DRIFT_TURN_MULTIPLIER
         )
         setMotorPowers(powers[0], powers[1], powers[2], powers[3])
-    }
-
-    @Config
-    object Constants {
-        /*
-         * These are motor constants that should be listed online for your motors.
-         */
-        @JvmField
-        var TICKS_PER_REV = 537.7 // 5203 312 RPM
-
-        @JvmField
-        var MAX_RPM = 312.0
-
-        /*
-         * Set runUsingEncoder to true to enable built-in hub velocity control using drive encoders.
-         * Set this flag to false if drive encoders are not present and an alternative localization
-         * method is in use (e.g., tracking wheels).
-         *
-         * If using the built-in motor velocity PID, update motorVeloPID with the tuned coefficients
-         * from DriveVelocityPIDTuner.
-         */
-
-        @JvmField
-        var MOTOR_VELO_PID = PIDFCoefficients(0.0, 0.0, 0.0, getMotorVelocityF(MAX_RPM / 60 * TICKS_PER_REV))
-
-        @JvmField
-        var IS_RUN_USING_ENCODER = false
-
-        /*
-         * These are physical constants that can be determined from your robot (including the track
-         * width; it will be tune empirically later although a rough estimate is important). Users are
-         * free to chose whichever linear distance unit they would like so long as it is consistently
-         * used. The default values were selected with inches in mind. Road runner uses radians for
-         * angular distances although most angular parameters are wrapped in Math.toRadians() for
-         * convenience. Make sure to exclude any gear ratio included in MOTOR_CONFIG from gearRatio.
-         */
-
-        @JvmField
-        var WHEEL_RADIUS = 2.0 // in
-
-        @JvmField
-        var GEAR_RATIO = 1.0 // output (wheel) speed / input (motor) speed
-
-        @JvmField
-        var TRACK_WIDTH = 18.0 // in
-
-        /*
-         * These are the feedforward parameters used to model the drive motor behavior. If you are using
-         * the built-in velocity PID, *these values are fine as is*. However, if you do not have drive
-         * motor encoders or have elected not to use them for velocity control, these values should be
-         * empirically tuned.
-         */
-
-        @JvmField
-        var kV = 0.018
-
-        @JvmField
-        var kA = 0.0025
-
-        @JvmField
-        var kStatic = 0.01
-
-        /*
-         * These values are used to generate the trajectories for you robot. To ensure proper operation,
-         * the constraints should never exceed ~80% of the robot's actual capabilities. While Road
-         * Runner is designed to enable faster autonomous motion, it is a good idea for testing to start
-         * small and gradually increase them later after everything is working. The velocity and
-         * acceleration values are required, and the jerk values are optional (setting a jerk of 0.0
-         * forces acceleration-limited profiling). All distance units are inches.
-         */
-
-        @JvmField
-        var MAX_VEL = 30.0
-
-        @JvmField
-        var MAX_ACCEL = 30.0
-
-        @JvmField
-        var MAX_ANG_VEL = 3.54
-
-        @JvmField
-        var MAX_ANG_ACCEL = Math.toRadians(60.0)
-
-        /*
-         * These values are used solely with Mecanum Drives to adjust the kinematics functions that
-         * translate robot velocity to motor speeds. The only way to find these values is to tune and
-         * adjust them until they seem about right. They should be close to 1.0.
-         */
-
-        @JvmField
-        var LATERAL_MULTIPLIER = 1.0
-
-        @JvmField
-        var DRIFT_MULTIPLIER = 1.0
-
-        @JvmField
-        var DRIFT_TURN_MULTIPLIER = 1.0
-
-        /*
-         * These coefficients are used to adjust your location and heading when they don't match up with
-         * where you should be. The only way to get these values is through tuning, but generally P=8
-         * I=0 and D=0 are reasonable starting points.
-         */
-
-        @JvmField
-        var TRANSLATIONAL_PID = PIDCoefficients(8.0, 0.0, 0.0)
-
-        @JvmField
-        var HEADING_PID = PIDCoefficients(5.0, 0.0, 0.0)
-
-        @JvmField
-        var VX_WEIGHT = 1.0
-
-        @JvmField
-        var VY_WEIGHT = 1.0
-
-        @JvmField
-        var OMEGA_WEIGHT = 1.0
-
-        @JvmField
-        var POSE_HISTORY_LIMIT = 100
-
-        @JvmField
-        var VUFORIA_KEY = " AZ2jk6P/////AAABmck8NCyjWkCGvLdpx9HZ1kxI2vQPDlzN9vJnqy69nXRjvoXgBCEWZasRnd1hFjBpRiSXw4G4JwDFsk3kNSVko2UkuCgbi/RsiODF76MtldIi6YZGfrRMZTICMKwTanuOysh4Cn9Xd9nZzCpDiLAPLsUtKoj/DdBUn0gJuARMglUPW7/qirgtk0xI232ttZpXhgh9ya8R8LxnH+UTCCFtEaQft2ru0Tv+30Un82gG1uEzcrMc/8F3lefedcOTrelPQx8xUD8cME9dj99b5oZWfM60b36/xdswhYF7pygskPtXCS28j81xWKHGNhr5s8xL91cbKOovDzdJYdfVIILZnL1sjdbtN8zW4mULOYHwO4ur"
-
-        @JvmField
-        var CAMERA_FORWARD_DISPLACEMENT = 8.5.inchesToMm.toFloat()
-
-        @JvmField
-        var CAMERA_VERTICAL_DISPLACEMENT = 9.9.inchesToMm.toFloat()
-
-        @JvmField
-        var CAMERA_LEFT_DISPLACEMENT = -5.0.inchesToMm.toFloat()
     }
 }

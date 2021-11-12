@@ -32,8 +32,8 @@ class OdometryLocalizer : TwoTrackingWheelLocalizer(listOf(
         Pose2d(PARALLEL_X, PARALLEL_Y, 0.0),
         Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90.0))
 )) {
-    val perpendicularEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LF"))
-    val parallelEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "RF"))
+    val perpendicularEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "RF"))
+    val parallelEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LF"))
 
     init {
         if (Constants.PERPENDICULAR_REVERSED) perpendicularEncoder.direction = Encoder.Direction.REVERSE
@@ -50,8 +50,8 @@ class OdometryLocalizer : TwoTrackingWheelLocalizer(listOf(
 
     override fun getWheelPositions(): List<Double> {
         return listOf(
-                encoderTicksToInches(perpendicularEncoder.currentPosition.toDouble()) * Constants.X_MULTIPLIER,
-                encoderTicksToInches(parallelEncoder.currentPosition.toDouble()) * Constants.Y_MULTIPLIER
+                encoderTicksToInches(parallelEncoder.currentPosition.toDouble()) * Constants.X_MULTIPLIER,
+                encoderTicksToInches(perpendicularEncoder.currentPosition.toDouble()) * Constants.Y_MULTIPLIER
         )
     }
 
@@ -85,7 +85,7 @@ class OdometryLocalizer : TwoTrackingWheelLocalizer(listOf(
         @JvmField
         var PERPENDICULAR_Y = 1.0 // in; left offset of the perpendicular wheel
         @JvmField
-        var PARALLEL_REVERSED = false
+        var PARALLEL_REVERSED = true
         @JvmField
         var PERPENDICULAR_REVERSED = true
         @JvmField

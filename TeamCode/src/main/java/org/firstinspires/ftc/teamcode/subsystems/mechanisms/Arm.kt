@@ -1,13 +1,16 @@
 package org.firstinspires.ftc.teamcode.subsystems.mechanisms
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.Constants.opMode
+import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
+@Config
 object Arm : Subsystem {
     @JvmField
     var ARM_NAME = "lift"
@@ -16,9 +19,9 @@ object Arm : Subsystem {
     @JvmField
     var ARM_POSITION_HIGH = 20.0 // in
     @JvmField
-    var ARM_POSITION_MEDIUM = 0.0 // in
+    var ARM_POSITION_MEDIUM = 14.5 // in
     @JvmField
-    var ARM_POSITION_LOW = 0.0 // in
+    var ARM_POSITION_LOW = 8.5 // in
 
     private const val PULLEY_WIDTH = 2.0 // in
     private const val COUNTS_PER_REV = 1612.8
@@ -33,7 +36,7 @@ object Arm : Subsystem {
     val toHigh: AtomicCommand
         get() = moveArmToPosition((ARM_POSITION_HIGH * COUNTS_PER_INCH).toInt())
     val toStart: AtomicCommand
-        get() = moveArmToPosition(0)
+        get() = moveArmToPosition((0.1 * COUNTS_PER_INCH).toInt())
     val start: AtomicCommand
         get() = powerArm(ARM_SPEED)
     val reverse: AtomicCommand
@@ -63,9 +66,22 @@ object Arm : Subsystem {
     fun moveArmToPosition(position: Int) = CustomCommand(
             getDone = { !motor.isBusy },
             _start = {
-                motor.mode = DcMotor.RunMode.RUN_TO_POSITION
                 motor.targetPosition = position
+                motor.mode = DcMotor.RunMode.RUN_TO_POSITION
                 motor.power = ARM_SPEED
             }
+    )
+
+    fun moveArmAutonomous() = CustomCommand(
+        getDone = { !motor.isBusy },
+        _start = {
+            if (ObjectDetectionMB1220.position == ObjectDetectionMB1220.Position.LEFT)
+                motor.targetPosition = (ARM_POSITION_LOW * COUNTS_PER_INCH).toInt()
+            else if (ObjectDetectionMB1220.position == ObjectDetectionMB1220.Position.MIDDLE)
+                    motor.targetPosition = (ARM_POSITION_MEDIUM * COUNTS_PER_INCH).toInt()
+            else motor.targetPosition = (ARM_POSITION_HIGH * COUNTS_PER_INCH).toInt()
+            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
+            motor.power = ARM_SPEED
+        }
     )
 }

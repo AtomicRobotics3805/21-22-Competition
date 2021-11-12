@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.roadrunner.DashboardUtil
 
 @Suppress("unused")
-open class Turn(private var angle: Double, private val MAX_VEL: Double = MecanumDrive.MAX_ANG_VEL): AtomicCommand() {
+open class TurnRelative(private var angle: Double, private val MAX_VEL: Double = MecanumDrive.MAX_ANG_VEL): AtomicCommand() {
     override val _isDone: Boolean
         get() = turnProfile.duration() < timer.seconds()
 
@@ -24,11 +24,15 @@ open class Turn(private var angle: Double, private val MAX_VEL: Double = Mecanum
     private val startPose = drive.poseEstimate
 
     override fun start() {
+        if (angle > 180.0.toRadians)
+            angle -= 360.0.toRadians
+        if (angle < (-180.0).toRadians)
+            angle += 360.0.toRadians
         turnProfile = generateSimpleMotionProfile(
-            MotionState(drive.poseEstimate.heading, 0.0, 0.0, 0.0),
-            MotionState(angle, 0.0, 0.0, 0.0),
-            MAX_VEL,
-            MecanumDrive.MAX_ANG_ACCEL
+                MotionState(drive.poseEstimate.heading, 0.0, 0.0, 0.0),
+                MotionState(angle + drive.poseEstimate.heading, 0.0, 0.0, 0.0),
+                MAX_VEL,
+                MecanumDrive.MAX_ANG_ACCEL
         )
         timer.reset()
     }
@@ -45,8 +49,8 @@ open class Turn(private var angle: Double, private val MAX_VEL: Double = Mecanum
         val targetAlpha = targetState.a
 
         MecanumDrive.setDriveSignal(DriveSignal(
-            Pose2d(0.0, 0.0, targetOmega + correction),
-            Pose2d(0.0, 0.0, targetAlpha)))
+                Pose2d(0.0, 0.0, targetOmega + correction),
+                Pose2d(0.0, 0.0, targetAlpha)))
 
         val newPose = startPose.copy(startPose.x, startPose.y, targetState.x)
         fieldOverlay.setStroke("#4CAF50")

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.mechanisms
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import com.qualcomm.robotcore.hardware.DcMotorSimple
@@ -9,6 +10,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
+@Config
 object Intake : Subsystem {
     @JvmField
     var INTAKE_NAME = "intake"

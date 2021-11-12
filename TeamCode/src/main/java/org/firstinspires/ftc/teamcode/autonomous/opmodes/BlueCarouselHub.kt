@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
+import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
@@ -27,12 +28,13 @@ class BlueCarouselHub: LinearOpMode() {
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.cancelAll()
+        CommandScheduler.commandsToSchedule += ObjectDetectionMB1220.DetectCommand()
 
         while (!isStarted) {
             CommandScheduler.run()
         }
 
-        CommandScheduler.commands += AutoRoutines.carouselHubRoutine
+        CommandScheduler.commandsToSchedule += AutoRoutines.carouselHubRoutine
 
         while (opModeIsActive()) {
             CommandScheduler.run()

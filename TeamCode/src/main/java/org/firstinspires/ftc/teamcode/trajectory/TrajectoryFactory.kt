@@ -15,6 +15,7 @@ object TrajectoryFactory {
     lateinit var closeParkStartPose: Pose2d
     lateinit var hubFrontStartPose: Pose2d
     lateinit var hubTopStartPose: Pose2d
+    lateinit var simpleCarouselStartPose: Pose2d
 
     lateinit var startToHubFront: ParallelTrajectory
     lateinit var startToHubTop: ParallelTrajectory
@@ -34,13 +35,30 @@ object TrajectoryFactory {
     lateinit var hubBottomToParkOut: ParallelTrajectory
 
     lateinit var carouselToPark: ParallelTrajectory
+    lateinit var testTrajectory: ParallelTrajectory
+
+    lateinit var simpleStartToHub1: ParallelTrajectory
+    lateinit var simpleStartToHub2: ParallelTrajectory
+    lateinit var simpleStartToHub3: ParallelTrajectory
+    lateinit var simpleHubToCarousel1: ParallelTrajectory
+    lateinit var simpleHubToCarousel2: ParallelTrajectory
+    lateinit var simpleCarouselToPark1: ParallelTrajectory
+    lateinit var simpleCarouselToPark2: ParallelTrajectory
+
+    fun initializeStartPositions() {
+        simpleCarouselStartPose = Pose2d(-36.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
+        carouselStartPose = Pose2d(-36.0, 63.0.switchColor, (if (Constants.color == Constants.Color.BLUE) 0.0 else 180.0).switchColorAngle.toRadians)
+        farParkStartPose = Pose2d(-36.0, 63.0.switchColor, 180.0.switchColorAngle.toRadians)
+        closeParkStartPose = Pose2d(6.0, 63.0.switchColor, 180.0.switchColorAngle.toRadians)
+        hubFrontStartPose = Pose2d(-12.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
+        hubTopStartPose = Pose2d(6.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
+    }
 
     fun initializeTrajectories() {
-        carouselStartPose = Pose2d(-36.0, 63.0.switchColor, (if (Constants.color == Constants.Color.BLUE) 180.0 else 90.0).switchColorAngle.toRadians)
-        farParkStartPose = Pose2d(-36.0, 63.0.switchColor, 0.0.switchColorAngle.toRadians)
-        closeParkStartPose = Pose2d(6.0, 63.0.switchColor, 0.0.switchColorAngle.toRadians)
-        hubFrontStartPose = Pose2d(-12.0, 63.0.switchColor, 270.0.switchColorAngle.toRadians)
-        hubTopStartPose = Pose2d(6.0, 63.0.switchColor, 270.0.switchColorAngle.toRadians)
+        testTrajectory = MecanumDrive.trajectoryBuilder(Pose2d(), 90.0.toRadians)
+            //.splineToSplineHeading(Pose2d(0.0, 20.0, 0.0.toRadians), 0.0.toRadians)
+            .strafeRight(30.0)
+            .build()
 
         startToHubFront = MecanumDrive.trajectoryBuilder(hubFrontStartPose, hubFrontStartPose.heading + 180.0.switchColorAngle.toRadians)
             .back(21.0)
@@ -49,12 +67,12 @@ object TrajectoryFactory {
             .splineToSplineHeading(Pose2d(6.0, 24.0.switchColor, 0.0.switchColorAngle.toRadians), 270.0.switchColorAngle.toRadians)
             .build()
         startToCarousel = if (Constants.color == Constants.Color.BLUE)
-            MecanumDrive.trajectoryBuilder(carouselStartPose, carouselStartPose.heading + 180.0.switchColorAngle.toRadians)
-                .splineToConstantHeading(Vector2d(-53.5, 62.0.switchColor), 175.0.switchColorAngle.toRadians)
+            MecanumDrive.trajectoryBuilder(carouselStartPose, carouselStartPose.heading + 220.0.switchColorAngle.toRadians)
+                .splineToSplineHeading(Pose2d(-54.0, 59.0.switchColor, 100.0.switchColorAngle.toRadians), 180.0.switchColorAngle.toRadians)
                 .build()
         else
-            MecanumDrive.trajectoryBuilder(carouselStartPose, carouselStartPose.heading + 80.0.switchColorAngle.toRadians)
-                .splineToSplineHeading(Pose2d(-56.5, 59.0.switchColor, 300.0.switchColorAngle.toRadians), 180.0.switchColorAngle.toRadians)
+            MecanumDrive.trajectoryBuilder(carouselStartPose, carouselStartPose.heading + 0.0.switchColorAngle.toRadians)
+                .splineToConstantHeading(Vector2d(-53.5, 62.0.switchColor), 175.0.switchColorAngle.toRadians)
                 .build()
 
         startToParkFar = MecanumDrive.trajectoryBuilder(farParkStartPose, farParkStartPose.heading - 184.0.switchColorAngle.toRadians)
@@ -64,21 +82,21 @@ object TrajectoryFactory {
             .splineToConstantHeading(Vector2d(40.0, 61.0.switchColor), 0.0.switchColorAngle.toRadians)
             .build()
 
-        carouselToHubFront = MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading)
-            .splineToSplineHeading(Pose2d(-12.0, 42.0.switchColor, 90.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
+        carouselToHubFront = MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 180.0.switchColorAngle.toRadians)
+            .splineToSplineHeading(Pose2d(-12.0, 44.0.switchColor, 90.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
             .build()
         carouselToHubBottom = if (Constants.color == Constants.Color.BLUE)
-            MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 270.0.toRadians)
+            MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 180.0.toRadians)
                 .splineToSplineHeading(Pose2d(-30.0, 24.0.switchColor, 180.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
                 .build()
         else
-            MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 0.0.toRadians)
+            MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 270.0.toRadians)
                 .splineToSplineHeading(Pose2d(-30.0, 24.0.switchColor, 180.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
                 .build()
 
         hubFrontToPark = MecanumDrive.trajectoryBuilder(carouselToHubFront.trajectory.end(), carouselToHubFront.trajectory.end().heading + 270.0.switchColorAngle.toRadians)
             .splineToSplineHeading(Pose2d(20.0, 42.0.switchColor, 0.0.switchColorAngle.toRadians), 0.0.switchColorAngle.toRadians)
-            .splineToSplineHeading(Pose2d(40.0, 42.0.switchColor, 0.0.switchColorAngle.toRadians), 0.0.switchColorAngle.toRadians)
+            .splineToSplineHeading(Pose2d(60.0, 42.0.switchColor, 0.0.switchColorAngle.toRadians), 0.0.switchColorAngle.toRadians)
             .build()
         hubTopToParkIn = MecanumDrive.trajectoryBuilder(startToHubTop.trajectory.end(), startToHubTop.trajectory.end().heading + 90.0.switchColorAngle.toRadians)
             .splineToSplineHeading(Pose2d(6.0, 32.0.switchColor, 0.0.switchColorAngle.toRadians), 90.0.switchColorAngle.toRadians)
@@ -101,8 +119,34 @@ object TrajectoryFactory {
             .build()
 
         carouselToPark = MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(),
-            startToCarousel.trajectory.end().heading + if (Constants.color == Constants.Color.BLUE) 0.0.switchColorAngle.toRadians else 55.0.switchColorAngle.toRadians)
+            startToCarousel.trajectory.end().heading + if (Constants.color == Constants.Color.BLUE) 180.0.switchColorAngle.toRadians else 150.0.switchColorAngle.toRadians)
             .splineToSplineHeading(Pose2d(40.0, 61.0.switchColor, 0.0.switchColorAngle.toRadians), 0.0.switchColorAngle.toRadians)
+            .build()
+
+        simpleStartToHub1 = MecanumDrive.trajectoryBuilder(simpleCarouselStartPose, simpleCarouselStartPose.heading)
+            .back(19.0)
+            .build()
+        simpleStartToHub2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleStartToHub1.trajectory.end().vec(), simpleStartToHub1.trajectory.end().heading + 270.0.switchColorAngle.toRadians), simpleStartToHub1.trajectory.end().heading + 270.0.switchColorAngle.toRadians)
+            .forward(22.0)
+            .build()
+
+        simpleHubToCarousel1 = MecanumDrive.trajectoryBuilder(Pose2d(simpleStartToHub2.trajectory.end().vec(), simpleStartToHub2.trajectory.end().heading + (if (Constants.color == Constants.Color.BLUE) 170.0 else 170.0).switchColorAngle.toRadians), simpleStartToHub2.trajectory.end().heading + (if (Constants.color == Constants.Color.BLUE) 170.0 else 170.0).switchColorAngle.toRadians)
+            .forward(46.0)
+            .build()
+        simpleHubToCarousel2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel1.trajectory.end().vec(), simpleHubToCarousel1.trajectory.end().heading + 308.0.switchColorAngle.toRadians), simpleHubToCarousel1.trajectory.end().heading + 308.0.switchColorAngle.toRadians)
+            .forward(3.0)
+            .build()
+
+        simpleCarouselToPark1 = if (Constants.color == Constants.Color.BLUE)
+            MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel2.trajectory.end().vec(), simpleHubToCarousel2.trajectory.end().heading + 0.0.switchColorAngle.toRadians), simpleHubToCarousel2.trajectory.end().heading + 0.0.switchColorAngle.toRadians)
+                .back(18.0)
+                .build()
+        else
+            MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel1.trajectory.end().vec(), 135.0.switchColorAngle.toRadians), 135.0.switchColorAngle.toRadians)
+                .back(12.0)
+                .build()
+        simpleCarouselToPark2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleCarouselToPark1.trajectory.end().vec(), 0.0.switchColorAngle.toRadians), 0.0.switchColorAngle.toRadians)
+            .forward(135.0)
             .build()
     }
 
