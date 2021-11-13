@@ -51,7 +51,7 @@ import kotlin.math.abs
 * Simple mecanum drive hardware implementation for REV hardware.
 */
 @Config
-object MecanumDrive : RoadRunnerMecanumDrive(0.019, 0.0025, 0.01, 18.0, 18.0, 1.46), Subsystem {
+object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.46), Subsystem {
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -127,10 +127,10 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.019, 0.0025, 0.01, 18.0, 18.0, 1.
     var MAX_ACCEL = 45.0
 
     @JvmField
-    var MAX_ANG_VEL = 2.0
+    var MAX_ANG_VEL = 3.1
 
     @JvmField
-    var MAX_ANG_ACCEL = Math.toRadians(40.0)
+    var MAX_ANG_ACCEL = Math.toRadians(120.0)
 
     /*
      * These values are used solely with Mecanum Drives to adjust the kinematics functions that
@@ -296,7 +296,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.019, 0.0025, 0.01, 18.0, 18.0, 1.
         //VuforiaLocalizer.update()
         //telemetry.addData("Odometry Position", poseEstimate)
         //telemetry.addData("Vuforia Position", VuforiaLocalizer.poseEstimate)
-        telemetry.addData("Position", poseEstimate)
+        //telemetry.addData("Position", poseEstimate)
         //telemetry.update()
         /*
         val packet = TelemetryPacket()

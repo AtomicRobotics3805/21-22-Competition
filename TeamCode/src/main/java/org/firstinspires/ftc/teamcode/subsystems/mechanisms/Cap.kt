@@ -15,16 +15,21 @@ object Cap {
     var DOWN_POSITION = 0.22
     @JvmField
     var UP_POSITION = 0.7
+    @JvmField
+    var IDLE_POSITION = 0.3
 
     enum class Position {
         UP,
-        DOWN
+        DOWN,
+        IDLE
     }
 
     val down: AtomicCommand
         get() = moveServo(DOWN_POSITION, Position.DOWN)
     val up: AtomicCommand
         get() = moveServo(UP_POSITION, Position.UP)
+    val idle: AtomicCommand
+        get() = moveServo(IDLE_POSITION, Position.IDLE)
     val switch: AtomicCommand
         get() = if(position == Position.UP) down else up
 

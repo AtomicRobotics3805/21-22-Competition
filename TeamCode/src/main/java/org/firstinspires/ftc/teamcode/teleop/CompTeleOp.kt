@@ -33,7 +33,8 @@ class CompTeleOp: LinearOpMode() {
 
         while (opModeIsActive()) {
             CommandScheduler.run()
-            MecanumDrive.telemetry.addData("Position", MecanumDrive.poseEstimate)
+            telemetry.addData("Position", MecanumDrive.poseEstimate)
+            telemetry.update()
         }
     }
 }

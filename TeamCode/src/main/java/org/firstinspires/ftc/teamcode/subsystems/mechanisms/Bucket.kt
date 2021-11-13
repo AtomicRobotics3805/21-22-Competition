@@ -20,7 +20,7 @@ object Bucket : Subsystem {
     @JvmField
     var DROP_POSITION = 0.0
     @JvmField
-    var UP_POSITION = 1.0
+    var UP_POSITION = 0.95
 
     val drop: AtomicCommand
         get() = moveServo(DROP_POSITION, Position.DOWN)

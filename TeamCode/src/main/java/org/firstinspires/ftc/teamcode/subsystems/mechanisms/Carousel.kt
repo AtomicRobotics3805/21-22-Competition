@@ -38,7 +38,7 @@ object Carousel : Subsystem {
     val stop: AtomicCommand
         get() = powerCarousel(0.0)
     val fullRotation: AtomicCommand
-        get() = TimedCustomCommand(_start = {motor.power = CAROUSEL_SPEED}, _done = {motor.power = 0.0}, time = 1.0)
+        get() = TimedCustomCommand(_start = {motor.power = CAROUSEL_SPEED}, _done = {motor.power = 0.0}, time = 2.3)
     val fullRotationReverse: AtomicCommand
         get() = TimedCustomCommand(_start = {motor.power = CAROUSEL_BACKWARDS_SPEED}, _done = {motor.power = 0.0}, time = 2.3)
 

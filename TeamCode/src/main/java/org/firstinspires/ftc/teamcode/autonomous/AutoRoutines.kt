@@ -79,10 +79,10 @@ object AutoRoutines {
             +MecanumDrive.followTrajectory(TrajectoryFactory.simpleStartToHub2)
             +MecanumDrive.turnRelative(90.0.switchColorAngle.toRadians)
             +dropFreightRoutine
-            +MecanumDrive.turnRelative((if (Constants.color == Constants.Color.BLUE) 80.0 else 80.0).switchColorAngle.toRadians)
+            +MecanumDrive.turnRelative((if (Constants.color == Constants.Color.BLUE) 84.0 else 80.0).switchColorAngle.toRadians)
             +MecanumDrive.followTrajectory(TrajectoryFactory.simpleHubToCarousel1)
             if (Constants.color == Constants.Color.BLUE) {
-                +MecanumDrive.turnRelative(-52.0.switchColorAngle.toRadians)
+                +MecanumDrive.turnRelative(-54.0.switchColorAngle.toRadians)
                 +MecanumDrive.followTrajectory(TrajectoryFactory.simpleHubToCarousel2)
                 +Carousel.fullRotation
             }
@@ -91,7 +91,8 @@ object AutoRoutines {
                 +MecanumDrive.turn(135.0.switchColorAngle.toRadians)
             }
             +MecanumDrive.followTrajectory(TrajectoryFactory.simpleCarouselToPark1)
-            +MecanumDrive.turn(0.0.switchColorAngle.toRadians)
+            //+Cap.idle
+            +MecanumDrive.turn((if (Constants.color == Constants.Color.BLUE) 182.0 else 182.0).switchColorAngle.toRadians)
             +DeadWheelServo.upAutonomous
             +MecanumDrive.followTrajectory(TrajectoryFactory.simpleCarouselToPark2)
             +DeadWheelServo.resetTranslationalPID

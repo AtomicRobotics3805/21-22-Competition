@@ -37,28 +37,28 @@ object ObjectDetectionMB1220 {
         override fun start() {
             position = Position.UNKNOWN
             timer.reset()
-            servo.position = 0.2
+            servo.position = 0.09
         }
 
         override fun execute() {
-            Constants.opMode.telemetry.addData("Voltage", mb1220.voltage)
-            Constants.opMode.telemetry.addData("Position", position)
-            Constants.opMode.telemetry.update()
             if (timer.seconds() > 1.0 && position == Position.UNKNOWN) {
                 timer.reset()
                 if (!triedRight) {
                     triedRight = true
-                    if (mb1220.voltage < 0.12)
+                    if (mb1220.voltage < 0.09)
                         position = Position.RIGHT
                     else {
-                        servo.position = 0.42
+                        servo.position = 0.24
                     }
                 }
                 else {
-                    position = if (mb1220.voltage < 0.15)
+                    position = if (mb1220.voltage < 0.12)
                         Position.MIDDLE
                     else Position.LEFT
                 }
+                Constants.opMode.telemetry.addData("Voltage", mb1220.voltage)
+                Constants.opMode.telemetry.addData("Position", position)
+                Constants.opMode.telemetry.update()
             }
         }
     }

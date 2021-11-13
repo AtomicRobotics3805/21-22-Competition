@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.toRadians
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
-@Autonomous(group = "Blue", name = "Blue Simple Carousel Hub Front")
+@Autonomous(group = "Blue", name = "Blue Competition Autonomous")
 class BlueSimpleCarouselHub: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
@@ -28,6 +28,7 @@ class BlueSimpleCarouselHub: LinearOpMode() {
         DeadWheelServo.initialize()
         BucketLatch.initialize()
         ObjectDetectionMB1220.initialize()
+        Cap.initialize()
         TrajectoryFactory.initializeTrajectories()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)

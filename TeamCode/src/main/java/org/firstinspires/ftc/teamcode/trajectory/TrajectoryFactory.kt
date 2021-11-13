@@ -124,29 +124,29 @@ object TrajectoryFactory {
             .build()
 
         simpleStartToHub1 = MecanumDrive.trajectoryBuilder(simpleCarouselStartPose, simpleCarouselStartPose.heading)
-            .back(19.0)
+            .back(18.0)
             .build()
         simpleStartToHub2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleStartToHub1.trajectory.end().vec(), simpleStartToHub1.trajectory.end().heading + 270.0.switchColorAngle.toRadians), simpleStartToHub1.trajectory.end().heading + 270.0.switchColorAngle.toRadians)
             .forward(22.0)
             .build()
 
-        simpleHubToCarousel1 = MecanumDrive.trajectoryBuilder(Pose2d(simpleStartToHub2.trajectory.end().vec(), simpleStartToHub2.trajectory.end().heading + (if (Constants.color == Constants.Color.BLUE) 170.0 else 170.0).switchColorAngle.toRadians), simpleStartToHub2.trajectory.end().heading + (if (Constants.color == Constants.Color.BLUE) 170.0 else 170.0).switchColorAngle.toRadians)
+        simpleHubToCarousel1 = MecanumDrive.trajectoryBuilder(Pose2d(simpleStartToHub2.trajectory.end().vec(), simpleStartToHub2.trajectory.end().heading + (if (Constants.color == Constants.Color.BLUE) 174.0 else 170.0).switchColorAngle.toRadians), simpleStartToHub2.trajectory.end().heading + (if (Constants.color == Constants.Color.BLUE) 174.0 else 170.0).switchColorAngle.toRadians)
             .forward(46.0)
             .build()
-        simpleHubToCarousel2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel1.trajectory.end().vec(), simpleHubToCarousel1.trajectory.end().heading + 308.0.switchColorAngle.toRadians), simpleHubToCarousel1.trajectory.end().heading + 308.0.switchColorAngle.toRadians)
-            .forward(3.0)
+        simpleHubToCarousel2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel1.trajectory.end().vec(), simpleHubToCarousel1.trajectory.end().heading + 308.0.switchColorAngle.toRadians), simpleHubToCarousel1.trajectory.end().heading + 307.0.switchColorAngle.toRadians)
+            .forward(4.0)
             .build()
 
         simpleCarouselToPark1 = if (Constants.color == Constants.Color.BLUE)
             MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel2.trajectory.end().vec(), simpleHubToCarousel2.trajectory.end().heading + 0.0.switchColorAngle.toRadians), simpleHubToCarousel2.trajectory.end().heading + 0.0.switchColorAngle.toRadians)
-                .back(18.0)
+                .back(14.0)
                 .build()
         else
             MecanumDrive.trajectoryBuilder(Pose2d(simpleHubToCarousel1.trajectory.end().vec(), 135.0.switchColorAngle.toRadians), 135.0.switchColorAngle.toRadians)
-                .back(12.0)
+                .back(13.0)
                 .build()
-        simpleCarouselToPark2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleCarouselToPark1.trajectory.end().vec(), 0.0.switchColorAngle.toRadians), 0.0.switchColorAngle.toRadians)
-            .forward(135.0)
+        simpleCarouselToPark2 = MecanumDrive.trajectoryBuilder(Pose2d(simpleCarouselToPark1.trajectory.end().vec(), (if (Constants.color == Constants.Color.BLUE) 182.0 else 182.0).switchColorAngle.toRadians), (if (Constants.color == Constants.Color.BLUE) 176.0 else 182.0).switchColorAngle.toRadians)
+            .back(158.0)
             .build()
     }
 
