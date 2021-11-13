@@ -1,8 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous.opmodes
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
@@ -10,16 +8,17 @@ import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.toRadians
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
+import org.firstinspires.ftc.teamcode.util.commands.sequential
 
-@Autonomous(group = "Blue", name = "Blue Park Close")
-@Disabled
-class BlueParkClose: LinearOpMode() {
+@Autonomous(group = "Blue", name = "Blue Competition Autonomous")
+class BlueSimpleCarouselHub: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
         Constants.color = Constants.Color.BLUE
         TrajectoryFactory.initializeStartPositions()
-        Constants.startPose = Pose2d()
+        Constants.startPose = TrajectoryFactory.simpleCarouselStartPose
 
         MecanumDrive.initialize()
         Arm.initialize()
@@ -27,18 +26,28 @@ class BlueParkClose: LinearOpMode() {
         Carousel.initialize()
         Intake.initialize()
         DeadWheelServo.initialize()
+        BucketLatch.initialize()
+        ObjectDetectionMB1220.initialize()
+        Cap.initialize()
         TrajectoryFactory.initializeTrajectories()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.cancelAll()
-        CommandScheduler.commandsToSchedule += DeadWheelServo.up
-        CommandScheduler.commandsToSchedule += ObjectDetectionMB1220.DetectCommand()
 
         while (!isStarted) {
-            CommandScheduler.run()
+            //CommandScheduler.run()
         }
 
-        CommandScheduler.commandsToSchedule += AutoRoutines.testRoutine
+        CommandScheduler.commandsToSchedule += sequential {
+            +ObjectDetectionMB1220.DetectCommand()
+            +AutoRoutines.simpleCarouselHubRoutine
+        }
+        /*CommandScheduler.commandsToSchedule += sequential {
+            +MecanumDrive.turnRelative((-90.0).toRadians)
+            +MecanumDrive.turnRelative(90.0.toRadians)
+            +MecanumDrive.turnRelative(90.0.toRadians)
+            +MecanumDrive.turnRelative(90.0.toRadians)
+        }*/
 
         while (opModeIsActive()) {
             CommandScheduler.run()

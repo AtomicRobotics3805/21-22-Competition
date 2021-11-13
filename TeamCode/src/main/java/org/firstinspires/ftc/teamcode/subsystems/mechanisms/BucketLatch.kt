@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.mechanisms
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
@@ -8,33 +9,34 @@ import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import kotlin.math.abs
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
-object Bucket : Subsystem {
+@Config
+object BucketLatch : Subsystem {
 
     enum class Position {
-        UP,
-        DOWN
+        OPEN,
+        CLOSE
     }
 
     @JvmField
-    var BUCKET_NAME = "bucket"
+    var LATCH_NAME = "lock"
     @JvmField
-    var DROP_POSITION = 0.0
+    var OPEN_POSITION = 0.45
     @JvmField
-    var UP_POSITION = 0.95
+    var CLOSE_POSITION = 0.1
 
-    val drop: AtomicCommand
-        get() = moveServo(DROP_POSITION, Position.DOWN)
-    val up: AtomicCommand
-        get() = moveServo(UP_POSITION, Position.UP)
+    val open: AtomicCommand
+        get() = moveServo(OPEN_POSITION, Position.OPEN)
+    val close: AtomicCommand
+        get() = moveServo(CLOSE_POSITION, Position.CLOSE)
     val switch: AtomicCommand
-        get() = if (position == Position.UP) drop else up
+        get() = if (position == Position.OPEN) close else open
 
 
-    var position = Position.UP
+    var position = Position.OPEN
     private lateinit var servo: Servo
 
     fun initialize() {
-        servo = opMode.hardwareMap.get(Servo::class.java, BUCKET_NAME)
+        servo = opMode.hardwareMap.get(Servo::class.java, LATCH_NAME)
     }
 
     fun moveServo(position: Double, state: Position) =

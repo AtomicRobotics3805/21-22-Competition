@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous.opmodes
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
@@ -12,14 +11,14 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
-@Autonomous(group = "Blue", name = "Blue Park Close")
+@Autonomous(group = "Blue", name = "Blue Carousel Hub Front")
 @Disabled
-class BlueParkClose: LinearOpMode() {
+class BlueCarouselHub: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
         Constants.color = Constants.Color.BLUE
         TrajectoryFactory.initializeStartPositions()
-        Constants.startPose = Pose2d()
+        Constants.startPose = TrajectoryFactory.carouselStartPose
 
         MecanumDrive.initialize()
         Arm.initialize()
@@ -31,14 +30,13 @@ class BlueParkClose: LinearOpMode() {
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.cancelAll()
-        CommandScheduler.commandsToSchedule += DeadWheelServo.up
         CommandScheduler.commandsToSchedule += ObjectDetectionMB1220.DetectCommand()
 
         while (!isStarted) {
             CommandScheduler.run()
         }
 
-        CommandScheduler.commandsToSchedule += AutoRoutines.testRoutine
+        CommandScheduler.commandsToSchedule += AutoRoutines.carouselHubRoutine
 
         while (opModeIsActive()) {
             CommandScheduler.run()
