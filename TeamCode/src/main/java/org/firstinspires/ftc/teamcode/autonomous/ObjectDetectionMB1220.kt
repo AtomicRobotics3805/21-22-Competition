@@ -25,6 +25,7 @@ object ObjectDetectionMB1220 {
     fun initialize() {
         servo = Constants.opMode.hardwareMap.get(Servo::class.java, servoName)
         mb1220 = Constants.opMode.hardwareMap.get(AnalogInput::class.java, mb1220Name)
+        position = Position.UNKNOWN
     }
 
     class DetectCommand : AtomicCommand() {
@@ -37,7 +38,7 @@ object ObjectDetectionMB1220 {
         override fun start() {
             position = Position.UNKNOWN
             timer.reset()
-            servo.position = 0.09
+            servo.position = 0.08
         }
 
         override fun execute() {
@@ -45,14 +46,14 @@ object ObjectDetectionMB1220 {
                 timer.reset()
                 if (!triedRight) {
                     triedRight = true
-                    if (mb1220.voltage < 0.09)
+                    if (mb1220.voltage < 0.087)
                         position = Position.RIGHT
                     else {
-                        servo.position = 0.24
+                        servo.position = 0.255
                     }
                 }
                 else {
-                    position = if (mb1220.voltage < 0.12)
+                    position = if (mb1220.voltage < 0.087)
                         Position.MIDDLE
                     else Position.LEFT
                 }
