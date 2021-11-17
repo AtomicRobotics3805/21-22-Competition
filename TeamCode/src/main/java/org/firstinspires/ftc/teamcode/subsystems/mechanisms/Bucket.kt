@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.mechanisms
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.TimedCustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import kotlin.math.abs
 

@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.util.commands
+package org.firstinspires.ftc.teamcode.util.commands.other
+
+import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 
 open class CustomCommand(
         private val getDone: () -> Boolean = { true },

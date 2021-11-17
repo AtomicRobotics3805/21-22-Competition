@@ -1,8 +1,8 @@
-package org.firstinspires.ftc.teamcode.util.commands
+package org.firstinspires.ftc.teamcode.util.commands.other
 
 import com.qualcomm.robotcore.util.ElapsedTime
 
-class TimedCustomCommand(
+open class TimedCustomCommand(
         private val time: Double,
         private val getDone: () -> Boolean = { true },
         _run: () -> Unit = { },
@@ -18,5 +18,5 @@ class TimedCustomCommand(
         _start.invoke()
     }
 
-    val timer = ElapsedTime()
+    private val timer = ElapsedTime()
 }

@@ -29,10 +29,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer
-import org.firstinspires.ftc.teamcode.subsystems.localization.VuforiaLocalizer
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
-import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.driving.DriverControlled
 import org.firstinspires.ftc.teamcode.util.commands.driving.FollowTrajectory
 import org.firstinspires.ftc.teamcode.util.commands.driving.Turn

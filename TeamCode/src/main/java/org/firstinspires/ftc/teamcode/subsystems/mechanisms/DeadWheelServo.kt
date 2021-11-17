@@ -8,9 +8,8 @@ import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.TimedCustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.sequential
-import kotlin.math.abs
 
 @Config
 object DeadWheelServo {

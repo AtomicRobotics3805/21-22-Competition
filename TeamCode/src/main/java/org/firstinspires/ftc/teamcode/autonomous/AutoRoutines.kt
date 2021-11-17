@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
-import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint
-import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint
-import com.acmerobotics.roadrunner.trajectory.constraints.MinVelocityConstraint
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
@@ -11,9 +7,7 @@ import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColorAngle
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.toRadians
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.delays.Delay
-import org.firstinspires.ftc.teamcode.util.commands.driving.TurnRelative
 import org.firstinspires.ftc.teamcode.util.commands.parallel
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
