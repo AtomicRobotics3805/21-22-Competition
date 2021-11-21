@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.localization
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.localization.Localizer
+import com.vuforia.Vuforia
 import org.firstinspires.ftc.robotcore.external.ClassFactory
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName
 import org.firstinspires.ftc.robotcore.external.matrices.OpenGLMatrix
@@ -16,7 +17,7 @@ import java.util.*
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 object VuforiaLocalizer : Localizer {
     override var poseEstimate: Pose2d
-        get() = Pose2d(lastLocation) + offset
+        get() = lastLocation?.let { Pose2d(it) } ?: Pose2d() + offset
         // set should almost never be used
         set(value) {
             offset = value - poseEstimate
@@ -28,14 +29,16 @@ object VuforiaLocalizer : Localizer {
     // Since ImageTarget trackables use mm to specify their dimensions, we must use mm for all the physical dimension.
     private val mmTargetHeight = 6.0.inchesToMm.toFloat()
 
-    private val HALF_FIELD = 72.0.inchesToMm.toFloat()
-    private val QUARTER_FIELD = 36.0.inchesToMm.toFloat()
+    private val halfField = 72.0.inchesToMm.toFloat()
+    private val oneAndHalfTile = 36.0.inchesToMm.toFloat()
+    private val halfTile = 12.0.inchesToMm.toFloat()
 
-    private var lastLocation: OpenGLMatrix = OpenGLMatrix()
+    private var lastLocation: OpenGLMatrix? = null
     private lateinit var vuforia: VuforiaLocalizer
 
     private var targetVisible = false
-    private lateinit var allTrackables: MutableList<VuforiaTrackable>
+    private var targets: VuforiaTrackables? = null
+    private val allTrackables: ArrayList<VuforiaTrackable> = arrayListOf()
 
     fun initialize() {
         /*
@@ -67,21 +70,9 @@ object VuforiaLocalizer : Localizer {
 
         // Load the data sets for the trackable objects. These particular data
         // sets are stored in the 'assets' part of our application.
-        val targetsUltimateGoal: VuforiaTrackables = vuforia.loadTrackablesFromAsset("UltimateGoal")
-        val blueTowerGoalTarget = targetsUltimateGoal[0]
-        blueTowerGoalTarget.name = "Blue Tower Goal Target"
-        val redTowerGoalTarget = targetsUltimateGoal[1]
-        redTowerGoalTarget.name = "Red Tower Goal Target"
-        val redAllianceTarget = targetsUltimateGoal[2]
-        redAllianceTarget.name = "Red Alliance Target"
-        val blueAllianceTarget = targetsUltimateGoal[3]
-        blueAllianceTarget.name = "Blue Alliance Target"
-        val frontWallTarget = targetsUltimateGoal[4]
-        frontWallTarget.name = "Front Wall Target"
+        targets = vuforia.loadTrackablesFromAsset("FreightFrenzy")
 
-        // For convenience, gather together all the trackable objects in one easily-iterable collection */
-        allTrackables = ArrayList()
-        allTrackables.addAll(targetsUltimateGoal)
+        allTrackables.addAll(targets!!)
 
         //Set the position of the perimeter targets with relation to origin (center of field)
         /*
@@ -102,25 +93,11 @@ object VuforiaLocalizer : Localizer {
          * coordinate system (the center of the field), facing up.
          */
 
-        //Set the position of the perimeter targets with relation to origin (center of field)
-        redAllianceTarget.location = OpenGLMatrix
-                .translation(0f, -HALF_FIELD, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, 90f, 0f, 180f))
-
-        blueAllianceTarget.location = OpenGLMatrix
-                .translation(0f, HALF_FIELD, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, 90f, 0f, 0f))
-        frontWallTarget.location = OpenGLMatrix
-                .translation(-HALF_FIELD, 0f, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, 90f, 0f, 90f))
-
-        // The tower goal targets are located a quarter field length from the ends of the back perimeter wall.
-        blueTowerGoalTarget.location = OpenGLMatrix
-                .translation(HALF_FIELD, QUARTER_FIELD, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, 90f, 0f, -90f))
-        redTowerGoalTarget.location = OpenGLMatrix
-                .translation(HALF_FIELD, -QUARTER_FIELD, mmTargetHeight)
-                .multiplied(Orientation.getRotationMatrix(AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, 90f, 0f, -90f))
+        // Name and locate each trackable object
+        identifyTarget(0, "Blue Storage",       -halfField,  oneAndHalfTile, mmTargetHeight, 90f, 0f, 90f)
+        identifyTarget(1, "Blue Alliance Wall",  halfTile,   halfField,      mmTargetHeight, 90f, 0f, 0f)
+        identifyTarget(2, "Red Storage",        -halfField, -oneAndHalfTile, mmTargetHeight, 90f, 0f, 90f)
+        identifyTarget(3, "Red Alliance Wall",   halfTile,  -halfField,      mmTargetHeight, 90f, 0f, 180f)
 
         //
         // Create a transformation matrix describing where the phone is on the robot.
@@ -148,7 +125,7 @@ object VuforiaLocalizer : Localizer {
         // Note: To use the remote camera preview:
         // AFTER you hit Init on the Driver Station, use the "options menu" to select "Camera Stream"
         // Tap the preview window to receive a fresh image.
-        targetsUltimateGoal.activate()
+        targets!!.activate()
     }
 
     override fun update() {
@@ -168,5 +145,16 @@ object VuforiaLocalizer : Localizer {
                 break
             }
         }
+    }
+
+    fun identifyTarget(
+        targetIndex: Int, targetName: String?,
+        dx: Float, dy: Float, dz: Float, rx: Float, ry: Float, rz: Float) {
+        val aTarget = targets!![targetIndex]
+        aTarget.name = targetName
+        aTarget.location = OpenGLMatrix.translation(dx, dy, dz).multiplied(
+            Orientation.getRotationMatrix(
+                    AxesReference.EXTRINSIC, AxesOrder.XYZ, AngleUnit.DEGREES, rx, ry, rz)
+        )
     }
 }
