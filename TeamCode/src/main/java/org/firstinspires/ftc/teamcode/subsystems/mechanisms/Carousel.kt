@@ -8,25 +8,35 @@ import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.subsystems.MotorToPosition
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 @Config
 object Carousel : Subsystem {
-    const val CAROUSEL_CIRCUMFERENCE = 15.0 * Math.PI
-    const val COUNTS_PER_MOTOR_REV = 537.6
-    const val WHEEL_DIAMETER = 4.0
-    const val COUNTS_PER_INCH = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER * Math.PI)
-    const val CAROUSEL_ROTATION_COUNTS = (CAROUSEL_CIRCUMFERENCE * (400.0/360.0) * COUNTS_PER_INCH).toInt()
+    @JvmField
+    var CAROUSEL_SLOW_POSITION = 13.0 * Math.PI
+    @JvmField
+    var CAROUSEL_FAST_POSITION = 18.0 * Math.PI
+    @JvmField
+    var COUNTS_PER_MOTOR_REV = 537.6
+    @JvmField
+    var WHEEL_DIAMETER = 4.0
+    val COUNTS_PER_INCH: Double
+            get() = COUNTS_PER_MOTOR_REV / (WHEEL_DIAMETER * Math.PI)
+    val CAROUSEL_SLOW_ROTATION_COUNTS: Int
+        get() = (CAROUSEL_SLOW_POSITION * COUNTS_PER_INCH).toInt()
+    val CAROUSEL_FAST_ROTATION_COUNTS: Int
+        get() = (CAROUSEL_FAST_POSITION * COUNTS_PER_INCH).toInt()
 
     @JvmField
     var CAROUSEL_NAME = "carousel"
     @JvmField
     var CAROUSEL_DIRECTION = DcMotorSimple.Direction.REVERSE
     @JvmField
-    var CAROUSEL_SPEED = 0.08
+    var CAROUSEL_SLOW_SPEED = 0.6
     @JvmField
-    var CAROUSEL_BACKWARDS_SPEED = -0.08
+    var CAROUSEL_FAST_SPEED = 1.0
 
     var on = false
 
@@ -34,13 +44,13 @@ object Carousel : Subsystem {
         get() = if (on) stop else start
     val start: AtomicCommand
         get() = powerCarousel((if (CAROUSEL_DIRECTION == DcMotorSimple.Direction.FORWARD)
-            1 else -1) * CAROUSEL_SPEED)
+            1 else -1) * CAROUSEL_SLOW_SPEED)
     val stop: AtomicCommand
         get() = powerCarousel(0.0)
     val fullRotation: AtomicCommand
-        get() = TimedCustomCommand(_start = {motor.power = CAROUSEL_SPEED}, _done = {motor.power = 0.0}, time = 2.3)
+        get() = FullRotation(1)//TimedCustomCommand(_start = {motor.power = CAROUSEL_SLOW_SPEED}, _done = {motor.power = 0.0}, time = 2.3)
     val fullRotationReverse: AtomicCommand
-        get() = TimedCustomCommand(_start = {motor.power = CAROUSEL_BACKWARDS_SPEED}, _done = {motor.power = 0.0}, time = 2.3)
+        get() = FullRotation(-1)//TimedCustomCommand(_start = {motor.power = -CAROUSEL_SLOW_SPEED}, _done = {motor.power = 0.0}, time = 2.3)
 
     private lateinit var motor: DcMotorEx
 
@@ -57,14 +67,11 @@ object Carousel : Subsystem {
         on = power != 0.0
     })
 
-    class FullRotation : AtomicCommand() {
-        override val _isDone
-            get() = !motor.isBusy
-
-        override fun start() {
-            motor.targetPosition = CAROUSEL_ROTATION_COUNTS
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-            motor.power = CAROUSEL_SPEED
+    class FullRotation(direction: Int) : MotorToPosition(motor, CAROUSEL_FAST_ROTATION_COUNTS * direction, CAROUSEL_SLOW_SPEED) {
+        override fun execute() {
+            super.execute()
+            if (error < CAROUSEL_FAST_ROTATION_COUNTS - CAROUSEL_SLOW_ROTATION_COUNTS)
+                speed = CAROUSEL_FAST_SPEED
         }
     }
 }
