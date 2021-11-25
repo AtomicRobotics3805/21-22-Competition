@@ -39,7 +39,7 @@ class RedSimpleCarouselHub: LinearOpMode() {
         }
 
         CommandScheduler.commandsToSchedule += sequential {
-            //+ObjectDetectionMB1220.DetectCommand()
+            +ObjectDetectionMB1220.DetectCommand()
             +AutoRoutines.simpleCarouselHubRoutine
         }
         /*CommandScheduler.commandsToSchedule += sequential {

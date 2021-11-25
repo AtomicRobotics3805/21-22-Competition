@@ -21,7 +21,7 @@ object Arm : Subsystem {
     @JvmField
     var ARM_POSITION_MEDIUM = 14.5 // in
     @JvmField
-    var ARM_POSITION_LOW = 10.0 // in
+    var ARM_POSITION_LOW = 11.0 // in
 
     private const val PULLEY_WIDTH = 2.0 // in
     private const val COUNTS_PER_REV = 1612.8
