@@ -17,14 +17,14 @@ object Arm : Subsystem {
     @JvmField
     var ARM_SPEED = 1.0
     @JvmField
-    var ARM_POSITION_HIGH = 20.0 // in
+    var ARM_POSITION_HIGH = 22.0 // in
     @JvmField
-    var ARM_POSITION_MEDIUM = 14.5 // in
+    var ARM_POSITION_MEDIUM = 13.8 // in
     @JvmField
-    var ARM_POSITION_LOW = 10.0 // in
+    var ARM_POSITION_LOW = 9.0 // in
 
     private const val PULLEY_WIDTH = 2.0 // in
-    private const val COUNTS_PER_REV = 1612.8
+    private const val COUNTS_PER_REV = 537.6
     // higher value makes driven gear slower
     private const val DRIVE_GEAR_REDUCTION = 1.0
     private const val COUNTS_PER_INCH = COUNTS_PER_REV * DRIVE_GEAR_REDUCTION / (PULLEY_WIDTH * Math.PI)
@@ -44,44 +44,44 @@ object Arm : Subsystem {
     val stop: AtomicCommand
         get() = halt()
 
-    private lateinit var motor: DcMotorEx
+    private lateinit var armMotor: DcMotorEx
 
     fun initialize() {
-        motor = opMode.hardwareMap.get(DcMotorEx::class.java, ARM_NAME)
-        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        armMotor = opMode.hardwareMap.get(DcMotorEx::class.java, ARM_NAME)
+        armMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        armMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
     fun halt() = CustomCommand(_start = {
-        //motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-        //motor.targetPosition = motor.currentPosition
-        motor.power = 0.0
+        //armMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+        //armMotor.targetPosition = armMotor.currentPosition
+        armMotor.power = 0.0
     })
 
     fun powerArm(speed: Double) = CustomCommand(_start = {
-        motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        motor.power = speed
+        armMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        armMotor.power = speed
     })
 
     fun moveArmToPosition(position: Int) = CustomCommand(
-            getDone = { !motor.isBusy },
+            getDone = { !armMotor.isBusy },
             _start = {
-                motor.targetPosition = position
-                motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-                motor.power = ARM_SPEED
+                armMotor.targetPosition = position
+                armMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+                armMotor.power = ARM_SPEED
             }
     )
 
     fun moveArmAutonomous() = CustomCommand(
-        getDone = { !motor.isBusy },
+        getDone = { !armMotor.isBusy },
         _start = {
             if (ObjectDetectionMB1220.position == ObjectDetectionMB1220.Position.LEFT)
-                motor.targetPosition = (ARM_POSITION_LOW * COUNTS_PER_INCH).toInt()
+                armMotor.targetPosition = (ARM_POSITION_LOW * COUNTS_PER_INCH).toInt()
             else if (ObjectDetectionMB1220.position == ObjectDetectionMB1220.Position.MIDDLE)
-                    motor.targetPosition = (ARM_POSITION_MEDIUM * COUNTS_PER_INCH).toInt()
-            else motor.targetPosition = (ARM_POSITION_HIGH * COUNTS_PER_INCH).toInt()
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-            motor.power = ARM_SPEED
+                    armMotor.targetPosition = (ARM_POSITION_MEDIUM * COUNTS_PER_INCH).toInt()
+            else armMotor.targetPosition = (ARM_POSITION_HIGH * COUNTS_PER_INCH).toInt()
+            armMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+            armMotor.power = ARM_SPEED
         }
     )
 }

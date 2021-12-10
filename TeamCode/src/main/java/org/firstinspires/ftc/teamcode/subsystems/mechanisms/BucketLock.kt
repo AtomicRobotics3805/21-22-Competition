@@ -10,7 +10,7 @@ import kotlin.math.abs
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 @Config
-object BucketLatch : Subsystem {
+object BucketLock : Subsystem {
 
     enum class Position {
         OPEN,
@@ -33,16 +33,16 @@ object BucketLatch : Subsystem {
 
 
     var position = Position.OPEN
-    private lateinit var servo: Servo
+    private lateinit var lockServo: Servo
 
     fun initialize() {
-        servo = opMode.hardwareMap.get(Servo::class.java, LATCH_NAME)
+        lockServo = opMode.hardwareMap.get(Servo::class.java, LATCH_NAME)
     }
 
     fun moveServo(position: Double, state: Position) =
-            TimedCustomCommand(time = abs(position - servo.position),
+            TimedCustomCommand(time = abs(position - lockServo.position),
                     _start = {
-                        servo.position = position
+                        lockServo.position = position
                         this.position = state
                     })
 }

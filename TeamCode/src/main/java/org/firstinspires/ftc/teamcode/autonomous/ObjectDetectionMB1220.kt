@@ -1,11 +1,13 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
+import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.AnalogInput
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 
+@Config
 object ObjectDetectionMB1220 {
     enum class Position {
         UNKNOWN,
@@ -14,6 +16,12 @@ object ObjectDetectionMB1220 {
         RIGHT
     }
 
+    @JvmField
+    var rightPosition = 0.1
+    @JvmField
+    var middlePosition = 0.26
+    @JvmField
+    var minVoltage = 0.07
     var position: Position = Position.UNKNOWN
 
     private lateinit var servo: Servo
@@ -37,7 +45,7 @@ object ObjectDetectionMB1220 {
         override fun start() {
             position = Position.UNKNOWN
             timer.reset()
-            servo.position = 0.09
+            servo.position = rightPosition
         }
 
         override fun execute() {
@@ -45,14 +53,14 @@ object ObjectDetectionMB1220 {
                 timer.reset()
                 if (!triedRight) {
                     triedRight = true
-                    if (mb1220.voltage < 0.09)
+                    if (mb1220.voltage < minVoltage)
                         position = Position.RIGHT
                     else {
-                        servo.position = 0.24
+                        servo.position = middlePosition
                     }
                 }
                 else {
-                    position = if (mb1220.voltage < 0.12)
+                    position = if (mb1220.voltage < minVoltage)
                         Position.MIDDLE
                     else Position.LEFT
                 }

@@ -26,12 +26,15 @@ class BlueParkClose: LinearOpMode() {
         Bucket.initialize()
         Carousel.initialize()
         Intake.initialize()
-        DeadWheelServo.initialize()
+        OdometryServo.initialize()
+        BucketLock.initialize()
+        ObjectDetectionMB1220.initialize()
+        CapArm.initialize()
         TrajectoryFactory.initializeTrajectories()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.cancelAll()
-        CommandScheduler.commandsToSchedule += DeadWheelServo.up
+        CommandScheduler.commandsToSchedule += OdometryServo.up
         CommandScheduler.commandsToSchedule += ObjectDetectionMB1220.DetectCommand()
 
         while (!isStarted) {

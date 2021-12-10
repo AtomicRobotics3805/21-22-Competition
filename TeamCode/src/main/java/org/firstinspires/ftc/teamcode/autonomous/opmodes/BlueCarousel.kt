@@ -20,13 +20,15 @@ class BlueCarousel: LinearOpMode() {
         TrajectoryFactory.initializeStartPositions()
         Constants.startPose = TrajectoryFactory.carouselStartPose
 
-        TrajectoryFactory.initializeStartPositions()
         MecanumDrive.initialize()
         Arm.initialize()
         Bucket.initialize()
         Carousel.initialize()
         Intake.initialize()
-        DeadWheelServo.initialize()
+        OdometryServo.initialize()
+        BucketLock.initialize()
+        ObjectDetectionMB1220.initialize()
+        CapArm.initialize()
         TrajectoryFactory.initializeTrajectories()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)

@@ -10,10 +10,11 @@ import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
+import org.firstinspires.ftc.teamcode.util.commands.sequential
 
-@Autonomous(group = "Blue", name = "Blue Carousel Hub Front")
-@Disabled
-class BlueCarouselHub: LinearOpMode() {
+@Autonomous(group = "Blue", name = "Blue Carousel Hub Bottom Park Out")
+//@Disabled
+class BlueCarouselHubBottomParkOut: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
         Constants.color = Constants.Color.BLUE
@@ -22,7 +23,10 @@ class BlueCarouselHub: LinearOpMode() {
 
         OpModeController.initialize(this)
 
-        CommandScheduler.commandsToSchedule += AutoRoutines.carouselHubRoutine
+        CommandScheduler.commandsToSchedule += sequential {
+            +ObjectDetectionMB1220.DetectCommand()
+            +AutoRoutines.carouselHubBottomParkOutRoutine
+        }
 
         while (opModeIsActive()) {
             CommandScheduler.run()
