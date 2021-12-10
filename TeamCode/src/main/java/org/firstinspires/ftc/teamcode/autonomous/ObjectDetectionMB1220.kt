@@ -33,6 +33,7 @@ object ObjectDetectionMB1220 {
     fun initialize() {
         servo = Constants.opMode.hardwareMap.get(Servo::class.java, servoName)
         mb1220 = Constants.opMode.hardwareMap.get(AnalogInput::class.java, mb1220Name)
+        position = Position.UNKNOWN
     }
 
     class DetectCommand : AtomicCommand() {
