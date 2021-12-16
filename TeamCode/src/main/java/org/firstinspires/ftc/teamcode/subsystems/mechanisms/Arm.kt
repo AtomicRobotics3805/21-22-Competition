@@ -19,7 +19,7 @@ object Arm : Subsystem {
     @JvmField
     var ARM_POSITION_HIGH = 22.0 // in
     @JvmField
-    var ARM_POSITION_MEDIUM = 13.8 // in
+    var ARM_POSITION_MEDIUM = 14.4 // in
     @JvmField
     var ARM_POSITION_LOW = 9.0 // in
 

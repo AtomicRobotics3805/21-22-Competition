@@ -111,17 +111,17 @@ object TrajectoryFactory {
             carouselToHubBottom.trajectory.end().heading + 270.0.switchColorAngle.toRadians)
             .splineToSplineHeading(Pose2d(-30.0, 38.0.switchColor, 180.0.switchColorAngle.toRadians), 90.0.switchColorAngle.toRadians)
             .splineToConstantHeading(Vector2d(-12.0, 48.0.switchColor), 0.0.switchColorAngle.toRadians)
-            .splineToConstantHeading(Vector2d(13.0, 44.0.switchColor), 0.0.switchColorAngle.toRadians)
+            .splineToConstantHeading(Vector2d(0.0, 46.0.switchColor), 0.0.switchColorAngle.toRadians)
             .build()
         warehouseToParkIn = MecanumDrive.trajectoryBuilder(hubBottomToWarehouse.trajectory.end(),
             hubBottomToWarehouse.trajectory.end().heading + 180.0.switchColorAngle.toRadians)
-            .splineToConstantHeading(Vector2d(60.0, 44.0.switchColor), 0.0.switchColorAngle.toRadians)
-            .splineToConstantHeading(Vector2d(60.0, 52.0.switchColor), 90.0.switchColorAngle.toRadians)
+            .splineToConstantHeading(Vector2d(64.0, 46.0.switchColor), 0.0.switchColorAngle.toRadians)
+            .splineToConstantHeading(Vector2d(64.0, 52.0.switchColor), 90.0.switchColorAngle.toRadians)
             .build()
 
         hubBottomToParkOut = MecanumDrive.trajectoryBuilder(carouselToHubBottom.trajectory.end(), carouselToHubBottom.trajectory.end().heading + 270.0.switchColorAngle.toRadians)
             .splineToSplineHeading(Pose2d(-30.0, 36.0.switchColor, 180.0.switchColorAngle.toRadians), 90.0.switchColorAngle.toRadians)
-            .splineToConstantHeading(Vector2d(62.0, 61.0.switchColor), 0.0.switchColorAngle.toRadians)
+            .splineToConstantHeading(Vector2d(64.0, 65.0.switchColor), 0.0.switchColorAngle.toRadians)
             .build()
 
         carouselToPark = MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(),

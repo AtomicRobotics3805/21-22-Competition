@@ -58,7 +58,7 @@ object AutoRoutines {
         get() = sequential {
             +parallel {
                 +Bucket.up
-                +CapArm.up
+                +CapArm.idle
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
             }
             +Carousel.fullRotation
@@ -102,7 +102,7 @@ object AutoRoutines {
         get() = sequential {
             +parallel {
                 +Bucket.up
-                +CapArm.up
+                +CapArm.idle
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
             }
             +Carousel.fullRotation
@@ -117,7 +117,7 @@ object AutoRoutines {
         get() = sequential {
             +parallel {
                 +Bucket.up
-                +CapArm.up
+                +CapArm.idle
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
             }
             +Carousel.fullRotation

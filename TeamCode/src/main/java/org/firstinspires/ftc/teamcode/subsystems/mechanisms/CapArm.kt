@@ -12,11 +12,11 @@ object CapArm {
     @JvmField
     var CAP_NAME = "cap"
     @JvmField
-    var DOWN_POSITION = 0.7
+    var DOWN_POSITION = 0.0
     @JvmField
-    var UP_POSITION = 0.1
+    var UP_POSITION = 0.875
     @JvmField
-    var IDLE_POSITION = 0.3
+    var IDLE_POSITION = 0.7
 
     enum class Position {
         UP,

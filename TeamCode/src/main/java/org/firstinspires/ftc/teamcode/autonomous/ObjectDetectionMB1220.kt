@@ -17,9 +17,9 @@ object ObjectDetectionMB1220 {
     }
 
     @JvmField
-    var rightPosition = 0.1
+    var rightPosition = 0.04
     @JvmField
-    var middlePosition = 0.26
+    var middlePosition = 0.18
     @JvmField
     var minVoltage = 0.07
     var position: Position = Position.UNKNOWN
@@ -64,6 +64,7 @@ object ObjectDetectionMB1220 {
                         Position.MIDDLE
                     else Position.LEFT
                 }
+                servo.position = 0.0
                 Constants.opMode.telemetry.addData("Voltage", mb1220.voltage)
                 Constants.opMode.telemetry.addData("Position", position)
                 Constants.opMode.telemetry.update()
