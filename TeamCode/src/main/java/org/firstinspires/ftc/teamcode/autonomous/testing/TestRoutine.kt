@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
-import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 

@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.mechanisms
+package org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
@@ -43,6 +43,6 @@ object BucketLock : Subsystem {
             TimedCustomCommand(time = abs(position - lockServo.position),
                     _start = {
                         lockServo.position = position
-                        this.position = state
+                        BucketLock.position = state
                     })
 }

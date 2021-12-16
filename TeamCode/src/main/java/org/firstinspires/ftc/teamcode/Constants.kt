@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.OpMode
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 
 @Suppress("unused")
 object Constants {

@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.autonomous.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants.opMode
-import org.firstinspires.ftc.teamcode.subsystems.localization.VuforiaLocalizer
+import org.firstinspires.ftc.teamcode.subsystems.trio.localization.VuforiaLocalizer
 
 class VuforiaTest : LinearOpMode() {
     override fun runOpMode() {

@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.trio.*
+import org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColorAngle
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.toRadians
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.delays.Delay
-import org.firstinspires.ftc.teamcode.util.commands.delays.DisplacementDelay
 import org.firstinspires.ftc.teamcode.util.commands.parallel
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 

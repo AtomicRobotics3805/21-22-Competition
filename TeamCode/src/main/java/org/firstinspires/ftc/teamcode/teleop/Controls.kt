@@ -1,8 +1,9 @@
 package org.firstinspires.ftc.teamcode.teleop
 
 import org.firstinspires.ftc.teamcode.Constants.opMode
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.trio.*
+import org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms.*
 import org.firstinspires.ftc.teamcode.util.CommandGamepad
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential

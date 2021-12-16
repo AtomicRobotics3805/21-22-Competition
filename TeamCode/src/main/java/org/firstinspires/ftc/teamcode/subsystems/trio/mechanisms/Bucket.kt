@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.mechanisms
+package org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
@@ -43,6 +43,6 @@ object Bucket : Subsystem {
             TimedCustomCommand(time = abs(position - bucketServo.position),
                     _start = {
                         bucketServo.position = position
-                        this.position = state
+                        Bucket.position = state
                     })
 }

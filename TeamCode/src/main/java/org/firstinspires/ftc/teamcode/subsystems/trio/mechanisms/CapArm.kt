@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.mechanisms
+package org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
@@ -44,6 +44,6 @@ object CapArm {
         TimedCustomCommand(time = abs(position - capServo.position),
             _start = {
                 capServo.position = position
-                this.position = state
+                CapArm.position = state
             })
 }

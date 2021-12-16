@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.mechanisms
+package org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.control.PIDCoefficients
@@ -6,11 +6,10 @@ import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.sequential
-import kotlin.math.abs
 
 @Config
 object OdometryServo {
@@ -52,7 +51,7 @@ object OdometryServo {
         TimedCustomCommand(time = 0.0,//abs(position - odometryServo.position),
             _start = {
                 odometryServo.position = position
-                this.position = state
+                OdometryServo.position = state
             })
 
     class StopTranslationalPIDCommand : AtomicCommand() {

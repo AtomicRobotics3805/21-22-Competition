@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.subsystems.mechanisms
+package org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.DcMotor
@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
-import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.MotorToPosition
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import kotlin.math.abs
@@ -46,7 +45,8 @@ object Carousel : Subsystem {
         get() = if (on) stop else start
     val start: AtomicCommand
         get() = powerCarousel((if (CAROUSEL_DIRECTION == DcMotorSimple.Direction.FORWARD)
-            1 else -1) * CAROUSEL_SLOW_SPEED)
+            1 else -1) * CAROUSEL_SLOW_SPEED
+        )
     val stop: AtomicCommand
         get() = powerCarousel(0.0)
     val fullRotation: AtomicCommand

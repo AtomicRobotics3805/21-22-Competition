@@ -1,8 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.commands.driving
 
 import com.acmerobotics.roadrunner.drive.DriveSignal
-import com.acmerobotics.roadrunner.geometry.Pose2d
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectory
 

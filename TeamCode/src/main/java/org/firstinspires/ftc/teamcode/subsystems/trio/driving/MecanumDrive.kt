@@ -1,17 +1,15 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package org.firstinspires.ftc.teamcode.subsystems.driving
+package org.firstinspires.ftc.teamcode.subsystems.trio.driving
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry
 import com.acmerobotics.roadrunner.control.PIDCoefficients
 import com.acmerobotics.roadrunner.control.PIDFController
-import com.acmerobotics.roadrunner.drive.DriveSignal
 import com.acmerobotics.roadrunner.drive.MecanumDrive as RoadRunnerMecanumDrive
 import com.acmerobotics.roadrunner.followers.HolonomicPIDVAFollower
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.kinematics.Kinematics
 import com.acmerobotics.roadrunner.trajectory.TrajectoryBuilder
 import com.acmerobotics.roadrunner.trajectory.constraints.AngularVelocityConstraint
 import com.acmerobotics.roadrunner.trajectory.constraints.MecanumVelocityConstraint
@@ -28,10 +26,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer
-import org.firstinspires.ftc.teamcode.subsystems.localization.VuforiaLocalizer
+import org.firstinspires.ftc.teamcode.subsystems.trio.localization.OdometryLocalizer
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.driving.DriverControlled
 import org.firstinspires.ftc.teamcode.util.commands.driving.FollowTrajectory
@@ -39,7 +35,6 @@ import org.firstinspires.ftc.teamcode.util.commands.driving.Turn
 import org.firstinspires.ftc.teamcode.util.commands.driving.TurnRelative
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.util.inchesToMm
-import org.firstinspires.ftc.teamcode.util.kinematics.AtomicMecanumKinematics
 import org.firstinspires.ftc.teamcode.util.roadrunner.LynxModuleUtil
 import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectory
 import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectoryBuilder
@@ -204,7 +199,8 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
             MecanumVelocityConstraint(MAX_VEL, TRACK_WIDTH)))
     val accelConstraint: ProfileAccelerationConstraint = ProfileAccelerationConstraint(MAX_ACCEL)
 
-    var follower: HolonomicPIDVAFollower = HolonomicPIDVAFollower(TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
+    var follower: HolonomicPIDVAFollower = HolonomicPIDVAFollower(
+        TRANSLATIONAL_PID, TRANSLATIONAL_PID, HEADING_PID,
             Pose2d(0.5, 0.5, Math.toRadians(5.0)), 0.5)
     val turnController: PIDFController = PIDFController(HEADING_PID)
 

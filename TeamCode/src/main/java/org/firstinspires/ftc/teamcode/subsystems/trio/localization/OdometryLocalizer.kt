@@ -1,12 +1,11 @@
-package org.firstinspires.ftc.teamcode.subsystems.localization
+package org.firstinspires.ftc.teamcode.subsystems.trio.localization
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.geometry.Pose2d
-import com.acmerobotics.roadrunner.localization.ThreeTrackingWheelLocalizer
 import com.acmerobotics.roadrunner.localization.TwoTrackingWheelLocalizer
 import com.qualcomm.robotcore.hardware.DcMotorEx
 import org.firstinspires.ftc.teamcode.Constants.opMode
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.roadrunner.Encoder
 
 /*
