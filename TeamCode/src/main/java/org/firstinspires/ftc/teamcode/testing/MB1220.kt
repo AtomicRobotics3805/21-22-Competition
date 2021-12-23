@@ -8,7 +8,6 @@ object MB1220 {
     private lateinit var mb1220: AnalogInput
     private var voltage: Double = 0.0
     private var freight = false
-    private const val cmThreshold = 0 //Modify after testing.
     private const val deviceName  = "MB1220"
 
     class Read: AtomicCommand() {
@@ -19,9 +18,7 @@ object MB1220 {
 
             voltage = (mb1220.voltage) / 0.00468 //Scale factor for 5v.
 
-            if (voltage < cmThreshold) {
-                freight = true
-            }
+
         }
     }
 }

@@ -30,37 +30,44 @@
 package org.firstinspires.ftc.teamcode.testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+import com.qualcomm.robotcore.hardware.LED;
 import com.qualcomm.robotcore.hardware.AnalogInput;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.hardware.Servo;
 
 
-@Autonomous(name="Sharp_IR", group="Linear Opmode")
+@TeleOp(name = "LED Test", group = "Sensor")
 
-public class Sharp_IR extends LinearOpMode {
+public class BoxLED extends LinearOpMode {
 
 
-    private ElapsedTime runtime = new ElapsedTime();
-    AnalogInput sharpir;
+  @Override
+  public void runOpMode() {
+
+
+    AnalogInput SharpIR;
+    LED digOut;
     double voltage;
 
-    @Override
-    public void runOpMode() {
-
-        sharpir = hardwareMap.get(AnalogInput.class, "sharpir");
 
 
-        waitForStart();
+    digOut = hardwareMap.get(LED.class, "digout");
+    SharpIR = hardwareMap.get(AnalogInput.class,"sensor");
+    digOut.enableLight(false);
+    waitForStart();
 
-        while (opModeIsActive()) {
-            voltage = sharpir.getVoltage();
-            telemetry.addData("Voltage", voltage);
-            telemetry.update();
+    while (opModeIsActive())  {
+
+        voltage = SharpIR.getVoltage();
+        if (voltage>1){
+            digOut.enableLight(true);
         }
+        else {
+            digOut.enableLight(false);
         }
-        }
 
-
-
-
+    }
+  }
+}

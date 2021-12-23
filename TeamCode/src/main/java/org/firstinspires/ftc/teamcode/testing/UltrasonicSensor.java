@@ -40,7 +40,7 @@ import com.qualcomm.robotcore.hardware.AnalogInput;
 public class UltrasonicSensor extends LinearOpMode {
 
 
-    private ElapsedTime runtime = new ElapsedTime();
+
     AnalogInput MB1220;
     double voltage;
     @Override
@@ -49,10 +49,9 @@ public class UltrasonicSensor extends LinearOpMode {
         MB1220 = hardwareMap.get(AnalogInput.class, "mb1220");
 
         waitForStart();
-        runtime.reset();
+
         while (opModeIsActive()) {
             voltage = MB1220.getVoltage();
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
             telemetry.addData("Voltage", voltage);
             telemetry.update();
         }
