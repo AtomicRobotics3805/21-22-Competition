@@ -4,7 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
+import org.firstinspires.ftc.teamcode.autonomous.TrioAutoRoutines
 import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
@@ -19,7 +19,7 @@ class TestRoutine : LinearOpMode() {
         Constants.startPose = Pose2d()
 
         MecanumDrive.initialize()
-        TrajectoryFactory.initializeTrajectories()
+        TrajectoryFactory.initializeTrioTrajectories()
 
         CommandScheduler.cancelAll()
 
@@ -27,7 +27,7 @@ class TestRoutine : LinearOpMode() {
             CommandScheduler.run()
         }
 
-        CommandScheduler.commandsToSchedule += AutoRoutines.testRoutine
+        CommandScheduler.commandsToSchedule += TrioAutoRoutines.testRoutine
 
         while (opModeIsActive()) {
             CommandScheduler.run()

@@ -1,10 +1,9 @@
-package org.firstinspires.ftc.teamcode.autonomous.opmodes
+package org.firstinspires.ftc.teamcode.autonomous.opmodes.trio
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.trio.*
 import org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
@@ -23,7 +22,7 @@ object OpModeController {
         ObjectDetectionMB1220.initialize()
         CapArm.initialize()
         OdometryServo.initialize()
-        TrajectoryFactory.initializeTrajectories()
+        TrajectoryFactory.initializeTrioTrajectories()
 
         CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.cancelAll()

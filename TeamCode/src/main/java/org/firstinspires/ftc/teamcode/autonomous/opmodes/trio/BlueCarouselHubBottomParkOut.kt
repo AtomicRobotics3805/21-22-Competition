@@ -1,20 +1,20 @@
-package org.firstinspires.ftc.teamcode.autonomous.opmodes
+package org.firstinspires.ftc.teamcode.autonomous.opmodes.trio
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
+import org.firstinspires.ftc.teamcode.autonomous.TrioAutoRoutines
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
-@Autonomous(group = "Red", name = "Red Carousel Hub Bottom Park Out")
+@Autonomous(group = "Blue", name = "Blue Carousel Hub Bottom Park Out")
 //@Disabled
-class RedCarouselHubBottomParkOut: LinearOpMode() {
+class BlueCarouselHubBottomParkOut: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
-        Constants.color = Constants.Color.RED
+        Constants.color = Constants.Color.BLUE
         TrajectoryFactory.initializeStartPositions()
         Constants.startPose = TrajectoryFactory.carouselStartPose
 
@@ -22,8 +22,9 @@ class RedCarouselHubBottomParkOut: LinearOpMode() {
 
         CommandScheduler.commandsToSchedule += sequential {
             +ObjectDetectionMB1220.DetectCommand()
-            +AutoRoutines.carouselHubBottomParkOutRoutine
+            +TrioAutoRoutines.carouselHubBottomParkOutRoutine
         }
+
         while (opModeIsActive()) {
             CommandScheduler.run()
         }

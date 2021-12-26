@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.autonomous
 
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.trio.*
 import org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColorAngle
@@ -13,7 +12,7 @@ import org.firstinspires.ftc.teamcode.util.commands.parallel
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Suppress("Unused")
-object AutoRoutines {
+object TrioAutoRoutines {
     val testRoutine: AtomicCommand
         get() = sequential {
             +MecanumDrive.followTrajectory(TrajectoryFactory.testTrajectory)

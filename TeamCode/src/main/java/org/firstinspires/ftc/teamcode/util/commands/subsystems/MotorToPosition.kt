@@ -10,7 +10,7 @@ import kotlin.math.round
 import kotlin.math.sign
 
 @Suppress("MemberVisibilityCanBePrivate")
-open class MotorToPosition(protected val motor: DcMotor, protected val position: Int,
+open class MotorToPosition(protected val motor: DcMotor, protected var position: Int,
                            protected var speed: Double, protected val minError: Int = 15,
                            protected val kP: Double = 0.005) : AtomicCommand() {
     override val _isDone: Boolean

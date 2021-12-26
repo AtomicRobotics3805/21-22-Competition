@@ -10,6 +10,12 @@ import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectory
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 @Config
 object TrajectoryFactory {
+    lateinit var frankieStartPose: Pose2d
+
+    lateinit var startToWarehouse: ParallelTrajectory
+    lateinit var warehouseToHub: ParallelTrajectory
+    lateinit var hubToWarehouse: ParallelTrajectory
+
     lateinit var carouselStartPose: Pose2d
     lateinit var farParkStartPose: Pose2d
     lateinit var closeParkStartPose: Pose2d
@@ -47,6 +53,8 @@ object TrajectoryFactory {
     lateinit var simpleCarouselToPark2: ParallelTrajectory
 
     fun initializeStartPositions() {
+        frankieStartPose = Pose2d()
+
         simpleCarouselStartPose = Pose2d(-36.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         carouselStartPose = Pose2d(-36.0, 63.0.switchColor, (if (Constants.color == Constants.Color.BLUE) 0.0 else 180.0).switchColorAngle.toRadians)
         farParkStartPose = Pose2d(-36.0, 63.0.switchColor, 180.0.switchColorAngle.toRadians)
@@ -55,7 +63,11 @@ object TrajectoryFactory {
         hubTopStartPose = Pose2d(6.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
     }
 
-    fun initializeTrajectories() {
+    fun initializeFrankieTrajectories() {
+
+    }
+
+    fun initializeTrioTrajectories() {
         testTrajectory = MecanumDrive.trajectoryBuilder(Pose2d(), 90.0.toRadians)
             //.splineToSplineHeading(Pose2d(0.0, 20.0, 0.0.toRadians), 0.0.toRadians)
             .splineToSplineHeading(Pose2d(20.0, 20.0, 180.0.toRadians), 0.0.toRadians)
