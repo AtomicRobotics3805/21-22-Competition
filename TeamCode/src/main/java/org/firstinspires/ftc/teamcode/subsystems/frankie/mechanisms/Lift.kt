@@ -165,9 +165,10 @@ object Lift {
 
         class ToCollectCareful : MotorToPosition(swivelMotor, 0, SWIVEL_SPEED) {
             override fun execute() {
-                position = if (abs(Pivot.angle) > ACCEPTABLE_PIVOT_ANGLE)
-                    ACCEPTABLE_HEIGHT * SWIVEL_TICKS_PER_DEGREE
-                else 0
+                speed = if (abs(Pivot.angle) > ACCEPTABLE_PIVOT_ANGLE)
+                    SWIVEL_SPEED
+                else 0.0
+                super.execute()
             }
         }
     }
