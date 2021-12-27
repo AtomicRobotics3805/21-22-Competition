@@ -22,6 +22,8 @@ object TrajectoryFactory {
     lateinit var hubFrontStartPose: Pose2d
     lateinit var hubTopStartPose: Pose2d
     lateinit var simpleCarouselStartPose: Pose2d
+    lateinit var teleOpAutomaticDepositPosition: Pose2d
+    lateinit var shippingHubPosition: Vector2d
 
     lateinit var startToHubFront: ParallelTrajectory
     lateinit var startToHubTop: ParallelTrajectory
@@ -61,6 +63,8 @@ object TrajectoryFactory {
         closeParkStartPose = Pose2d(6.0, 63.0.switchColor, 180.0.switchColorAngle.toRadians)
         hubFrontStartPose = Pose2d(-12.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         hubTopStartPose = Pose2d(6.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
+        teleOpAutomaticDepositPosition = Pose2d(12.0, 64.0.switchColor, 0.0)
+        shippingHubPosition = Vector2d(-12.0, 24.0.switchColor)
     }
 
     fun initializeFrankieTrajectories() {

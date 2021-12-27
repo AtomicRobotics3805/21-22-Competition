@@ -2,20 +2,21 @@
 
 package org.firstinspires.ftc.teamcode.autonomous
 
-import com.acmerobotics.roadrunner.geometry.Vector2d
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
 import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.shippingHubPosition
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.teleOpAutomaticDepositPosition
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
+import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.delays.Delay
 import org.firstinspires.ftc.teamcode.util.commands.parallel
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Suppress("Unused", "MemberVisibilityCouldBePrivate")
-object FrankieAutoRoutines {
-    val shippingHubPosition = Vector2d(-12.0, 24.0)
+object FrankieRoutines {
 
     val noCarouselFreightRoutine: AtomicCommand
         get() = sequential {
@@ -33,14 +34,15 @@ object FrankieAutoRoutines {
                         }
                     }
                 }
-                +Intake.Extender.extend
             }
             +Bucket.Latch.open
+            +Delay(0.3)
             +parallel {
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToWarehouse)
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
                 +Intake.Spinner.start
+                +Intake.Extender.extend
             }
             +deliverFreightRoutine
             +deliverFreightRoutine
@@ -62,27 +64,67 @@ object FrankieAutoRoutines {
                     +Intake.Spinner.start
                     +Delay(0.4)
                     +Bucket.Latch.close
+                    +Lift.Swivel.toHigh
                     +parallel {
-                        +sequential {
-                            +Lift.Swivel.toHigh
-                            +Lift.Extender.fullExtend
-                        }
+                        +Lift.Extender.fullExtend
                         +Lift.Pivot.toPosition(shippingHubPosition)
-                        +Intake.Extender.extend
-                        +Bucket.Rotator.drop
+                        +sequential {
+                            +Delay(0.2)
+                            +Bucket.Rotator.drop
+                        }
                     }
                 }
                 +MecanumDrive.followTrajectory(TrajectoryFactory.warehouseToHub)
             }
             +Bucket.Latch.open
+            +Delay(0.3)
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
-                +Intake.Spinner.start
                 +Intake.Extender.extend
                 +Intake.Rotator.down
                 +MecanumDrive.followTrajectory(TrajectoryFactory.hubToWarehouse)
             }
         }
 
+    val depositTeleOpRoutine: AtomicCommand
+        get() = sequential {
+            +parallel {
+                +Intake.Extender.retract
+                +Intake.Rotator.up
+                +Intake.Spinner.idle
+                +Bucket.Rotator.up
+            }
+            +Intake.Spinner.start
+            +Delay(0.4)
+            +Bucket.Latch.close
+            +Lift.Swivel.toHigh
+            +parallel {
+                +Lift.Extender.fullExtend
+                +sequential {
+                    +setTeleOpPosition
+                    +Lift.Pivot.toPosition(shippingHubPosition)
+                }
+                +sequential {
+                    +Delay(0.2)
+                    +Bucket.Rotator.drop
+                }
+            }
+        }
+
+    val dropFreightTeleOpRoutine: AtomicCommand
+        get() = parallel {
+            +Bucket.Latch.open
+            +Delay(0.3)
+            +parallel {
+                +Lift.Pivot.toAngle(0.0)
+                +Lift.Swivel.ToCollectCareful()
+                +Intake.Spinner.start
+                +Intake.Extender.extend
+                +Intake.Rotator.down
+            }
+        }
+
+    val setTeleOpPosition: AtomicCommand
+        get() = CustomCommand(_start = { MecanumDrive.poseEstimate = teleOpAutomaticDepositPosition })
 }
