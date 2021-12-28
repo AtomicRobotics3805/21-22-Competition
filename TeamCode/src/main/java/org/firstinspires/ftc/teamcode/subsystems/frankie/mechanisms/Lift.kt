@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.DigitalChannel
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
-import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.MotorToPosition
@@ -45,18 +45,21 @@ object Lift {
             round(EXTENDER_TICKS_PER_REV / PULLEY_CIRCUMFERENCE).toInt()
 
         private lateinit var extensionMotor: DcMotor
+        private var fullExtended = false
 
         fun initialize() {
             extensionMotor = opMode.hardwareMap.get(DcMotor::class.java, EXTENDER_NAME)
         }
 
         val fullExtend: AtomicCommand
-            get() = ToPosition(FULL_EXTENSION_DISTANCE)
+            get() = ToPosition(FULL_EXTENSION_DISTANCE, _fullExtended = true)
         //
         val fullExtendStopEarly: AtomicCommand
             get() = ToPosition(FULL_EXTENSION_DISTANCE, true)
         val retract: AtomicCommand
-            get() = ToPosition(0.0)
+            get() = ToPosition(0.0, _fullExtended = false)
+        val switch: AtomicCommand
+            get() = if (fullExtended) retract else fullExtend
         val manualUp: AtomicCommand
             get() = powerExtender(EXTENDER_SPEED)
         val manualDown: AtomicCommand
@@ -73,10 +76,15 @@ object Lift {
             extensionMotor.power = power
         })
 
-        class ToPosition(val distance: Double, val stopEarly: Boolean = false) : MotorToPosition(extensionMotor, round(
+        class ToPosition(val distance: Double, val stopEarly: Boolean = false, val _fullExtended: Boolean? = null) : MotorToPosition(extensionMotor, round(
             EXTENDER_TICKS_PER_INCH * distance).toInt() + extensionMotor.currentPosition, EXTENDER_SPEED) {
             override val _isDone: Boolean
                 get() = if (!stopEarly) super._isDone else (distance * EXTENDER_TICKS_PER_REV) / error < 3
+
+            override fun start() {
+                if (_fullExtended != null) fullExtended = _fullExtended
+                super.start()
+            }
         }
 
         class ResetAtStart : AtomicCommand() {
@@ -161,7 +169,10 @@ object Lift {
                     swivelMotor.power = SWIVEL_SPEED
                 })
 
-        fun powerSwivel(power: Double) = CustomCommand(_start = { swivelMotor.power = power})
+        fun powerSwivel(power: Double) = CustomCommand(_start = {
+            swivelMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            swivelMotor.power = power
+        })
 
         class ToCollectCareful : MotorToPosition(swivelMotor, 0, SWIVEL_SPEED) {
             override fun execute() {
@@ -206,7 +217,10 @@ object Lift {
                 liftPivotMotor.targetPosition = liftPivotMotor.currentPosition
             })
 
-        fun powerPivot(power: Double) = CustomCommand(_start = { liftPivotMotor.power = power})
+        fun powerPivot(power: Double) = CustomCommand(_start = {
+            liftPivotMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            liftPivotMotor.power = power
+        })
         fun toAngle(angle: Double): AtomicCommand =
             MotorToPosition(
                 liftPivotMotor,

@@ -27,8 +27,9 @@ class CommandGamepad(qualcommGamepad: Gamepad) {
 
     val leftBumper = CommandButton(gamepad.leftBumper)
     val rightBumper = CommandButton(gamepad.rightBumper)
-    
-    
+
+    val leftTrigger = CommandTrigger(gamepad.leftTrigger)
+    val rightTrigger = CommandTrigger(gamepad.rightTrigger)
 
     private val controls = listOf(a, b, x, y, dpadUp, dpadDown, dpadLeft, dpadRight,
             leftBumper, rightBumper)

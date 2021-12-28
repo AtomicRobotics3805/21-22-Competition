@@ -1,6 +1,6 @@
 @file:Suppress("MemberVisibilityCanBePrivate", "unused")
 
-package org.firstinspires.ftc.teamcode.subsystems.trio.driving
+package org.firstinspires.ftc.teamcode.subsystems.driving
 
 import com.acmerobotics.dashboard.FtcDashboard
 import com.acmerobotics.dashboard.config.Config
@@ -26,7 +26,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.subsystems.trio.localization.OdometryLocalizer
+import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.driving.DriverControlled

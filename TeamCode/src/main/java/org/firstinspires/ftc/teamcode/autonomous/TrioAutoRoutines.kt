@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColorAngle

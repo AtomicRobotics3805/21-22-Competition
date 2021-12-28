@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.util.commands.driving
 
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.hardware.Gamepad
-import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 
 class DriverControlled(private val gamepad: Gamepad,

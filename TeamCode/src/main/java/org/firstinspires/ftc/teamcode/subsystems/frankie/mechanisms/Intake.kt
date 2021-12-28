@@ -41,6 +41,7 @@ object Intake {
         @JvmField
         var RIGHT_EXTENDER_NAME = "rightIntakeExtender"
 
+        private var extended = false
         private lateinit var leftExtensionServo: Servo
         private lateinit var rightExtensionServo: Servo
 
@@ -54,6 +55,7 @@ object Intake {
                 time = max(abs(leftExtensionServo.position - EXTENDED_POSITION_LEFT),
                     abs(rightExtensionServo.position - EXTENDED_POSITION_RIGHT)),
                 _start = {
+                    extended = true
                     leftExtensionServo.position = EXTENDED_POSITION_LEFT
                     rightExtensionServo.position = EXTENDED_POSITION_RIGHT
                 })
@@ -62,9 +64,12 @@ object Intake {
                 time = max(abs(leftExtensionServo.position - RETRACTED_POSITION_LEFT),
                     abs(rightExtensionServo.position - RETRACTED_POSITION_RIGHT)),
                 _start = {
+                    extended = false
                     leftExtensionServo.position = RETRACTED_POSITION_LEFT
                     rightExtensionServo.position = RETRACTED_POSITION_RIGHT
                 })
+        val switch: AtomicCommand
+            get() = if (extended) retract else extend
     }
 
     @Config
@@ -82,6 +87,7 @@ object Intake {
         @JvmField
         var RIGHT_ROTATOR_NAME = "rightIntakeRotator"
 
+        private var rotatedUp = false
         private lateinit var leftRotatorServo: Servo
         private lateinit var rightRotatorServo: Servo
 
@@ -91,17 +97,21 @@ object Intake {
         }
 
         val up: AtomicCommand
-            get() = moveServos(UP_POSITION_LEFT, UP_POSITION_RIGHT)
+            get() = moveServos(UP_POSITION_LEFT, UP_POSITION_RIGHT, true)
         val down: AtomicCommand
-            get() = moveServos(DOWN_POSITION_LEFT, DOWN_POSITION_RIGHT)
+            get() = moveServos(DOWN_POSITION_LEFT, DOWN_POSITION_RIGHT, false)
+        val switch: AtomicCommand
+            get() = if (rotatedUp) down else up
         val downStart: AtomicCommand
-            get() = moveServos(DOWN_POSITION_LEFT, DOWN_POSITION_RIGHT, 0.3)
+            get() = moveServos(DOWN_POSITION_LEFT, DOWN_POSITION_RIGHT, false, 0.3)
 
         fun moveServos(leftPosition: Double,
                        rightPosition: Double,
+                       _rotatedUp: Boolean,
                        time: Double = max(abs(leftRotatorServo.position - leftPosition),
                            abs(rightRotatorServo.position - rightPosition))): AtomicCommand =
             TimedCustomCommand(time = time, _start = {
+                rotatedUp = _rotatedUp
                 leftRotatorServo.position = leftPosition
                 rightRotatorServo.position = rightPosition
         })
@@ -120,6 +130,7 @@ object Intake {
         @JvmField
         var SPINNER_NAME = "intakeSpinner"
 
+        private var spinning = false
         private lateinit var spinnerMotor: DcMotor
 
         fun initialize() {
@@ -128,13 +139,16 @@ object Intake {
         }
 
         val start: AtomicCommand
-            get() = powerSpinner(SPINNER_INTAKING_SPEED)
+            get() = powerSpinner(SPINNER_INTAKING_SPEED, true)
         val idle: AtomicCommand
-            get() = powerSpinner(SPINNER_IDLE_SPEED)
+            get() = powerSpinner(SPINNER_IDLE_SPEED, false)
         val stop: AtomicCommand
-            get() = powerSpinner(0.0)
+            get() = powerSpinner(0.0, false)
+        val switch: AtomicCommand
+            get() = if (spinning) idle else start
 
-        fun powerSpinner(power: Double) = CustomCommand(_start = {
+        fun powerSpinner(power: Double, _spinning: Boolean) = CustomCommand(_start = {
+            spinning = _spinning
             spinnerMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             spinnerMotor.power = power
         })
@@ -149,6 +163,7 @@ object Intake {
         @JvmField
         var LOCK_NAME = "intakeLock"
 
+        private var closed = false
         private lateinit var lockServo: Servo
 
         fun initialize() {
@@ -156,12 +171,15 @@ object Intake {
         }
 
         val close: AtomicCommand
-            get() = moveServo(CLOSED_POSITION)
+            get() = moveServo(CLOSED_POSITION, true)
         val open: AtomicCommand
-            get() = moveServo(OPEN_POSITION)
+            get() = moveServo(OPEN_POSITION, false)
+        val switch: AtomicCommand
+            get() = if (closed) close else open
 
-        fun moveServo(position: Double): AtomicCommand = CustomCommand(_start = {
+        fun moveServo(position: Double, _closed: Boolean): AtomicCommand = CustomCommand(_start = {
             lockServo.position = position
+            closed = _closed
         })
     }
 

@@ -1,39 +1,33 @@
 package org.firstinspires.ftc.teamcode.teleop
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import org.firstinspires.ftc.teamcode.Constants
-import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
-import org.firstinspires.ftc.teamcode.subsystems.trio.mechanisms.*
+import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Bucket
+import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Carousel
+import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
+import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
-@TeleOp(name = "Competition Testing")
-@Disabled
-class CompTeleOpTrio: LinearOpMode() {
+@TeleOp(name = "Testing Frankie TeleOp")
+class TestingTeleOpFrankie: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
 
-        MecanumDrive.initialize()
-        Arm.initialize()
         Bucket.initialize()
         Carousel.initialize()
         Intake.initialize()
-        OdometryServo.initialize()
-        BucketLock.initialize()
+        Lift.initialize()
         Controls.registerGamepads()
-        CommandScheduler.registerSubsystems(MecanumDrive, Arm, Bucket, Carousel, Intake)
         CommandScheduler.cancelAll()
 
         waitForStart()
 
-        Controls.registerTrioCommands()
+        Controls.registerFrankieTestingCommands()
 
         while (opModeIsActive()) {
             CommandScheduler.run()
-            telemetry.addData("Position", MecanumDrive.poseEstimate)
-            telemetry.update()
         }
     }
 }

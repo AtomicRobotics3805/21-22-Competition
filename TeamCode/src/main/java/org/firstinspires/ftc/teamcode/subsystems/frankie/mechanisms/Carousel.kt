@@ -72,10 +72,12 @@ object Carousel : Subsystem {
         carouselMotor.direction = DcMotorSimple.Direction.REVERSE
     }
 
-    fun powerCarouselTrigger(trigger: CustomGamepad.Trigger) = CustomCommand(_start = {
-        carouselMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-    }, _execute = {
-        carouselMotor.power = trigger.amount.toDouble() * CAROUSEL_TRIGGER_SPEED
+    fun powerCarouselTrigger(trigger: CustomGamepad.Trigger) = CustomCommand(
+        getDone = { !trigger.down },
+        _start = {
+            carouselMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        }, _execute = {
+            carouselMotor.power = trigger.amount.toDouble() * CAROUSEL_TRIGGER_SPEED
     })
 
     fun powerCarousel(power: Double) = CustomCommand(_start = {

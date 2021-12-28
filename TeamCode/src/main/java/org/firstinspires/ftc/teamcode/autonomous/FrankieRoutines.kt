@@ -2,10 +2,10 @@
 
 package org.firstinspires.ftc.teamcode.autonomous
 
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
-import org.firstinspires.ftc.teamcode.subsystems.trio.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.shippingHubPosition
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.teleOpAutomaticDepositPosition
@@ -87,7 +87,7 @@ object FrankieRoutines {
             }
         }
 
-    val depositTeleOpRoutine: AtomicCommand
+    val transferMoveLiftTeleOpRoutine: AtomicCommand
         get() = sequential {
             +parallel {
                 +Intake.Extender.retract
@@ -112,8 +112,8 @@ object FrankieRoutines {
             }
         }
 
-    val dropFreightTeleOpRoutine: AtomicCommand
-        get() = parallel {
+    val dropAndCollectTeleOpRoutine: AtomicCommand
+        get() = sequential {
             +Bucket.Latch.open
             +Delay(0.3)
             +parallel {

@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
-@TeleOp(name = "Frankie TeleOp")
+@TeleOp(name = "Competition Frankie TeleOp")
 class CompTeleOpFrankie: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
@@ -24,7 +24,7 @@ class CompTeleOpFrankie: LinearOpMode() {
 
         waitForStart()
 
-        Controls.registerFrankieCommands()
+        Controls.registerFrankieCompetitionCommands()
 
         while (opModeIsActive()) {
             CommandScheduler.run()
