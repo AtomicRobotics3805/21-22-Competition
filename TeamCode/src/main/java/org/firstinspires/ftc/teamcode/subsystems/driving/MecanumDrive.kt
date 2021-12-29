@@ -220,7 +220,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
     private lateinit var hardwareMap: HardwareMap
 
     val driverSpeeds = listOf(0.1, 0.4, 1.0)
-    var driverSpeedIndex = 0
+    var driverSpeedIndex = 1
     val driverSpeed: Double
         get() = driverSpeeds[driverSpeedIndex]
 

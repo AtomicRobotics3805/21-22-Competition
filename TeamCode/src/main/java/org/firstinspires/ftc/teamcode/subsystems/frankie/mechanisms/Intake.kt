@@ -29,17 +29,17 @@ object Intake {
     @Config
     object Extender : Subsystem {
         @JvmField
-        var EXTENDED_POSITION_LEFT = 0.0
+        var EXTENDED_POSITION_LEFT = 1.0
         @JvmField
-        var EXTENDED_POSITION_RIGHT = 1.0
+        var EXTENDED_POSITION_RIGHT = 0.0
         @JvmField
-        var RETRACTED_POSITION_LEFT = 1.0
+        var RETRACTED_POSITION_LEFT = 0.4
         @JvmField
-        var RETRACTED_POSITION_RIGHT = 0.0
+        var RETRACTED_POSITION_RIGHT = 0.6
         @JvmField
-        var LEFT_EXTENDER_NAME = "leftIntakeExtender"
+        var LEFT_EXTENDER_NAME = "intakeLeftExtendServo"
         @JvmField
-        var RIGHT_EXTENDER_NAME = "rightIntakeExtender"
+        var RIGHT_EXTENDER_NAME = "intakeRightExtendServo"
 
         private var extended = false
         private lateinit var leftExtensionServo: Servo
@@ -75,17 +75,17 @@ object Intake {
     @Config
     object Rotator : Subsystem {
         @JvmField
-        var UP_POSITION_LEFT = 0.0
+        var UP_POSITION_LEFT = 0.4
         @JvmField
-        var UP_POSITION_RIGHT = 1.0
+        var UP_POSITION_RIGHT = 0.6
         @JvmField
-        var DOWN_POSITION_LEFT = 0.2
+        var DOWN_POSITION_LEFT = 0.85
         @JvmField
-        var DOWN_POSITION_RIGHT = 0.8
+        var DOWN_POSITION_RIGHT = 0.15
         @JvmField
-        var LEFT_ROTATOR_NAME = "leftIntakeRotator"
+        var LEFT_ROTATOR_NAME = "intakeLeftRotateServo"
         @JvmField
-        var RIGHT_ROTATOR_NAME = "rightIntakeRotator"
+        var RIGHT_ROTATOR_NAME = "intakeRightRotateServo"
 
         private var rotatedUp = false
         private lateinit var leftRotatorServo: Servo
@@ -128,7 +128,7 @@ object Intake {
         @JvmField
         var SPINNER_COUNTS_PER_MOTOR_REV: Double = 28 * 3.7
         @JvmField
-        var SPINNER_NAME = "intakeSpinner"
+        var SPINNER_NAME = "intake"
 
         private var spinning = false
         private lateinit var spinnerMotor: DcMotor
@@ -159,9 +159,9 @@ object Intake {
         @JvmField
         var CLOSED_POSITION = 0.0
         @JvmField
-        var OPEN_POSITION = 0.5
+        var OPEN_POSITION = 0.2
         @JvmField
-        var LOCK_NAME = "intakeLock"
+        var LOCK_NAME = "intakeLockServo"
 
         private var closed = false
         private lateinit var lockServo: Servo

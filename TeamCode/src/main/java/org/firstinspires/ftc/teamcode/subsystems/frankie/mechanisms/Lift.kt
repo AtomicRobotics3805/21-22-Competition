@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.geometry.Vector2d
-import com.qualcomm.robotcore.hardware.DcMotor
-import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.DigitalChannel
+import com.qualcomm.robotcore.hardware.*
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
@@ -23,32 +21,32 @@ object Lift {
         Extender.initialize()
         Swivel.initialize()
         Pivot.initialize()
-        LimitSwitch.initialize()
     }
 
     @Config
     object Extender : Subsystem {
         @JvmField
-        var EXTENDER_NAME = "liftExtender"
+        var EXTENDER_NAME = "armExtend"
 
         @JvmField
         var FULL_EXTENSION_DISTANCE = 30.0
         @JvmField
-        var EXTENDER_SPEED = 1.0
+        var EXTENDER_SPEED = 0.25
         @JvmField
-        var EXTENDER_DIRECTION = DcMotorSimple.Direction.FORWARD
+        var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
 
-        private const val PULLEY_DIAMETER = 1.0
+        private const val PULLEY_DIAMETER = 1.25
         private const val PULLEY_CIRCUMFERENCE: Double = PULLEY_DIAMETER * PI
         private const val EXTENDER_TICKS_PER_REV: Double = 28 * 3.7
         private val EXTENDER_TICKS_PER_INCH: Int =
             round(EXTENDER_TICKS_PER_REV / PULLEY_CIRCUMFERENCE).toInt()
 
-        private lateinit var extensionMotor: DcMotor
+        lateinit var extensionMotor: DcMotor
         private var fullExtended = false
 
         fun initialize() {
             extensionMotor = opMode.hardwareMap.get(DcMotor::class.java, EXTENDER_NAME)
+            extensionMotor.direction = EXTENDER_DIRECTION
         }
 
         val fullExtend: AtomicCommand
@@ -77,7 +75,7 @@ object Lift {
         })
 
         class ToPosition(val distance: Double, val stopEarly: Boolean = false, val _fullExtended: Boolean? = null) : MotorToPosition(extensionMotor, round(
-            EXTENDER_TICKS_PER_INCH * distance).toInt() + extensionMotor.currentPosition, EXTENDER_SPEED) {
+            EXTENDER_TICKS_PER_INCH * distance).toInt(), EXTENDER_SPEED) {
             override val _isDone: Boolean
                 get() = if (!stopEarly) super._isDone else (distance * EXTENDER_TICKS_PER_REV) / error < 3
 
@@ -109,7 +107,7 @@ object Lift {
     @Config
     object Swivel {
         @JvmField
-        var SWIVEL_NAME = "swivel"
+        var SWIVEL_NAME = "armSwivel"
         @JvmField
         var SWIVEL_SPEED = 1.0
         @JvmField
@@ -187,21 +185,24 @@ object Lift {
     @Config
     object Pivot {
         @JvmField
-        var PIVOT_NAME = "pivot"
+        var PIVOT_NAME = "armPivot"
         @JvmField
-        var PIVOT_SPEED = 1.0
+        var PIVOT_SPEED = 0.2
         @JvmField
-        var EXTENDER_DIRECTION = DcMotorSimple.Direction.FORWARD
+        var PIVOT_DIRECTION = DcMotorSimple.Direction.REVERSE
 
         private const val PIVOT_GEAR_RATIO = 1.0
         private const val PIVOT_TICKS_PER_REV: Double = 28 * 19.2
         private val PIVOT_TICKS_PER_DEGREE: Int =
             round(PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0).toInt()
 
-        private lateinit var liftPivotMotor: DcMotor
+        lateinit var liftPivotMotor: DcMotorEx
 
         fun initialize() {
-            liftPivotMotor = opMode.hardwareMap.get(DcMotor::class.java, PIVOT_NAME)
+            liftPivotMotor = opMode.hardwareMap.get(DcMotorEx::class.java, PIVOT_NAME)
+            liftPivotMotor.direction = PIVOT_DIRECTION
+            liftPivotMotor.setVelocityPIDFCoefficients(5.0, 0.02, 1.0, 0.0)
+            liftPivotMotor.setPositionPIDFCoefficients(1.0)
         }
 
         val angle: Double

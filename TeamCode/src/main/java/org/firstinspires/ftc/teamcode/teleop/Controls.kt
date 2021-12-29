@@ -39,7 +39,7 @@ object Controls {
         gamepad2.y.pressed.command = { Intake.Lock.switch }
         gamepad2.leftBumper.pressed.command = { Intake.Spinner.switch }
         gamepad2.rightBumper.pressed.command = { Intake.Rotator.switch }
-        gamepad2.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad2.gamepad.leftTrigger) }
+        //gamepad2.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad2.gamepad.leftTrigger) }
         gamepad2.rightTrigger.pressed.command = { Bucket.Rotator.switch }
         gamepad2.dpadUp.pressed.command = { Lift.Swivel.manualUp }
         gamepad2.dpadUp.released.command = { Lift.Swivel.idle }
@@ -58,11 +58,11 @@ object Controls {
         gamepad1.b.pressed.command = { Intake.Extender.retract }
         gamepad1.x.pressed.command = { Intake.Lock.open }
         gamepad1.y.pressed.command = { Intake.Lock.close }
-        gamepad1.rightTrigger.pressed.command = { Intake.Spinner.start }
-        gamepad1.rightTrigger.released.command = { Intake.Spinner.stop }
+        gamepad1.dpadUp.pressed.command = { Intake.Spinner.start }
+        gamepad1.dpadDown.pressed.command = { Intake.Spinner.stop }
         gamepad1.leftBumper.pressed.command = { Intake.Rotator.up }
         gamepad1.rightBumper.pressed.command = { Intake.Rotator.down }
-        gamepad1.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad1.gamepad.leftTrigger) }
+        //gamepad1.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad1.gamepad.leftTrigger) }
 
         gamepad2.a.pressed.command = { Lift.Extender.fullExtend }
         gamepad2.b.pressed.command = { Lift.Extender.retract }

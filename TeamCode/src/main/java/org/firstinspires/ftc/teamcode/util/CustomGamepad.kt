@@ -88,8 +88,7 @@ class CustomGamepad(private val gamepad: Gamepad) {
     }
 
     class Trigger(private val name: String = "Unknown Trigger") {
-        val down: Boolean
-            get() = amount != 0.0f
+        var down = false
         var pressed = false
         var released = false
         var amount = 0.0f
@@ -97,6 +96,7 @@ class CustomGamepad(private val gamepad: Gamepad) {
         fun update(value: Float) {
             pressed = value != 0.0f && !down
             released = value == 0.0f && down
+            down = value != 0.0f
             amount = value
         }
 

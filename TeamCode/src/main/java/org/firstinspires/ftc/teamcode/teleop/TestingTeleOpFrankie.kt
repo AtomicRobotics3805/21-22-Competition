@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode.teleop
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
+import com.qualcomm.robotcore.hardware.DcMotor
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Carousel
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
@@ -15,8 +17,8 @@ class TestingTeleOpFrankie: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
 
+        MecanumDrive.initialize()
         Bucket.initialize()
-        Carousel.initialize()
         Intake.initialize()
         Lift.initialize()
         Controls.registerGamepads()
@@ -28,6 +30,10 @@ class TestingTeleOpFrankie: LinearOpMode() {
 
         while (opModeIsActive()) {
             CommandScheduler.run()
+            telemetry.addData("Lift Extension Position", Lift.Extender.extensionMotor.currentPosition)
+            telemetry.addData("Lift Pivot Position", Lift.Pivot.liftPivotMotor.currentPosition)
+            telemetry.addData("Coefficients", Lift.Pivot.liftPivotMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION))
+            telemetry.update()
         }
     }
 }

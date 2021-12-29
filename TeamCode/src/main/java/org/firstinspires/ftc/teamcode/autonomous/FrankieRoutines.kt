@@ -119,6 +119,7 @@ object FrankieRoutines {
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
+                +Lift.Extender.retract
                 +Intake.Spinner.start
                 +Intake.Extender.extend
                 +Intake.Rotator.down

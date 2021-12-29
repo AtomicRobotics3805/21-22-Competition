@@ -23,12 +23,12 @@ object Bucket {
         }
 
         @JvmField
-        var LATCH_NAME = "latch"
+        var LATCH_NAME = "bucketLockServo"
 
         @JvmField
-        var OPEN_POSITION = 0.45
+        var OPEN_POSITION = 0.75
         @JvmField
-        var CLOSE_POSITION = 0.1
+        var CLOSE_POSITION = 0.45
 
         val open: AtomicCommand
             get() = moveServo(OPEN_POSITION, Position.OPEN)
@@ -60,12 +60,12 @@ object Bucket {
         }
 
         @JvmField
-        var ROTATOR_NAME = "bucketRotator"
+        var ROTATOR_NAME = "bucketRotateServo"
 
         @JvmField
-        var DROP_POSITION = 0.25
+        var DROP_POSITION = 0.5
         @JvmField
-        var COLLECT_POSITION = 0.9
+        var COLLECT_POSITION = 0.0
 
         val drop: AtomicCommand
             get() = moveServo(DROP_POSITION, Position.DOWN)
