@@ -20,10 +20,13 @@ object FrankieRoutines {
 
     val noCarouselFreightRoutine: AtomicCommand
         get() = sequential {
-            +Intake.Rotator.downStart
+            +parallel {
+                +Intake.Rotator.downStart
+                +Lift.Extender.retract
+            }
             +parallel {
                 +sequential {
-                    +Lift.Extender.ResetAtStart()
+                    //+Lift.Extender.ResetAtStart()
                     +Lift.Swivel.toPreloadPosition
                     +parallel {
                         +Lift.Pivot.toPosition(shippingHubPosition)
@@ -38,7 +41,7 @@ object FrankieRoutines {
             +Bucket.Latch.open
             +Delay(0.3)
             +parallel {
-                +MecanumDrive.followTrajectory(TrajectoryFactory.startToWarehouse)
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
                 +Intake.Spinner.start
@@ -74,7 +77,7 @@ object FrankieRoutines {
                         }
                     }
                 }
-                +MecanumDrive.followTrajectory(TrajectoryFactory.warehouseToHub)
+                +MecanumDrive.followTrajectory(TrajectoryFactory.insideWarehouseToOutsideWarehouse)
             }
             +Bucket.Latch.open
             +Delay(0.3)
@@ -83,7 +86,7 @@ object FrankieRoutines {
                 +Lift.Swivel.ToCollectCareful()
                 +Intake.Extender.extend
                 +Intake.Rotator.down
-                +MecanumDrive.followTrajectory(TrajectoryFactory.hubToWarehouse)
+                +MecanumDrive.followTrajectory(TrajectoryFactory.outsideWarehouseToInsideWarehouse)
             }
         }
 

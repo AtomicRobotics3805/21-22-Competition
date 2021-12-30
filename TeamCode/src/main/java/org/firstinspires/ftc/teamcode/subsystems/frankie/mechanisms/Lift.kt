@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.MotorToPosition
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
+import org.firstinspires.ftc.teamcode.util.toDegrees
 import kotlin.math.PI
 import kotlin.math.abs
 import kotlin.math.round
@@ -31,10 +32,11 @@ object Lift {
         @JvmField
         var FULL_EXTENSION_DISTANCE = 30.0
         @JvmField
-        var EXTENDER_SPEED = 0.25
+        var EXTENDER_SPEED = 0.5
         @JvmField
         var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
 
+        private const val startingDistance = 1.0
         private const val PULLEY_DIAMETER = 1.25
         private const val PULLEY_CIRCUMFERENCE: Double = PULLEY_DIAMETER * PI
         private const val EXTENDER_TICKS_PER_REV: Double = 28 * 3.7
@@ -75,7 +77,7 @@ object Lift {
         })
 
         class ToPosition(val distance: Double, val stopEarly: Boolean = false, val _fullExtended: Boolean? = null) : MotorToPosition(extensionMotor, round(
-            EXTENDER_TICKS_PER_INCH * distance).toInt(), EXTENDER_SPEED) {
+            EXTENDER_TICKS_PER_INCH * (distance - startingDistance)).toInt(), EXTENDER_SPEED) {
             override val _isDone: Boolean
                 get() = if (!stopEarly) super._isDone else (distance * EXTENDER_TICKS_PER_REV) / error < 3
 
@@ -187,14 +189,13 @@ object Lift {
         @JvmField
         var PIVOT_NAME = "armPivot"
         @JvmField
-        var PIVOT_SPEED = 0.2
+        var PIVOT_SPEED = 0.4
         @JvmField
         var PIVOT_DIRECTION = DcMotorSimple.Direction.REVERSE
 
         private const val PIVOT_GEAR_RATIO = 1.0
         private const val PIVOT_TICKS_PER_REV: Double = 28 * 19.2
-        private val PIVOT_TICKS_PER_DEGREE: Int =
-            round(PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0).toInt()
+        private const val PIVOT_TICKS_PER_DEGREE: Double = PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0
 
         lateinit var liftPivotMotor: DcMotorEx
 
@@ -229,7 +230,7 @@ object Lift {
                 PIVOT_SPEED
             )
         fun toPosition(position: Vector2d): AtomicCommand =
-            toAngle(MecanumDrive.poseEstimate.vec() angleBetween position)
+            toAngle((MecanumDrive.poseEstimate.vec() angleBetween position).toDegrees)
     }
 
     object LimitSwitch {

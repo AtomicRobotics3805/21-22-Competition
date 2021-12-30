@@ -65,7 +65,7 @@ object Bucket {
         @JvmField
         var DROP_POSITION = 0.5
         @JvmField
-        var COLLECT_POSITION = 0.0
+        var COLLECT_POSITION = 0.3
 
         val drop: AtomicCommand
             get() = moveServo(DROP_POSITION, Position.DOWN)

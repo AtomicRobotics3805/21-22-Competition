@@ -10,11 +10,11 @@ import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectory
 @Suppress("unused", "MemberVisibilityCanBePrivate")
 @Config
 object TrajectoryFactory {
-    lateinit var frankieStartPose: Pose2d
+    lateinit var outsideWarehouseStartPose: Pose2d
 
-    lateinit var startToWarehouse: ParallelTrajectory
-    lateinit var warehouseToHub: ParallelTrajectory
-    lateinit var hubToWarehouse: ParallelTrajectory
+    lateinit var startToInsideWarehouse: ParallelTrajectory
+    lateinit var insideWarehouseToOutsideWarehouse: ParallelTrajectory
+    lateinit var outsideWarehouseToInsideWarehouse: ParallelTrajectory
 
     lateinit var carouselStartPose: Pose2d
     lateinit var farParkStartPose: Pose2d
@@ -55,8 +55,7 @@ object TrajectoryFactory {
     lateinit var simpleCarouselToPark2: ParallelTrajectory
 
     fun initializeStartPositions() {
-        frankieStartPose = Pose2d()
-
+        outsideWarehouseStartPose = Pose2d(12.0, 65.5.switchColor, 0.0.switchColorAngle.toRadians)
         simpleCarouselStartPose = Pose2d(-36.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         carouselStartPose = Pose2d(-36.0, 63.0.switchColor, (if (Constants.color == Constants.Color.BLUE) 0.0 else 180.0).switchColorAngle.toRadians)
         farParkStartPose = Pose2d(-36.0, 63.0.switchColor, 180.0.switchColorAngle.toRadians)
@@ -68,10 +67,19 @@ object TrajectoryFactory {
     }
 
     fun initializeFrankieTrajectories() {
-
     }
 
     fun initializeTrioTrajectories() {
+        startToInsideWarehouse = MecanumDrive.trajectoryBuilder(outsideWarehouseStartPose, 0.0.toRadians)
+            .forward(28.0)
+            .build()
+        insideWarehouseToOutsideWarehouse = MecanumDrive.trajectoryBuilder(startToInsideWarehouse.trajectory.end(), 0.0.toRadians)
+            .back(23.0)
+            .build()
+        outsideWarehouseToInsideWarehouse = MecanumDrive.trajectoryBuilder(insideWarehouseToOutsideWarehouse.trajectory.end(), 0.0.toRadians)
+            .forward(23.0)
+            .build()
+
         testTrajectory = MecanumDrive.trajectoryBuilder(Pose2d(), 90.0.toRadians)
             //.splineToSplineHeading(Pose2d(0.0, 20.0, 0.0.toRadians), 0.0.toRadians)
             .splineToSplineHeading(Pose2d(20.0, 20.0, 180.0.toRadians), 0.0.toRadians)

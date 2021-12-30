@@ -48,13 +48,13 @@ import kotlin.math.abs
 @Config
 object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.46), Subsystem {
     @JvmField
-    var PARALLEL_X = -5.8 // in; forward offset of the parallel wheel
+    var PARALLEL_X = 0.0//-5.8 // in; forward offset of the parallel wheel
     @JvmField
-    var PARALLEL_Y = -2.0 // in; left offset of the parallel wheel
+    var PARALLEL_Y = 2.1//-2.0 // in; left offset of the parallel wheel
     @JvmField
-    var PERPENDICULAR_X = -6.6 // in; forward offset of the perpendicular wheel
+    var PERPENDICULAR_X = 1.5//-6.6 // in; forward offset of the perpendicular wheel
     @JvmField
-    var PERPENDICULAR_Y = 1.0 // in; left offset of the perpendicular wheel
+    var PERPENDICULAR_Y = 0.0//1.0 // in; left offset of the perpendicular wheel
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -96,7 +96,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
     var GEAR_RATIO = 1.0 // output (wheel) speed / input (motor) speed
 
     @JvmField
-    var TRACK_WIDTH = 18.0 // in
+    var TRACK_WIDTH = 15.2//18.0 // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -106,10 +106,10 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
      */
 
     @JvmField
-    var kV = 0.018
+    var kV = 0.02//0.018
 
     @JvmField
-    var kA = 0.0025
+    var kA = 0.003//0.0025
 
     @JvmField
     var kStatic = 0.01
@@ -124,13 +124,13 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
      */
 
     @JvmField
-    var MAX_VEL = 40.0
+    var MAX_VEL = 30.0//40.0
 
     @JvmField
     var MAX_ACCEL = 30.0
 
     @JvmField
-    var MAX_ANG_VEL = 3.1
+    var MAX_ANG_VEL = Math.toRadians(120.0)//3.1
 
     @JvmField
     var MAX_ANG_ACCEL = Math.toRadians(120.0)
@@ -142,7 +142,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
      */
 
     @JvmField
-    var LATERAL_MULTIPLIER = 1.46
+    var LATERAL_MULTIPLIER = 1.0//1.46
 
     @JvmField
     var DRIFT_MULTIPLIER = 1.0
