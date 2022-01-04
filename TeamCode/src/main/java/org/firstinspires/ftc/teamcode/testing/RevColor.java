@@ -48,8 +48,6 @@ import java.util.Locale;
 
 public class RevColor extends LinearOpMode {
 
-
-
     private ElapsedTime runtime = new ElapsedTime();
     double distance;
     ColorSensor sensorColor;

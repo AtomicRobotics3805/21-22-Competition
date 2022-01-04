@@ -18,10 +18,11 @@ object BucketIndicator : Subsystem {
 
     enum class Bucket {
         FULL,
-        EMPTY
+        EMPTY,
+        UNKNOWN
     }
 
-    var status: Bucket = Bucket.EMPTY
+    var status: Bucket = Bucket.UNKNOWN
     private lateinit var distanceSensor: DistanceSensor
     private lateinit var colorSensor: ColorSensor
 
@@ -30,6 +31,14 @@ object BucketIndicator : Subsystem {
     private lateinit var ledTwo: LED
     private lateinit var ledThree: LED
 
+    var distanceSensorName = "color_distance_sensor"
+    var colorSensorName = "color_distance_sensor"
+
+    var ledZeroName = "led_0"
+    var ledOneName = "led_1"
+    var ledTwoName = "led_2"
+    var ledThreeName = "led_3"
+
     private var distance = 0.0
     private val distanceMax = 3.3
 
@@ -37,50 +46,41 @@ object BucketIndicator : Subsystem {
     val scaleFactor = 255
     var relativeLayoutId = hardwareMap.appContext.getResources().getIdentifier("RelativeLayout", "id", hardwareMap.appContext.getPackageName());
 
-    //val status: AtomicCommand
-    //    get() = readSensor()
+        fun initialize() {
 
-    fun initialize() {
+            distanceSensor = opMode.hardwareMap.get(DistanceSensor::class.java,distanceSensorName)
+            colorSensor = opMode.hardwareMap.get(ColorSensor::class.java,colorSensorName)
 
-        distanceSensor = opMode.hardwareMap.get(DistanceSensor::class.java,"color_distance_sensor")
-        colorSensor = opMode.hardwareMap.get(ColorSensor::class.java,"color_distance_sensor")
+            ledZero = opMode.hardwareMap.get(LED::class.java,ledZeroName)
+            ledOne = opMode.hardwareMap.get(LED::class.java,ledOneName)
+            ledTwo = opMode.hardwareMap.get(LED::class.java,ledTwoName)
+            ledThree = opMode.hardwareMap.get(LED::class.java,ledThreeName)
 
-        ledZero = opMode.hardwareMap.get(LED::class.java,"led_0" )
-        ledOne = opMode.hardwareMap.get(LED::class.java,"led_1" )
-        ledTwo = opMode.hardwareMap.get(LED::class.java,"led_2" )
-        ledThree = opMode.hardwareMap.get(LED::class.java,"led_3" )
+            status = Bucket.UNKNOWN
+        }
+        class DetectCommmand : AtomicCommand(){
+            override val _isDone: Boolean
+                get() = status != Bucket.UNKNOWN
 
-    }
-    fun readSensor(){
-        distance = distanceSensor.getDistance(DistanceUnit.CM)
-        Color.RGBToHSV((colorSensor.red() * scaleFactor) as Int,
-                (colorSensor.green() * scaleFactor) as Int,
-                (colorSensor.blue() * scaleFactor) as Int,
-                hsvValues)
-    }
-    fun enable(){
-        distance = distanceSensor.getDistance(DistanceUnit.CM)
-        Color.RGBToHSV((colorSensor.red() * scaleFactor) as Int,
-                (colorSensor.green() * scaleFactor) as Int,
-                (colorSensor.blue() * scaleFactor) as Int,
-                hsvValues)
-
-        if (distance < distanceMax){
-            if (74 < hsvValues[0] && hsvValues[0] < 79
-                    || 93 < hsvValues[0] && hsvValues[0] < 97
-                    || 163 < hsvValues[0] && hsvValues[0] < 168){
-                ledZero.enableLight(false)
-                ledOne.enableLight(true)
-                ledTwo.enableLight(false)
-                ledThree.enableLight(true)
+            override fun start() {
+                status = Bucket.UNKNOWN
             }
-            else {
-                ledZero.enableLight(true)
-                ledOne.enableLight(false)
-                ledTwo.enableLight(true)
-                ledThree.enableLight(false)
+            override fun execute() {
+                distance = distanceSensor.getDistance(DistanceUnit.CM)
+                Color.RGBToHSV((colorSensor.red() * scaleFactor) as Int,
+                        (colorSensor.green() * scaleFactor) as Int,
+                        (colorSensor.blue() * scaleFactor) as Int,
+                        hsvValues)
+
+                if (distance < 3.3) {
+                    status = if (75 < hsvValues[0] && hsvValues[0] < 79 || 93 < hsvValues[0] && hsvValues[0] < 97 || 163 < hsvValues[0] && hsvValues[0] < 168) {
+                        Bucket.FULL
+                    }
+                    else{
+                        Bucket.EMPTY
+                    }
+                }
             }
         }
-    }
 }
 

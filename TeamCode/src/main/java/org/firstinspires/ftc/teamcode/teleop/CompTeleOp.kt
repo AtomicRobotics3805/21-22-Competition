@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Arm
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Carousel
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.Intake
+import org.firstinspires.ftc.teamcode.testing.BucketIndicator
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
@@ -16,6 +17,7 @@ class CompTeleOp: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
 
+        BucketIndicator.initialize()
         MecanumDrive.initialize()
         Arm.initialize()
         Bucket.initialize()
