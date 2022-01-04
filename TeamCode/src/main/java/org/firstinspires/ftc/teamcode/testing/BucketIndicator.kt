@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
-object BucketIndicator : Subsystem {
+object BucketIndicator {
 
     enum class Bucket {
         FULL,
