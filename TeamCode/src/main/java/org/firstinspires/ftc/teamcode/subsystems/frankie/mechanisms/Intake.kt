@@ -183,6 +183,39 @@ object Intake {
         })
     }
 
+    object Pushthrough {
+        enum class State {
+            PUSHING,
+            IDLE
+        }
+
+        @JvmField
+        var PUSHTHROUGH_NAME = "intakeRightRotateServo"
+        @JvmField
+        var PUSH_POSITION = 0.95
+        @JvmField
+        var IDLE_POSITION = 0.25
+
+        var state = State.IDLE
+        private lateinit var pushthroughServo: Servo
+
+        fun initialize() {
+            pushthroughServo = opMode.hardwareMap.get(Servo::class.java, PUSHTHROUGH_NAME)
+        }
+
+        val push: AtomicCommand
+            get() = moveServo(PUSH_POSITION, State.PUSHING)
+        val idle: AtomicCommand
+            get() = moveServo(IDLE_POSITION, State.IDLE)
+        val switch: AtomicCommand
+            get() = if (state == State.IDLE) push else idle
+
+        fun moveServo(position: Double, state: State): AtomicCommand = CustomCommand(_start = {
+            pushthroughServo.position = position
+            this.state = state
+        })
+    }
+
     @Config
     object ColorSensor {
         @JvmField

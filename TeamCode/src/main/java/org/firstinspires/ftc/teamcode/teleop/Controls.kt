@@ -38,7 +38,8 @@ object Controls {
         gamepad2.x.pressed.command = { Intake.Extender.switch }
         gamepad2.y.pressed.command = { Intake.Lock.switch }
         gamepad2.leftBumper.pressed.command = { Intake.Spinner.switch }
-        gamepad2.rightBumper.pressed.command = { Intake.Rotator.switch }
+        gamepad1.rightBumper.pressed.command = { Intake.Pushthrough.push }
+        gamepad1.rightBumper.released.command = { Intake.Pushthrough.idle }
         //gamepad2.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad2.gamepad.leftTrigger) }
         gamepad2.rightTrigger.pressed.command = { Bucket.Rotator.switch }
         gamepad2.dpadUp.pressed.command = { Lift.Swivel.manualUp }
@@ -60,8 +61,9 @@ object Controls {
         gamepad1.y.pressed.command = { Intake.Lock.close }
         gamepad1.rightTrigger.pressed.command = { Intake.Spinner.start }
         gamepad1.rightTrigger.released.command = { Intake.Spinner.stop }
-        gamepad1.leftBumper.pressed.command = { Intake.Rotator.down }
-        gamepad1.rightBumper.pressed.command = { Intake.Rotator.up }
+        //gamepad1.leftBumper.pressed.command = { Intake.Rotator.down }
+        gamepad1.rightBumper.pressed.command = { Intake.Pushthrough.push }
+        gamepad1.rightBumper.released.command = { Intake.Pushthrough.idle }
         //gamepad1.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad1.gamepad.leftTrigger) }
 
         gamepad2.a.pressed.command = { Lift.Extender.fullExtend }
