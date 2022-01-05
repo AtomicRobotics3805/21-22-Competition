@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Bucket
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Carousel
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
@@ -21,6 +22,7 @@ class TestingTeleOpFrankie: LinearOpMode() {
         Bucket.initialize()
         Intake.initialize()
         Lift.initialize()
+        TrajectoryFactory.initializeStartPositions()
         Controls.registerGamepads()
         CommandScheduler.cancelAll()
 
@@ -30,7 +32,7 @@ class TestingTeleOpFrankie: LinearOpMode() {
 
         while (opModeIsActive()) {
             CommandScheduler.run()
-            telemetry.addData("Lift Extension Position", Lift.Extender.extensionMotor.currentPosition)
+            telemetry.addData("Lift Extension Position", Lift.Extender.extensionMotor.currentPosition / Lift.Extender.EXTENDER_TICKS_PER_INCH)
             telemetry.addData("Lift Pivot Position", Lift.Pivot.liftPivotMotor.currentPosition)
             telemetry.addData("Lift Swivel Position", Lift.Swivel.swivelMotor.currentPosition)
             telemetry.addData("Coefficients", Lift.Pivot.liftPivotMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION))

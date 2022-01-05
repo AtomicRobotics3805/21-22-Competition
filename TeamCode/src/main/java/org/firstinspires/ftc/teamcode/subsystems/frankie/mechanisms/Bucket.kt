@@ -18,27 +18,32 @@ object Bucket {
 
     object Latch {
         enum class Position {
-            OPEN,
-            CLOSE
+            SCORE,
+            COLLECT,
+            LOCK
         }
 
         @JvmField
         var LATCH_NAME = "bucketLockServo"
 
         @JvmField
-        var OPEN_POSITION = 0.75
+        var SCORE_POSITION = 0.8
         @JvmField
-        var CLOSE_POSITION = 0.45
+        var COLLECT_POSITION = 0.65
+        @JvmField
+        var LOCK_POSITION = 0.45
 
         val open: AtomicCommand
-            get() = moveServo(OPEN_POSITION, Position.OPEN)
+            get() = moveServo(SCORE_POSITION, Position.SCORE)
+        val collect: AtomicCommand
+            get() = moveServo(COLLECT_POSITION, Position.COLLECT)
         val close: AtomicCommand
-            get() = moveServo(CLOSE_POSITION, Position.CLOSE)
+            get() = moveServo(LOCK_POSITION, Position.LOCK)
         val switch: AtomicCommand
-            get() = if (position == Position.OPEN) close else open
+            get() = if (position == Position.SCORE) close else open
 
 
-        var position = Position.OPEN
+        var position = Position.SCORE
         private lateinit var latchServo: Servo
 
         fun initialize() {
@@ -55,24 +60,25 @@ object Bucket {
 
     object Rotator {
         enum class Position {
+            IDLE,
             COLLECT,
-            DOWN
+            SCORE
         }
 
         @JvmField
         var ROTATOR_NAME = "bucketRotateServo"
 
         @JvmField
-        var DROP_POSITION = 0.5
+        var SCORE_POSITION = 0.5
         @JvmField
-        var COLLECT_POSITION = 0.3
+        var COLLECT_POSITION = 0.0
 
-        val drop: AtomicCommand
-            get() = moveServo(DROP_POSITION, Position.DOWN)
-        val up: AtomicCommand
+        val score: AtomicCommand
+            get() = moveServo(SCORE_POSITION, Position.SCORE)
+        val collect: AtomicCommand
             get() = moveServo(COLLECT_POSITION, Position.COLLECT)
         val switch: AtomicCommand
-            get() = if (position == Position.COLLECT) drop else up
+            get() = if (position == Position.COLLECT) score else collect
 
 
         var position = Position.COLLECT

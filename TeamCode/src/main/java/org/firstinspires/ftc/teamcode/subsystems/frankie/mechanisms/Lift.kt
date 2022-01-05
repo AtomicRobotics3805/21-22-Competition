@@ -33,16 +33,18 @@ object Lift {
         @JvmField
         var FULL_EXTENSION_DISTANCE = 29.5
         @JvmField
+        var COLLECT_DISTANCE = 2.0
+        @JvmField
         var EXTENDER_SPEED = 0.5
         @JvmField
         var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
         @JvmField
-        var startingDistance = 1.0
+        var startingDistance = 2.0
 
         private const val PULLEY_DIAMETER = 1.25
         private const val PULLEY_CIRCUMFERENCE: Double = PULLEY_DIAMETER * PI
         private const val EXTENDER_TICKS_PER_REV: Double = 28 * 3.7
-        private val EXTENDER_TICKS_PER_INCH: Int =
+        val EXTENDER_TICKS_PER_INCH: Int =
             round(EXTENDER_TICKS_PER_REV / PULLEY_CIRCUMFERENCE).toInt()
 
         lateinit var extensionMotor: DcMotorEx
@@ -50,6 +52,8 @@ object Lift {
 
         fun initialize() {
             extensionMotor = opMode.hardwareMap.get(DcMotorEx::class.java, EXTENDER_NAME)
+            extensionMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            extensionMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             extensionMotor.direction = EXTENDER_DIRECTION
         }
 
@@ -59,9 +63,11 @@ object Lift {
         val fullExtendStopEarly: AtomicCommand
             get() = ToPosition(FULL_EXTENSION_DISTANCE, true)
         val retractAtStart: AtomicCommand
-            get() = ToPosition(0.0, minError = 3, kP = 0.04)
+            get() = ToPosition(0.0, minError = 3, kP = 0.08)
         val retract: AtomicCommand
             get() = ToPosition(0.0, _fullExtended = false)
+        val collect: AtomicCommand
+            get() = ToPosition(COLLECT_DISTANCE)
         val switch: AtomicCommand
             get() = if (fullExtended) retract else fullExtend
         val manualUp: AtomicCommand
@@ -121,6 +127,8 @@ object Lift {
         @JvmField
         var START_DEGREES = 20
         @JvmField
+        var UP_SLIGHTLY_DEGREES = 75
+        @JvmField
         var LOW_DEGREES = 85
         @JvmField
         var MIDDLE_DEGREES = 90
@@ -131,7 +139,7 @@ object Lift {
         @JvmField
         var ACCEPTABLE_HEIGHT = 90
         @JvmField
-        var COLLECT_HEIGHT = 25
+        var COLLECT_HEIGHT = 15
         
 
         private const val SWIVEL_GEAR_RATIO = 6.0
@@ -147,6 +155,8 @@ object Lift {
             get() = round(SWIVEL_TICKS_PER_DEGREE * (ACCEPTABLE_HEIGHT - START_DEGREES)).toInt()
         private val COLLECT_POSITION: Int
             get() = round(SWIVEL_TICKS_PER_DEGREE * (COLLECT_HEIGHT - START_DEGREES)).toInt()
+        private val UP_SLIGHTLY_POSITION: Int
+            get() = round(SWIVEL_TICKS_PER_DEGREE * (UP_SLIGHTLY_DEGREES - START_DEGREES)).toInt()
 
         lateinit var swivelMotor: DcMotor
 
@@ -175,6 +185,11 @@ object Lift {
         val toHigh: AtomicCommand
             get() = sequential {
                 +MotorToPosition(swivelMotor, HIGH_POSITION, SWIVEL_SPEED)
+                +idle
+            }
+        val upSlightly: AtomicCommand
+            get() = sequential {
+                +MotorToPosition(swivelMotor, UP_SLIGHTLY_POSITION, SWIVEL_SPEED)
                 +idle
             }
         val manualUp: AtomicCommand

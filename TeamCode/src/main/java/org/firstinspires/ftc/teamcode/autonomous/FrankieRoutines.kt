@@ -34,7 +34,7 @@ object FrankieRoutines {
                         +Lift.Extender.fullExtend
                         +sequential {
                             +Delay(0.2)
-                            +Bucket.Rotator.drop
+                            +Bucket.Rotator.score
                         }
                     }
                 }
@@ -45,7 +45,7 @@ object FrankieRoutines {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Extender.retract
                 +Bucket.Latch.close
-                +Bucket.Rotator.up
+                +Bucket.Rotator.collect
                 +Intake.Spinner.start
                 +Intake.Extender.extend
             }
@@ -80,7 +80,7 @@ object FrankieRoutines {
                         +Lift.Pivot.toPosition(shippingHubPosition)
                         +sequential {
                             +Delay(0.2)
-                            +Bucket.Rotator.drop
+                            +Bucket.Rotator.score
                         }
                     }
                 }
@@ -94,48 +94,73 @@ object FrankieRoutines {
                 +Lift.Extender.retract
                 +Intake.Extender.extend
                 +Intake.Rotator.down
-                +Bucket.Rotator.up
+                +Bucket.Rotator.collect
                 +MecanumDrive.followTrajectory(TrajectoryFactory.outsideWarehouseToInsideWarehouse)
             }
         }
 
     val transferMoveLiftTeleOpRoutine: AtomicCommand
         get() = sequential {
+            +Lift.Extender.retractAtStart
+            +Lift.Extender.idle
+            +Lift.Swivel.upSlightly
             +parallel {
                 +Intake.Extender.retract
-                +Intake.Rotator.up
                 +Intake.Spinner.idle
-                +Bucket.Rotator.up
             }
-            +Intake.Spinner.start
+            +Lift.Swivel.toCollect
+            +Intake.Lock.open
+            +Delay(0.5)
+            +Intake.Pushthrough.push
             +Delay(0.4)
             +Bucket.Latch.close
+            +Intake.Pushthrough.idle
             +Lift.Swivel.toHigh
             +parallel {
-                +Lift.Extender.fullExtend
                 +sequential {
                     +setTeleOpPosition
                     +Lift.Pivot.toPosition(shippingHubPosition)
                 }
                 +sequential {
                     +Delay(0.2)
-                    +Bucket.Rotator.drop
                 }
             }
+            +parallel {
+                +Lift.Extender.fullExtend
+                +Bucket.Rotator.score
+            }
+        }
+
+    val collectAtStartTeleOpRoutine: AtomicCommand
+        get() = sequential {
+            +Lift.Extender.retractAtStart
+            +Lift.Extender.idle
+            +parallel {
+                +Intake.Spinner.start
+                +Intake.Extender.extend
+                +Intake.Lock.close
+                +Bucket.Latch.collect
+            }
+            +Bucket.Rotator.collect
+            +Lift.Extender.collect
+            +Lift.Extender.idle
         }
 
     val dropAndCollectTeleOpRoutine: AtomicCommand
         get() = sequential {
             +Bucket.Latch.open
             +Delay(0.3)
+            +Lift.Extender.retract
+            +Lift.Pivot.toAngle(0.0)
             +parallel {
-                +Lift.Pivot.toAngle(0.0)
-                +Lift.Swivel.ToCollectCareful()
-                +Lift.Extender.retract
+                +Lift.Swivel.toCollect
                 +Intake.Spinner.start
                 +Intake.Extender.extend
-                +Intake.Rotator.down
+                +Intake.Lock.close
+                +Bucket.Latch.collect
             }
+            +Bucket.Rotator.collect
+            +Lift.Extender.collect
         }
 
     val setTeleOpPosition: AtomicCommand

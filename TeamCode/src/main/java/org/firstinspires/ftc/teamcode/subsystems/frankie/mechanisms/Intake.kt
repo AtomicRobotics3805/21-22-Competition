@@ -20,9 +20,9 @@ import kotlin.math.max
 object Intake {
     fun initialize() {
         Extender.initialize()
-        Rotator.initialize()
         Spinner.initialize()
         Lock.initialize()
+        Pushthrough.initialize()
         ColorSensor.initialize()
     }
 
@@ -33,9 +33,9 @@ object Intake {
         @JvmField
         var EXTENDED_POSITION_RIGHT = 0.0
         @JvmField
-        var RETRACTED_POSITION_LEFT = 0.4
+        var RETRACTED_POSITION_LEFT = 0.55
         @JvmField
-        var RETRACTED_POSITION_RIGHT = 0.6
+        var RETRACTED_POSITION_RIGHT = 0.45
         @JvmField
         var LEFT_EXTENDER_NAME = "intakeLeftExtendServo"
         @JvmField

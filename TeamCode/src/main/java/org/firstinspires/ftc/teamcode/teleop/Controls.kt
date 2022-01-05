@@ -4,7 +4,6 @@ import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.autonomous.FrankieRoutines
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Bucket
-import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Carousel
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
 import org.firstinspires.ftc.teamcode.util.CommandGamepad
@@ -30,6 +29,7 @@ object Controls {
         CommandScheduler.commandsToSchedule += MecanumDrive.driverControlled(opMode.gamepad1)
 
         gamepad1.a.pressed.command = { MecanumDrive.switchSpeed }
+        gamepad1.b.pressed.command = { FrankieRoutines.collectAtStartTeleOpRoutine }
         gamepad1.x.pressed.command = { FrankieRoutines.dropAndCollectTeleOpRoutine }
         gamepad1.y.pressed.command = { FrankieRoutines.transferMoveLiftTeleOpRoutine }
 
@@ -70,8 +70,8 @@ object Controls {
         gamepad2.b.pressed.command = { Lift.Extender.retract }
         gamepad2.x.pressed.command = { Bucket.Latch.open }
         gamepad2.y.pressed.command = { Bucket.Latch.close }
-        gamepad2.leftBumper.pressed.command = { Bucket.Rotator.drop }
-        gamepad2.rightBumper.pressed.command = { Bucket.Rotator.up }
+        gamepad2.leftBumper.pressed.command = { Bucket.Rotator.score }
+        gamepad2.rightBumper.pressed.command = { Bucket.Rotator.collect }
         gamepad2.rightTrigger.pressed.command = { Bucket.Rotator.switch }
         gamepad2.dpadUp.pressed.command = { Lift.Swivel.manualUp }
         gamepad2.dpadUp.released.command = { Lift.Swivel.idle }
