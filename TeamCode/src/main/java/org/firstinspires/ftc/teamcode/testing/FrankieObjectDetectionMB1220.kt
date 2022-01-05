@@ -1,6 +1,7 @@
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import com.qualcomm.robotcore.hardware.AnalogInput
 import org.firstinspires.ftc.teamcode.Constants
+import com.qualcomm.robotcore.util.ElapsedTime
 
 object FrankieObjectDetectionMB1220 {
     enum class Position {
@@ -41,10 +42,12 @@ object FrankieObjectDetectionMB1220 {
         override val _isDone: Boolean
             get() = position != Position.UNKNOWN
 
+        private val timer = ElapsedTime()
+
         override fun start(){
             var play = false
             position = Position.UNKNOWN
-
+            timer.reset()
         }
 
         override fun execute(){
@@ -54,14 +57,26 @@ object FrankieObjectDetectionMB1220 {
                 if (mb1220A.voltage < threshold){
                     barcodeA = Barcode.FULL
                 }
-                else{
+                else {
                     barcodeA = Barcode.EMPTY
                 }
+
+                timer.reset()
+
+                while (timer.seconds() < 2){
+                    //Do nothing.
+                }
+
                 if (mb1220B.voltage < threshold){
                     barcodeB = Barcode.FULL
                 }
                 else{
                     barcodeB = Barcode.EMPTY
+                }
+                timer.reset()
+
+                while (timer.seconds() < 2){
+                    //Do nothing.
                 }
             }
 
