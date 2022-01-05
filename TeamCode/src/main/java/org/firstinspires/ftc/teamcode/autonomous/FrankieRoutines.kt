@@ -22,14 +22,15 @@ object FrankieRoutines {
         get() = sequential {
             +parallel {
                 +Intake.Rotator.downStart
-                +Lift.Extender.retract
+                +Lift.Extender.retractAtStart
             }
             +parallel {
+                +Lift.Extender.idle
                 +sequential {
                     //+Lift.Extender.ResetAtStart()
                     +Lift.Swivel.toPreloadPosition
+                    +Lift.Pivot.toPosition(shippingHubPosition)
                     +parallel {
-                        +Lift.Pivot.toPosition(shippingHubPosition)
                         +Lift.Extender.fullExtend
                         +sequential {
                             +Delay(0.2)
@@ -41,17 +42,23 @@ object FrankieRoutines {
             +Bucket.Latch.open
             +Delay(0.3)
             +parallel {
-                +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
                 +Lift.Pivot.toAngle(0.0)
-                +Lift.Swivel.ToCollectCareful()
+                +Lift.Extender.retract
+                +Bucket.Latch.close
+                +Bucket.Rotator.up
                 +Intake.Spinner.start
                 +Intake.Extender.extend
             }
-            +deliverFreightRoutine
-            +deliverFreightRoutine
-            +deliverFreightRoutine
-            +deliverFreightRoutine
-            +deliverFreightRoutine
+            +Lift.Extender.idle
+            +Lift.Swivel.toCollect
+            +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
+
+            /*
+                +deliverFreightRoutine
+                +deliverFreightRoutine
+                +deliverFreightRoutine
+                +deliverFreightRoutine
+                +deliverFreightRoutine*/
         }
 
     val deliverFreightRoutine: AtomicCommand
@@ -62,7 +69,7 @@ object FrankieRoutines {
                         +Intake.Extender.retract
                         +Intake.Rotator.up
                         +Intake.Spinner.idle
-                        +Bucket.Rotator.up
+                        +Bucket.Latch.open
                     }
                     +Intake.Spinner.start
                     +Delay(0.4)
@@ -84,8 +91,10 @@ object FrankieRoutines {
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
+                +Lift.Extender.retract
                 +Intake.Extender.extend
                 +Intake.Rotator.down
+                +Bucket.Rotator.up
                 +MecanumDrive.followTrajectory(TrajectoryFactory.outsideWarehouseToInsideWarehouse)
             }
         }

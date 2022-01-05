@@ -30,9 +30,9 @@ class OdometryLocalizer(PARALLEL_X: Double, PARALLEL_Y: Double,
         Pose2d(PERPENDICULAR_X, PERPENDICULAR_Y, Math.toRadians(90.0))
 )) {
     @JvmField
-    var TICKS_PER_REV = 8192
+    var TICKS_PER_REV = 2400
     @JvmField
-    var WHEEL_RADIUS = 0.688975 // in
+    var WHEEL_RADIUS = 1.5 // in
     @JvmField
     var GEAR_RATIO = 1.0 // output (wheel) speed / input (encoder) speed
     @JvmField
@@ -40,12 +40,12 @@ class OdometryLocalizer(PARALLEL_X: Double, PARALLEL_Y: Double,
     @JvmField
     var PERPENDICULAR_REVERSED = true
     @JvmField
-    var X_MULTIPLIER = 1.03
+    var X_MULTIPLIER = 1.028
     @JvmField
-    var Y_MULTIPLIER = 1.1
+    var Y_MULTIPLIER = 1.0
     
-    val perpendicularEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "RF"))
-    val parallelEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LF"))
+    val perpendicularEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "LB"))
+    val parallelEncoder: Encoder = Encoder(opMode.hardwareMap.get(DcMotorEx::class.java, "RB"))
 
     init {
         if (PERPENDICULAR_REVERSED) perpendicularEncoder.direction = Encoder.Direction.REVERSE

@@ -63,7 +63,7 @@ object TrajectoryFactory {
         hubFrontStartPose = Pose2d(-12.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         hubTopStartPose = Pose2d(6.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         teleOpAutomaticDepositPosition = Pose2d(12.0, 64.0.switchColor, 0.0)
-        shippingHubPosition = Vector2d(-12.0, 24.0.switchColor)
+        shippingHubPosition = Vector2d(-12.0 + 9.0, 24.0.switchColor)
     }
 
     fun initializeFrankieTrajectories() {
@@ -71,13 +71,13 @@ object TrajectoryFactory {
 
     fun initializeTrioTrajectories() {
         startToInsideWarehouse = MecanumDrive.trajectoryBuilder(outsideWarehouseStartPose, 0.0.toRadians)
-            .forward(28.0)
+            .lineToConstantHeading(Vector2d(40.0, 67.0))
             .build()
-        insideWarehouseToOutsideWarehouse = MecanumDrive.trajectoryBuilder(startToInsideWarehouse.trajectory.end(), 0.0.toRadians)
-            .back(23.0)
+        insideWarehouseToOutsideWarehouse = MecanumDrive.trajectoryBuilder(Pose2d(40.0, 65.5, 0.0), 0.0.toRadians)
+            .lineToConstantHeading(Vector2d(17.0, 67.0))
             .build()
-        outsideWarehouseToInsideWarehouse = MecanumDrive.trajectoryBuilder(insideWarehouseToOutsideWarehouse.trajectory.end(), 0.0.toRadians)
-            .forward(23.0)
+        outsideWarehouseToInsideWarehouse = MecanumDrive.trajectoryBuilder(Pose2d(17.0, 65.5, 0.0), 0.0.toRadians)
+            .lineToConstantHeading(Vector2d(40.0, 67.0))
             .build()
 
         testTrajectory = MecanumDrive.trajectoryBuilder(Pose2d(), 90.0.toRadians)

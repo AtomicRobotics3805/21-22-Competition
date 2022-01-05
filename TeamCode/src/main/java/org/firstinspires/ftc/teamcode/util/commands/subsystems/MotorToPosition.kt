@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.commands.subsystems
 
 import com.qualcomm.robotcore.hardware.DcMotor
+import com.qualcomm.robotcore.util.ElapsedTime
 import com.qualcomm.robotcore.util.Range
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
@@ -21,8 +22,6 @@ open class MotorToPosition(protected val motor: DcMotor, protected var position:
 
     override fun start() {
         motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        error = position - motor.currentPosition
-        direction = sign(error.toDouble())
     }
 
     override fun execute() {
