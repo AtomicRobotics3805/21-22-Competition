@@ -119,32 +119,34 @@ object Lift {
         @JvmField
         var SWIVEL_DIRECTION = DcMotorSimple.Direction.FORWARD
         @JvmField
-        var LOW_DEGREES = 65
+        var START_DEGREES = 20
         @JvmField
-        var MIDDLE_DEGREES = 70
+        var LOW_DEGREES = 85
         @JvmField
-        var HIGH_DEGREES = 75
+        var MIDDLE_DEGREES = 90
+        @JvmField
+        var HIGH_DEGREES = 95
         @JvmField
         var ACCEPTABLE_PIVOT_ANGLE = 5.0
         @JvmField
-        var ACCEPTABLE_HEIGHT = 70
+        var ACCEPTABLE_HEIGHT = 90
         @JvmField
-        var COLLECT_HEIGHT = 5
+        var COLLECT_HEIGHT = 25
         
 
         private const val SWIVEL_GEAR_RATIO = 6.0
         private const val SWIVEL_TICKS_PER_REV: Double = 28 * 57.6
         private val SWIVEL_TICKS_PER_DEGREE: Double = SWIVEL_TICKS_PER_REV * SWIVEL_GEAR_RATIO / 360.0
         private val LOW_POSITION: Int
-            get() = round(SWIVEL_TICKS_PER_DEGREE * LOW_DEGREES).toInt()
+            get() = round(SWIVEL_TICKS_PER_DEGREE * (LOW_DEGREES - START_DEGREES)).toInt()
         private val MIDDLE_POSITION: Int
-            get() = round(SWIVEL_TICKS_PER_DEGREE * MIDDLE_DEGREES).toInt()
+            get() = round(SWIVEL_TICKS_PER_DEGREE * (MIDDLE_DEGREES - START_DEGREES)).toInt()
         private val HIGH_POSITION: Int
-            get() = round(SWIVEL_TICKS_PER_DEGREE * HIGH_DEGREES).toInt()
+            get() = round(SWIVEL_TICKS_PER_DEGREE * (HIGH_DEGREES - START_DEGREES)).toInt()
         private val ACCEPTABLE_HEIGHT_TICKS: Int
-            get() = round(SWIVEL_TICKS_PER_DEGREE * ACCEPTABLE_HEIGHT).toInt()
+            get() = round(SWIVEL_TICKS_PER_DEGREE * (ACCEPTABLE_HEIGHT - START_DEGREES)).toInt()
         private val COLLECT_POSITION: Int
-            get() = round(SWIVEL_TICKS_PER_DEGREE * COLLECT_HEIGHT).toInt()
+            get() = round(SWIVEL_TICKS_PER_DEGREE * (COLLECT_HEIGHT - START_DEGREES)).toInt()
 
         lateinit var swivelMotor: DcMotor
 
