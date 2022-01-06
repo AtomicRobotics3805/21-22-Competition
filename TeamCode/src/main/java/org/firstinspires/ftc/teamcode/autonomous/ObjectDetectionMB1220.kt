@@ -1,11 +1,18 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.qualcomm.robotcore.hardware.AnalogInput
 import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColor
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColorAngle
+import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.toRadians
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
+import org.firstinspires.ftc.teamcode.util.trajectories.ParallelTrajectory
 
 @Config
 object ObjectDetectionMB1220 {
@@ -17,9 +24,9 @@ object ObjectDetectionMB1220 {
     }
 
     @JvmField
-    var rightPosition = 0.1
+    var rightPosition = 0.18
     @JvmField
-    var middlePosition = 0.26
+    var middlePosition = 0.34
     @JvmField
     var minVoltage = 0.07
     var position: Position = Position.UNKNOWN
@@ -61,9 +68,13 @@ object ObjectDetectionMB1220 {
                     }
                 }
                 else {
-                    position = if (mb1220.voltage < minVoltage)
-                        Position.MIDDLE
-                    else Position.LEFT
+                    if (mb1220.voltage < minVoltage) {
+                        position = Position.MIDDLE
+                        TrajectoryFactory.startToHubTop = MecanumDrive.trajectoryBuilder(TrajectoryFactory.hubTopStartPose, TrajectoryFactory.hubTopStartPose.heading + 255.0.switchColorAngle.toRadians)
+                                .splineToSplineHeading(Pose2d(7.0, 24.0.switchColor, 0.0.switchColorAngle.toRadians), 270.0.switchColorAngle.toRadians)
+                                .build()
+                    }
+                    else position = Position.LEFT
                 }
                 Constants.opMode.telemetry.addData("Voltage", mb1220.voltage)
                 Constants.opMode.telemetry.addData("Position", position)

@@ -14,7 +14,7 @@ object CapArm {
     @JvmField
     var DOWN_POSITION = 0.7
     @JvmField
-    var UP_POSITION = 0.1
+    var UP_POSITION = 0.7
     @JvmField
     var IDLE_POSITION = 0.3
 

@@ -43,9 +43,16 @@ object AutoRoutines {
         }
     val hubTopParkInRoutine: AtomicCommand
         get() = sequential {
-            +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubTop)
-            //TODO: Deposit preloaded freight
-            +MecanumDrive.followTrajectory(TrajectoryFactory.hubTopToParkIn)
+            +parallel {
+                +Bucket.up
+                +CapArm.up
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubTop)
+            }
+            +dropFreightRoutine
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubTopToWarehouseIn)
+            +OdometryServo.upAutonomous
+            +MecanumDrive.followTrajectory(TrajectoryFactory.warehouseInToParkIn)
+            +OdometryServo.resetTranslationalPID
         }
     val hubTopParkOutRoutine: AtomicCommand
         get() = sequential {
@@ -126,6 +133,19 @@ object AutoRoutines {
             +OdometryServo.upAutonomous
             +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToParkOut)
             +OdometryServo.resetTranslationalPID
+        }
+
+    val carouselHubBottomStorageUnitRoutine: AtomicCommand
+        get() = sequential {
+            +parallel {
+                +Bucket.up
+                +CapArm.up
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+            }
+            +Carousel.fullRotation
+            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+            +dropFreightRoutine
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToStorageUnit)
         }
 
     private val dropFreightRoutine: AtomicCommand

@@ -20,7 +20,7 @@ object Bucket : Subsystem {
     @JvmField
     var BUCKET_NAME = "bucket"
     @JvmField
-    var DROP_POSITION = 0.3
+    var DROP_POSITION = 0.2
     @JvmField
     var COLLECT_POSITION = 0.9
 
