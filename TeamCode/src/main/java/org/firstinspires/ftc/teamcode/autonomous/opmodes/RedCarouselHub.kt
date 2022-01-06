@@ -11,12 +11,12 @@ import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
-@Autonomous(group = "Blue", name = "Blue Carousel Hub Front")
+@Autonomous(group = "Red", name = "Red Carousel Hub Front")
 @Disabled
-class BlueCarouselHub: LinearOpMode() {
+class RedCarouselHub: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
-        Constants.color = Constants.Color.BLUE
+        Constants.color = Constants.Color.RED
         TrajectoryFactory.initializeStartPositions()
         Constants.startPose = TrajectoryFactory.carouselStartPose
 

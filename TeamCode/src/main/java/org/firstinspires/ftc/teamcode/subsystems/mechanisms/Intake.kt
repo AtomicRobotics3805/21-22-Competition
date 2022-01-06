@@ -34,29 +34,29 @@ object Intake : Subsystem {
         get() = IntakeOne()
 
     var on = false
-    private lateinit var motor: DcMotorEx
+    private lateinit var intakeMotor: DcMotorEx
 
     fun initialize() {
-        motor = opMode.hardwareMap.get(DcMotorEx::class.java, INTAKE_NAME)
-        motor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        motor.direction = DcMotorSimple.Direction.REVERSE
+        intakeMotor = opMode.hardwareMap.get(DcMotorEx::class.java, INTAKE_NAME)
+        intakeMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+        intakeMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        intakeMotor.direction = DcMotorSimple.Direction.REVERSE
     }
 
     fun powerIntake(power: Double) = CustomCommand(_start = {
-        motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
-        motor.power = power
+        intakeMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        intakeMotor.power = power
         on = power != 0.0
     })
 
     class IntakeOne : AtomicCommand() {
         override val _isDone
-            get() = !motor.isBusy
+            get() = !intakeMotor.isBusy
 
         override fun start() {
-            motor.mode = DcMotor.RunMode.RUN_TO_POSITION
-            motor.targetPosition = ROTATION_COUNTS
-            motor.power = INTAKE_SPEED
+            intakeMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+            intakeMotor.targetPosition = ROTATION_COUNTS
+            intakeMotor.power = INTAKE_SPEED
         }
     }
 }

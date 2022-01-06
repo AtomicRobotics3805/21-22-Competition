@@ -81,6 +81,8 @@ object CommandScheduler {
     fun cancelAll() {
         for (command in commands)
             commandsToCancel += Pair(command, true)
+        cancelCommands()
+        commandsToSchedule.clear()
     }
 
     fun updateGamepads() {
