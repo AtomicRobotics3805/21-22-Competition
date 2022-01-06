@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.localization
 import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.localization.Localizer
 import com.qualcomm.robotcore.util.ElapsedTime
+import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import kotlin.math.abs
 
 class SimplePoseEstimator : Localizer {
@@ -22,7 +23,8 @@ class SimplePoseEstimator : Localizer {
     private val timer = ElapsedTime()
 
     fun initialize() {
-        odometryLocalizer = OdometryLocalizer()
+        odometryLocalizer = OdometryLocalizer(MecanumDrive.PARALLEL_X, MecanumDrive.PARALLEL_Y,
+            MecanumDrive.PERPENDICULAR_X, MecanumDrive.PERPENDICULAR_Y)
         timer.reset()
     }
 
