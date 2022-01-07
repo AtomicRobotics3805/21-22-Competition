@@ -32,7 +32,7 @@ class TestingTeleOpFrankie: LinearOpMode() {
 
         while (opModeIsActive()) {
             CommandScheduler.run()
-            telemetry.addData("Lift Extension Position", Lift.Extender.extensionMotor.currentPosition / Lift.Extender.EXTENDER_TICKS_PER_INCH)
+            telemetry.addData("Lift Extension Position", Lift.Extender.extensionMotor.currentPosition.toDouble() / Lift.Extender.EXTENDER_TICKS_PER_INCH)
             telemetry.addData("Lift Pivot Position", Lift.Pivot.liftPivotMotor.currentPosition)
             telemetry.addData("Lift Swivel Position", Lift.Swivel.swivelMotor.currentPosition)
             telemetry.addData("Coefficients", Lift.Pivot.liftPivotMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION))

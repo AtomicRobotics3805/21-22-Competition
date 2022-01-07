@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
+import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
 import kotlin.math.abs
 
@@ -27,11 +28,11 @@ object Bucket {
         var LATCH_NAME = "bucketLockServo"
 
         @JvmField
-        var SCORE_POSITION = 0.8
+        var SCORE_POSITION = 0.3
         @JvmField
-        var COLLECT_POSITION = 0.65
+        var COLLECT_POSITION = 0.4
         @JvmField
-        var LOCK_POSITION = 0.45
+        var LOCK_POSITION = 0.65
 
         val open: AtomicCommand
             get() = moveServo(SCORE_POSITION, Position.SCORE)
@@ -51,7 +52,7 @@ object Bucket {
         }
 
         fun moveServo(position: Double, state: Position) =
-            TimedCustomCommand(time = abs(position - latchServo.position),
+            /*Timed*/CustomCommand(/*time = abs(position - latchServo.position),*/
                 _start = {
                     latchServo.position = position
                     this.position = state

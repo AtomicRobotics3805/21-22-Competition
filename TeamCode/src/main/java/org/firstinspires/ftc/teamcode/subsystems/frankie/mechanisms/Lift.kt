@@ -31,15 +31,15 @@ object Lift {
         var EXTENDER_NAME = "armExtend"
 
         @JvmField
-        var FULL_EXTENSION_DISTANCE = 29.5
+        var FULL_EXTENSION_DISTANCE = 32.0
         @JvmField
-        var COLLECT_DISTANCE = 2.0
+        var COLLECT_DISTANCE = 3.5
         @JvmField
         var EXTENDER_SPEED = 0.5
         @JvmField
         var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
         @JvmField
-        var startingDistance = 2.0
+        var startingDistance = 3.5
 
         private const val PULLEY_DIAMETER = 1.25
         private const val PULLEY_CIRCUMFERENCE: Double = PULLEY_DIAMETER * PI
@@ -65,7 +65,7 @@ object Lift {
         val retractAtStart: AtomicCommand
             get() = ToPosition(0.0, minError = 3, kP = 0.08)
         val retract: AtomicCommand
-            get() = ToPosition(0.0, _fullExtended = false)
+            get() = ToPosition(0.0, _fullExtended = false, overrideSpeed = 1.0)
         val collect: AtomicCommand
             get() = ToPosition(COLLECT_DISTANCE)
         val switch: AtomicCommand
@@ -86,8 +86,8 @@ object Lift {
             extensionMotor.power = power
         })
 
-        class ToPosition(val distance: Double, val stopEarly: Boolean = false, val _fullExtended: Boolean? = null, minError: Int = 15, kP: Double = 0.005) : MotorToPosition(extensionMotor, round(
-            EXTENDER_TICKS_PER_INCH * (distance - startingDistance)).toInt(), EXTENDER_SPEED, minError, kP) {
+        class ToPosition(val distance: Double, val stopEarly: Boolean = false, val _fullExtended: Boolean? = null, minError: Int = 15, kP: Double = 0.005, overrideSpeed: Double = EXTENDER_SPEED) : MotorToPosition(extensionMotor, round(
+            EXTENDER_TICKS_PER_INCH * (distance - startingDistance)).toInt(), overrideSpeed, minError, kP) {
             override val _isDone: Boolean
                 get() = if (!stopEarly) super._isDone else (distance * EXTENDER_TICKS_PER_REV) / abs(error) < 3
 
@@ -129,11 +129,11 @@ object Lift {
         @JvmField
         var UP_SLIGHTLY_DEGREES = 75
         @JvmField
-        var LOW_DEGREES = 85
+        var LOW_DEGREES = 86
         @JvmField
-        var MIDDLE_DEGREES = 90
+        var MIDDLE_DEGREES = 93
         @JvmField
-        var HIGH_DEGREES = 95
+        var HIGH_DEGREES = 100
         @JvmField
         var ACCEPTABLE_PIVOT_ANGLE = 5.0
         @JvmField
@@ -257,9 +257,11 @@ object Lift {
 
         fun initialize() {
             liftPivotMotor = opMode.hardwareMap.get(DcMotorEx::class.java, PIVOT_NAME)
+            liftPivotMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
+            liftPivotMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             liftPivotMotor.direction = PIVOT_DIRECTION
-            liftPivotMotor.setVelocityPIDFCoefficients(20.0, 0.1, 1.0, 0.0)
-            liftPivotMotor.setPositionPIDFCoefficients(5.0)
+            liftPivotMotor.setVelocityPIDFCoefficients(18.0, 0.3, 1.0, 0.0)
+            liftPivotMotor.setPositionPIDFCoefficients(7.0)
             liftPivotMotor.targetPositionTolerance = 10
         }
 
@@ -282,9 +284,13 @@ object Lift {
         })
         fun toAngle(angle: Double): AtomicCommand = CustomCommand(
             getDone = { !liftPivotMotor.isBusy }, _start = {
-            liftPivotMotor.targetPosition = round(PIVOT_TICKS_PER_DEGREE * angle).toInt()
-            liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
-            liftPivotMotor.power = PIVOT_SPEED
+                liftPivotMotor.targetPosition = round(PIVOT_TICKS_PER_DEGREE * angle).toInt()
+                liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+                liftPivotMotor.power = PIVOT_SPEED
+                if (angle == 0.0) {
+                    liftPivotMotor.setVelocityPIDFCoefficients(10.0, 0.3, 0.0, 0.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(3.0)
+                }
         })
         /*MotorToPosition(
             liftPivotMotor,

@@ -63,7 +63,7 @@ object TrajectoryFactory {
         hubFrontStartPose = Pose2d(-12.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         hubTopStartPose = Pose2d(6.0, 63.0.switchColor, 90.0.switchColorAngle.toRadians)
         teleOpAutomaticDepositPosition = Pose2d(12.0, 65.5.switchColor, 0.0)
-        shippingHubPosition = Vector2d(-12.0 + 9.0, 24.0.switchColor)
+        shippingHubPosition = Vector2d(-12.0, 24.0.switchColor)
     }
 
     fun initializeFrankieTrajectories() {
