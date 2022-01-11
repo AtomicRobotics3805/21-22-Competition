@@ -53,13 +53,11 @@ object FrankieRoutines {
             +Lift.Extender.idle
             +Lift.Swivel.toCollect
             +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
-
-            /*
-                +deliverFreightRoutine
-                +deliverFreightRoutine
-                +deliverFreightRoutine
-                +deliverFreightRoutine
-                +deliverFreightRoutine*/
+            +deliverFreightRoutine
+            /*+deliverFreightRoutine
+            +deliverFreightRoutine
+            +deliverFreightRoutine
+            +deliverFreightRoutine*/
         }
 
     val deliverFreightRoutine: AtomicCommand
@@ -68,9 +66,7 @@ object FrankieRoutines {
                 +sequential {
                     +parallel {
                         +Intake.Extender.retract
-                        +Intake.Rotator.up
                         +Intake.Spinner.idle
-                        +Bucket.Latch.open
                     }
                     +Intake.Spinner.start
                     +Delay(0.4)
@@ -94,7 +90,6 @@ object FrankieRoutines {
                 +Lift.Swivel.ToCollectCareful()
                 +Lift.Extender.retract
                 +Intake.Extender.extend
-                +Intake.Rotator.down
                 +Bucket.Rotator.collect
                 +MecanumDrive.followTrajectory(TrajectoryFactory.outsideWarehouseToInsideWarehouse)
             }

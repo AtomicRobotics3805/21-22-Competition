@@ -251,7 +251,7 @@ object Lift {
         private const val PIVOT_GEAR_RATIO = 1.0
         private const val PIVOT_TICKS_PER_REV: Double = 28 * 19.2
         private const val PIVOT_TICKS_PER_DEGREE: Double = PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0
-        private val RELATIVE_POSITION = Vector2d(-6.0, 0.0)
+        private val RELATIVE_POSITION = Vector2d(-10.0, 0.0)
 
         lateinit var liftPivotMotor: DcMotorEx
 
