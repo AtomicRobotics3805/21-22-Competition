@@ -10,7 +10,7 @@ class DisplacementDelay(private val displacement: Double): AtomicCommand() {
     constructor(segmentNumber: Int) : this(drive.trajectory?.segmentLengths?.get(segmentNumber) ?: 0.0)
 
     override val _isDone: Boolean
-        get() = displacementToTime(drive.follower.trajectory.profile, displacement) > drive.follower.elapsedTime()
+        get() = displacementToTime(drive.follower.trajectory.profile, displacement) < drive.follower.elapsedTime()
 }
 
 private fun displacementToTime(profile: MotionProfile, s: Double): Double {

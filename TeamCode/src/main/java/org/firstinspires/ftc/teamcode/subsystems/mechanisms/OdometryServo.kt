@@ -12,14 +12,14 @@ import org.firstinspires.ftc.teamcode.util.commands.other.TimedCustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Config
-object DeadWheelServo {
+object OdometryServo {
     @JvmField
     var DEAD_WHEEL_SERVO_NAME = "deadWheelServo"
 
     @JvmField
-    var DOWN_POSITION = 0.2
+    var DOWN_POSITION = 0.0
     @JvmField
-    var UP_POSITION = 0.5
+    var UP_POSITION = 0.3
 
     enum class Position {
         UP,
@@ -41,16 +41,16 @@ object DeadWheelServo {
         get() = ResetTranslationalPIDCommand()
 
     var position = Position.DOWN
-    private lateinit var servo: Servo
+    private lateinit var odometryServo: Servo
 
     fun initialize() {
-        servo = Constants.opMode.hardwareMap.get(Servo::class.java, DEAD_WHEEL_SERVO_NAME)
+        odometryServo = Constants.opMode.hardwareMap.get(Servo::class.java, DEAD_WHEEL_SERVO_NAME)
     }
 
     fun moveServo(position: Double, state: Position) =
-        TimedCustomCommand(time = 0.0,//abs(position - servo.position),
+        TimedCustomCommand(time = 0.0,//abs(position - odometryServo.position),
             _start = {
-                servo.position = position
+                odometryServo.position = position
                 this.position = state
             })
 

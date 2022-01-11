@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.util.commands.other.TimedCustomCommand
 import kotlin.math.abs
 
 @Config
-object Cap {
+object CapArm {
     @JvmField
     var CAP_NAME = "cap"
     @JvmField
-    var DOWN_POSITION = 0.22
+    var DOWN_POSITION = 0.7
     @JvmField
     var UP_POSITION = 0.7
     @JvmField
@@ -34,16 +34,16 @@ object Cap {
         get() = if(position == Position.UP) down else up
 
     var position = Position.DOWN
-    private lateinit var servo: Servo
+    private lateinit var capServo: Servo
 
     fun initialize() {
-        servo = Constants.opMode.hardwareMap.get(Servo::class.java, CAP_NAME)
+        capServo = Constants.opMode.hardwareMap.get(Servo::class.java, CAP_NAME)
     }
 
     fun moveServo(position: Double, state: Position) =
-        TimedCustomCommand(time = abs(position - servo.position),
+        TimedCustomCommand(time = abs(position - capServo.position),
             _start = {
-                servo.position = position
+                capServo.position = position
                 this.position = state
             })
 }

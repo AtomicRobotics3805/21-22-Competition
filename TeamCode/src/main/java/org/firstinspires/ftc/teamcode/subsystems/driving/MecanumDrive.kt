@@ -49,7 +49,15 @@ import kotlin.math.abs
 * Simple mecanum drive hardware implementation for REV hardware.
 */
 @Config
-object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.46), Subsystem {
+object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.46), Subsystem {
+    @JvmField
+    var PARALLEL_X = -5.8 // in; forward offset of the parallel wheel
+    @JvmField
+    var PARALLEL_Y = -2.0 // in; left offset of the parallel wheel
+    @JvmField
+    var PERPENDICULAR_X = -6.6 // in; forward offset of the perpendicular wheel
+    @JvmField
+    var PERPENDICULAR_Y = 1.0 // in; left offset of the perpendicular wheel
 
     /*
      * These are motor constants that should be listed online for your motors.
@@ -101,7 +109,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.
      */
 
     @JvmField
-    var kV = 0.013
+    var kV = 0.018
 
     @JvmField
     var kA = 0.0025
@@ -119,10 +127,10 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.
      */
 
     @JvmField
-    var MAX_VEL = 52.0
+    var MAX_VEL = 40.0
 
     @JvmField
-    var MAX_ACCEL = 45.0
+    var MAX_ACCEL = 30.0
 
     @JvmField
     var MAX_ANG_VEL = 3.1
@@ -278,7 +286,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.
         leftRear.direction = DcMotorSimple.Direction.REVERSE
         leftFront.direction = DcMotorSimple.Direction.REVERSE
 
-        localizer = OdometryLocalizer()
+        localizer = OdometryLocalizer(PARALLEL_X, PARALLEL_Y, PERPENDICULAR_X, PERPENDICULAR_Y)
         //VuforiaLocalizer.initialize()
 
         poseEstimate = Constants.startPose
@@ -399,6 +407,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.
         rightFront.power = frontRight
     }
 
+    /*
     override fun setDriveSignal(driveSignal: DriveSignal) {
         val velocities = AtomicMecanumKinematics.robotToWheelVelocities(
                 driveSignal.vel,
@@ -430,5 +439,5 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.013, 0.0025, 0.01, 18.0, 18.0, 1.
                 DRIFT_TURN_MULTIPLIER
         )
         setMotorPowers(powers[0], powers[1], powers[2], powers[3])
-    }
+    }*/
 }
