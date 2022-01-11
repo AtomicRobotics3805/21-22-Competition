@@ -46,7 +46,6 @@ object FrankieRoutines {
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Extender.retract
-                +Bucket.Latch.close
                 +Bucket.Rotator.collect
                 +Intake.Spinner.start
                 +Intake.Extender.extend
