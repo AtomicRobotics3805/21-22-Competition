@@ -11,16 +11,20 @@ import kotlin.math.round
 import kotlin.math.sign
 
 @Suppress("MemberVisibilityCanBePrivate")
-open class MotorToPosition(protected val motor: DcMotor, protected var position: Int,
-                           protected var speed: Double, protected val minError: Int = 15,
-                           protected val kP: Double = 0.005) : AtomicCommand() {
+open class MotorToPosition(
+    protected val motor: DcMotor, protected var position: Int,
+    protected var speed: Double, protected val minError: Int = 15,
+    protected val kP: Double = 0.005, protected val time: Double = 5.0
+) : AtomicCommand() {
     override val _isDone: Boolean
-        get() = abs(error) < minError
+        get() = (abs(error) < minError) || timer.seconds() >= time
 
     protected var error: Int = 0
     protected var direction: Double = 0.0
+    protected var timer = ElapsedTime()
 
     override fun start() {
+        timer.reset()
         motor.mode = DcMotor.RunMode.RUN_USING_ENCODER
     }
 
