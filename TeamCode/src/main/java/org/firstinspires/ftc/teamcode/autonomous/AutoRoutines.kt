@@ -154,6 +154,7 @@ object AutoRoutines {
     private val dropFreightRoutine: AtomicCommand
         get() = sequential {
             +Arm.moveArmAutonomous()
+            +Delay(1.0)
             +BucketLock.open
             +Bucket.drop
             +Delay(1.6)
