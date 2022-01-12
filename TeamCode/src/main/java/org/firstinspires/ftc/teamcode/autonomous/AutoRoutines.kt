@@ -45,6 +45,7 @@ object AutoRoutines {
             +parallel {
                 +Bucket.up
                 +CapArm.up
+                +OdometryServo.down
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubTop)
             }
             +dropFreightRoutine
@@ -65,6 +66,7 @@ object AutoRoutines {
             +parallel {
                 +Bucket.up
                 +CapArm.up
+                +OdometryServo.down
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
             }
             +Carousel.fullRotation
@@ -109,6 +111,7 @@ object AutoRoutines {
             +parallel {
                 +Bucket.up
                 +CapArm.up
+                +OdometryServo.down
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
             }
             +Carousel.fullRotation
@@ -139,6 +142,7 @@ object AutoRoutines {
             +parallel {
                 +Bucket.up
                 +CapArm.up
+                +OdometryServo.down
                 +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
             }
             +Carousel.fullRotation
