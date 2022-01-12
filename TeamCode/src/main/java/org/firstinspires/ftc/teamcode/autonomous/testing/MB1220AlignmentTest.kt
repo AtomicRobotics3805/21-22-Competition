@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous.testing
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 import com.qualcomm.robotcore.hardware.AnalogInput
@@ -8,6 +9,7 @@ import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 
 @TeleOp
+@Disabled
 class MB1220AlignmentTest : LinearOpMode() {
 
     private lateinit var servo: Servo

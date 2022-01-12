@@ -1,10 +1,12 @@
 package org.firstinspires.ftc.teamcode.autonomous.testing
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp
 
 @Autonomous
+@Disabled
 class Example : LinearOpMode() {
     override fun runOpMode() {
         waitForStart()

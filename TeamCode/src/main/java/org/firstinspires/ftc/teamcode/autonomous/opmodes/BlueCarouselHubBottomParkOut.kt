@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Autonomous(group = "Blue", name = "Blue Carousel Hub Bottom Park Out")
-//@Disabled
+@Disabled
 class BlueCarouselHubBottomParkOut: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
