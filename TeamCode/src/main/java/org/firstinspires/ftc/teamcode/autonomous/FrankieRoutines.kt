@@ -34,7 +34,6 @@ object FrankieRoutines {
             +Lift.Swivel.toPreloadPosition
             +Lift.Pivot.toPosition(shippingHubPosition)
             +parallel {
-                +Intake.Extender.retract
                 +Lift.Extender.fullExtend
                 +sequential {
                     +Delay(0.2)
