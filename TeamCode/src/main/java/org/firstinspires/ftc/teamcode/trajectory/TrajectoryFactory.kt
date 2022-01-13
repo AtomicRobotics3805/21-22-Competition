@@ -68,7 +68,7 @@ object TrajectoryFactory {
             .build()
         startToHubTop = MecanumDrive.trajectoryBuilder(hubTopStartPose, hubTopStartPose.heading + 270.0.switchColorAngle.toRadians)
             .splineToSplineHeading(Pose2d(12.0, 28.0.switchColor, 0.0.switchColorAngle.toRadians), 270.0.switchColorAngle.toRadians)
-            .splineToSplineHeading(Pose2d(7.0, 24.0.switchColor, 0.0.switchColorAngle.toRadians), 225.0.switchColorAngle.toRadians)
+            .splineToConstantHeading(Vector2d(7.0, 24.0.switchColor), 225.0.switchColorAngle.toRadians)
             .build()
         startToCarousel = if (Constants.color == Constants.Color.BLUE)
             MecanumDrive.trajectoryBuilder(carouselStartPose, carouselStartPose.heading + 220.0.switchColorAngle.toRadians)
