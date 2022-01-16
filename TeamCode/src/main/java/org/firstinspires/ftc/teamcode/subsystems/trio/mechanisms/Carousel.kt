@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.MotorToPosition
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import kotlin.math.abs

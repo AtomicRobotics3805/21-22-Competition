@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.shippingHubPosition
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.teleOpAutomaticDepositPosition
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.delays.Delay
 import org.firstinspires.ftc.teamcode.util.commands.parallel
 import org.firstinspires.ftc.teamcode.util.commands.sequential

@@ -4,13 +4,12 @@ import com.acmerobotics.dashboard.config.Config
 import com.qualcomm.hardware.rev.RevColorSensorV3
 import com.qualcomm.robotcore.hardware.DcMotor
 import com.qualcomm.robotcore.hardware.DcMotorSimple
-import com.qualcomm.robotcore.hardware.DistanceSensor
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
-import org.firstinspires.ftc.teamcode.util.commands.CustomCommand
-import org.firstinspires.ftc.teamcode.util.commands.TimedCustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
+import org.firstinspires.ftc.teamcode.util.commands.other.TimedCustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import kotlin.math.abs
 import kotlin.math.max
