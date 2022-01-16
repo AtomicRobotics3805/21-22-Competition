@@ -17,7 +17,7 @@ object OdometryServo {
     var DEAD_WHEEL_SERVO_NAME = "deadWheelServo"
 
     @JvmField
-    var DOWN_POSITION = 0.0
+    var DOWN_POSITION = 0.5
     @JvmField
     var UP_POSITION = 0.3
 

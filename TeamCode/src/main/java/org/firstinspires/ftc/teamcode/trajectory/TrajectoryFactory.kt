@@ -91,11 +91,11 @@ object TrajectoryFactory {
             .build()
         carouselToHubBottom = if (Constants.color == Constants.Color.BLUE)
             MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 180.0.toRadians)
-                .splineToSplineHeading(Pose2d(-33.0, 24.0.switchColor, 180.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
+                .splineToSplineHeading(Pose2d(-33.5, 24.0.switchColor, 180.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
                 .build()
         else
             MecanumDrive.trajectoryBuilder(startToCarousel.trajectory.end(), startToCarousel.trajectory.end().heading + 270.0.toRadians)
-                .splineToSplineHeading(Pose2d(-33.0, 24.0.switchColor, 180.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
+                .splineToSplineHeading(Pose2d(-33.5, 24.0.switchColor, 180.0.switchColorAngle.toRadians), 320.0.switchColorAngle.toRadians)
                 .build()
 
         hubFrontToPark = MecanumDrive.trajectoryBuilder(carouselToHubFront.trajectory.end(), carouselToHubFront.trajectory.end().heading + 270.0.switchColorAngle.toRadians)

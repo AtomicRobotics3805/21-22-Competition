@@ -28,6 +28,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation
 import org.firstinspires.ftc.teamcode.Constants
+import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.subsystems.localization.OdometryLocalizer
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
@@ -299,6 +300,8 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
         if (POSE_HISTORY_LIMIT > -1 && poseHistory.size > POSE_HISTORY_LIMIT) {
             poseHistory.removeFirst()
         }
+        opMode.telemetry.addData("Position", MecanumDrive.poseEstimate)
+        opMode.telemetry.update()
         //VuforiaLocalizer.update()
         //telemetry.addData("Odometry Position", poseEstimate)
         //telemetry.addData("Vuforia Position", VuforiaLocalizer.poseEstimate)

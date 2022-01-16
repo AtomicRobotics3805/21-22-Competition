@@ -27,11 +27,11 @@ object ObjectDetectionMB1220 {
     var mb1220Name =  "mb1220"
 
     @JvmField
-    var rightServoPosition = 0.08
+    var rightServoPosition = 0.21
     @JvmField
     var rightVoltage = 0.087
     @JvmField
-    var middleServoPosition = 0.255
+    var middleServoPosition = 0.26
     @JvmField
     var middleVoltage = 0.087
 
