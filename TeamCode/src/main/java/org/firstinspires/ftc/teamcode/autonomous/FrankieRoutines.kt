@@ -117,7 +117,7 @@ object FrankieRoutines {
         get() = sequential {
             +Lift.Extender.collect
             +parallel {
-                +Intake.Extender.fullRetract
+                +Intake.Extender.retract
                 +Intake.Spinner.idle
             }
             +parallel {
