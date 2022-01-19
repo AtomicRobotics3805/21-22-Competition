@@ -7,6 +7,7 @@ import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
+import org.firstinspires.ftc.teamcode.util.commands.delays.WaitUntil
 import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.MotorToPosition
@@ -62,17 +63,30 @@ object Lift {
         }
 
         val fullExtend: AtomicCommand
-            get() = ToPosition(FULL_EXTENSION_DISTANCE, _fullExtended = true, time = 3.0)
-
-        //
+            get() = sequential {
+                +ToPosition(FULL_EXTENSION_DISTANCE, _fullExtended = true, time = 3.0)
+                +idle
+            }
         val fullExtendStopEarly: AtomicCommand
-            get() = ToPosition(FULL_EXTENSION_DISTANCE, true)
+            get() = sequential {
+                +ToPosition(FULL_EXTENSION_DISTANCE, true)
+                +idle
+            }
         val retractAtStart: AtomicCommand
-            get() = ToPosition(0.0, minError = 3, kP = 0.08, time = 1.5)
+            get() = sequential {
+                +ToPosition(0.0, minError = 3, kP = 0.08, time = 1.5)
+                +idle
+            }
         val retract: AtomicCommand
-            get() = ToPosition(0.0, _fullExtended = false, overrideSpeed = 1.0)
+            get() = sequential {
+                +ToPosition(0.0, _fullExtended = false, overrideSpeed = 1.0)
+                +idle
+            }
         val collect: AtomicCommand
-            get() = ToPosition(COLLECT_DISTANCE)
+            get() = sequential {
+                +ToPosition(COLLECT_DISTANCE)
+                +idle
+            }
         val switch: AtomicCommand
             get() = if (fullExtended) retract else fullExtend
         val manualUp: AtomicCommand
@@ -250,6 +264,8 @@ object Lift {
                 +MotorToPosition(swivelMotor, COLLECT_POSITION, SWIVEL_SPEED)
                 +idle
             }
+        val pivotHeightDelay: AtomicCommand
+            get() = WaitUntil { swivelMotor.currentPosition >= ACCEPTABLE_HEIGHT_TICKS }
 
         fun powerSwivel(power: Double) = CustomCommand(_start = {
             swivelMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER

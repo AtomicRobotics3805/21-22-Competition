@@ -18,38 +18,49 @@ import org.firstinspires.ftc.teamcode.util.commands.sequential
 @Suppress("Unused", "MemberVisibilityCouldBePrivate")
 object FrankieRoutines {
 
+    @JvmField
+    var EXTEND_ROTATE_BUCKET_DELAY = 0.2
+    @JvmField
+    var EXTEND_INTAKE_RETRACT_LIFT_DELAY = 0.5
+    @JvmField
+    var OPEN_LATCH_DELAY = 1.0
+    @JvmField
+    var TRANSFER_DELAY = 1.0
+
     val noCarouselFreightRoutine: AtomicCommand
         get() = sequential {
             +parallel {
                 +sequential {
                     +Intake.Extender.extend
-                    +Delay(0.5)
+                    +Delay(EXTEND_INTAKE_RETRACT_LIFT_DELAY)
                     +Lift.Extender.retractAtStart
-                    +Lift.Extender.idle
                 }
                 +Bucket.Latch.close
                 +Intake.Lock.close
             }
-            //+Lift.Extender.ResetAtStart()
             +Lift.Swivel.toPreloadPosition
-            +Lift.Pivot.toPosition(shippingHubPosition)
             +parallel {
-                +Lift.Extender.fullExtend
                 +sequential {
-                    +Delay(0.2)
-                    +Bucket.Rotator.score
+                    +Lift.Pivot.toPosition(shippingHubPosition)
+                    +parallel {
+                        +Lift.Extender.fullExtend
+                        +sequential {
+                            +Delay(EXTEND_ROTATE_BUCKET_DELAY)
+                            +Bucket.Rotator.score
+                        }
+                    }
                 }
+                +Intake.Extender.retract
             }
             +Bucket.Latch.open
-            +Delay(1.0)
+            +Delay(OPEN_LATCH_DELAY)
             +parallel {
-                +Lift.Pivot.toAngle(0.0)
                 +Lift.Extender.retract
                 +Bucket.Rotator.collect
                 +Intake.Spinner.start
                 +Intake.Extender.extend
             }
-            +Lift.Extender.idle
+            +Lift.Pivot.toAngle(0.0)
             +Lift.Swivel.toCollect
             +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
             +deliverFreightRoutine
@@ -68,14 +79,15 @@ object FrankieRoutines {
                         +Intake.Spinner.idle
                     }
                     +Intake.Spinner.start
-                    +Delay(0.4)
+                    +Intake.Lock.open
+                    +Delay(TRANSFER_DELAY)
                     +Bucket.Latch.close
                     +Lift.Swivel.toHigh
+                    +Lift.Pivot.toPosition(shippingHubPosition)
                     +parallel {
                         +Lift.Extender.fullExtend
-                        +Lift.Pivot.toPosition(shippingHubPosition)
                         +sequential {
-                            +Delay(0.2)
+                            +Delay(EXTEND_ROTATE_BUCKET_DELAY)
                             +Bucket.Rotator.score
                         }
                     }
@@ -83,7 +95,7 @@ object FrankieRoutines {
                 +MecanumDrive.followTrajectory(TrajectoryFactory.insideWarehouseToOutsideWarehouse)
             }
             +Bucket.Latch.open
-            +Delay(0.3)
+            +Delay(OPEN_LATCH_DELAY)
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
@@ -97,7 +109,7 @@ object FrankieRoutines {
     val transferMoveLiftTeleOpRoutine: AtomicCommand
         get() = sequential {
             +toTransfer
-            +Delay(1.0)
+            +Delay(TRANSFER_DELAY)
             +moveLiftTeamHub
         }
 
@@ -129,7 +141,6 @@ object FrankieRoutines {
     val collectAtStartTeleOpRoutine: AtomicCommand
         get() = sequential {
             +Lift.Extender.collect
-            +Lift.Extender.idle
             +parallel {
                 +Intake.Spinner.start
                 +Intake.Extender.extend
@@ -142,7 +153,7 @@ object FrankieRoutines {
     val dropAndCollectTeleOpRoutine: AtomicCommand
         get() = sequential {
             +Bucket.Latch.open
-            +Delay(0.3)
+            +Delay(OPEN_LATCH_DELAY)
             +Lift.Extender.retract
             +Lift.Pivot.toAngle(0.0)
             +parallel {
