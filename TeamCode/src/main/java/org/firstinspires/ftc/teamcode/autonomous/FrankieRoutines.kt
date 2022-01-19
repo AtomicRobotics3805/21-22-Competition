@@ -131,11 +131,15 @@ object FrankieRoutines {
             +Intake.Spinner.idle
             +Bucket.Latch.close
             +Lift.Swivel.toHigh
-            +sequential {
-                +setTeleOpPosition
-                +Lift.Pivot.toPosition(shippingHubPosition)
+            +setTeleOpPosition
+            +Lift.Pivot.toPosition(shippingHubPosition)
+            +parallel {
+                +Lift.Extender.fullExtend
+                +sequential {
+                    +Delay(EXTEND_ROTATE_BUCKET_DELAY)
+                    +Bucket.Rotator.score
+                }
             }
-            +Bucket.Rotator.score
         }
 
     val collectAtStartTeleOpRoutine: AtomicCommand
