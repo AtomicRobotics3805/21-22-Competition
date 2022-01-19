@@ -146,12 +146,10 @@ object FrankieRoutines {
         get() = sequential {
             +Lift.Extender.collect
             +parallel {
-                +Intake.Spinner.start
-                +Intake.Extender.extend
                 +Intake.Lock.close
                 +Bucket.Latch.collect
+                +Bucket.Rotator.collect
             }
-            +Bucket.Rotator.collect
         }
 
     val dropAndCollectTeleOpRoutine: AtomicCommand
@@ -162,12 +160,10 @@ object FrankieRoutines {
             +Lift.Pivot.toAngle(0.0)
             +parallel {
                 +Lift.Swivel.toCollect
-                +Intake.Spinner.start
-                +Intake.Extender.extend
                 +Intake.Lock.close
                 +Bucket.Latch.collect
+                +Bucket.Rotator.collect
             }
-            +Bucket.Rotator.collect
             +Lift.Extender.collect
         }
 

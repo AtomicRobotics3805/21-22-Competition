@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple
 import com.qualcomm.robotcore.hardware.Servo
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit
 import org.firstinspires.ftc.teamcode.Constants.opMode
+import org.firstinspires.ftc.teamcode.util.CommandGamepad
+import org.firstinspires.ftc.teamcode.util.CustomGamepad
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.other.TimedCustomCommand
@@ -82,6 +84,15 @@ object Intake {
                 })
         val switch: AtomicCommand
             get() = if (extended) retract else extend
+
+        fun extendTrigger(trigger: CustomGamepad.Trigger): AtomicCommand {
+            return CustomCommand(_done = { trigger.released }, _execute = {
+                leftExtensionServo.position = RETRACTED_POSITION_LEFT + (EXTENDED_POSITION_LEFT -
+                        RETRACTED_POSITION_LEFT) * trigger.amount
+                rightExtensionServo.position = RETRACTED_POSITION_RIGHT + (EXTENDED_POSITION_RIGHT -
+                        RETRACTED_POSITION_RIGHT) * trigger.amount
+            })
+        }
     }
 
     @Config
