@@ -31,12 +31,17 @@ class CommandGamepad(qualcommGamepad: Gamepad) {
     val leftTrigger = CommandTrigger(gamepad.leftTrigger)
     val rightTrigger = CommandTrigger(gamepad.rightTrigger)
 
-    private val controls = listOf(a, b, x, y, dpadUp, dpadDown, dpadLeft, dpadRight,
-            leftBumper, rightBumper)
+    val leftStickButton = CommandButton(gamepad.leftStick.button)
+    val rightStickButton = CommandButton(gamepad.rightStick.button)
+
+    private val buttons: List<CommandButton> = listOf(a, b, x, y, dpadUp, dpadDown, dpadLeft,
+        dpadRight, leftBumper, rightBumper, leftStickButton, rightStickButton)
+    private val triggers: List<CommandTrigger> = listOf(leftTrigger, rightTrigger)
 
     fun update() {
         gamepad.update()
-        controls.forEach { it.update() }
+        buttons.forEach { it.update() }
+        triggers.forEach { it.update() }
     }
 
     class CommandButton(val button: CustomGamepad.Button) {

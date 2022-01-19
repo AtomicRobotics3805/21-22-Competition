@@ -34,16 +34,16 @@ object Controls {
         gamepad1.x.pressed.command = { FrankieRoutines.dropAndCollectTeleOpRoutine }
         gamepad1.y.pressed.command = { FrankieRoutines.transferMoveLiftTeleOpRoutine }
 
-        gamepad2.rightBumper.pressed.command = { FrankieRoutines.collectAtStartTeleOpRoutine }
         gamepad2.a.pressed.command = { FrankieRoutines.toTransfer }
         gamepad2.b.pressed.command = { FrankieRoutines.moveLiftTeamHub }
-        //gamepad2.b.pressed.command = { FrankieRoutines.transferMoveLiftTeleOpRoutine }
-        gamepad2.x.pressed.command = { Lift.Extender.switch }
+        gamepad2.x.pressed.command = { FrankieRoutines.collectAtStartTeleOpRoutine }
         gamepad2.y.pressed.command = { FrankieRoutines.dropAndCollectTeleOpRoutine }
         gamepad2.leftBumper.pressed.command = { Intake.Spinner.switch }
-        //gamepad2.rightBumper.pressed.command = { Intake.Lock.switch }
+        gamepad2.rightBumper.pressed.command = { Lift.Extender.switch }
         gamepad2.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad2.gamepad.leftTrigger) }
         gamepad2.rightTrigger.pressed.command = { Bucket.Rotator.switch }
+        gamepad2.leftStickButton.pressed.command = { Intake.Lock.switch }
+        gamepad2.rightStickButton.pressed.command = { Bucket.Latch.switch }
         gamepad2.dpadUp.pressed.command = { Lift.Swivel.manualUp }
         gamepad2.dpadUp.released.command = { Lift.Swivel.idle }
         gamepad2.dpadDown.pressed.command = { Lift.Swivel.manualDown }
