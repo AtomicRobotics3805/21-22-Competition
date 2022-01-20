@@ -47,31 +47,31 @@ object Carousel : Subsystem {
         get() = if (Constants.color == Constants.Color.BLUE)
             fullRotation(1) else fullRotation(-1)
 
-    private lateinit var carouselMotor: CRServo
+    private lateinit var carouselServo: CRServo
 
     fun initialize() {
-        carouselMotor = opMode.hardwareMap.get(CRServo::class.java, CAROUSEL_NAME)
-        carouselMotor.direction = CAROUSEL_DIRECTION
+        carouselServo = opMode.hardwareMap.get(CRServo::class.java, CAROUSEL_NAME)
+        carouselServo.direction = CAROUSEL_DIRECTION
     }
 
     fun powerCarouselTrigger(trigger: CustomGamepad.Trigger) = CustomCommand(
         getDone = { !trigger.down },
         _execute = {
-            carouselMotor.power = trigger.amount.toDouble() * CAROUSEL_TRIGGER_SPEED
+            carouselServo.power = trigger.amount.toDouble() * CAROUSEL_TRIGGER_SPEED
         })
 
     fun powerCarousel(power: Double) = CustomCommand(_start = {
-        carouselMotor.power = power
+        carouselServo.power = power
         on = power != 0.0
     })
 
     fun fullRotation(direction: Int) = TimedCustomCommand(
         time = CAROUSEL_FULL_ROTATION_TIME,
         _start = {
-            carouselMotor.power = CAROUSEL_AUTOMATIC_SPEED * direction
+            carouselServo.power = CAROUSEL_AUTOMATIC_SPEED * direction
         },
         _done = {
-            carouselMotor.power = 0.0
+            carouselServo.power = 0.0
         }
     )
 
