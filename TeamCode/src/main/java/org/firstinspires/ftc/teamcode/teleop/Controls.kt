@@ -44,7 +44,7 @@ object Controls {
         gamepad2.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad2.gamepad.leftTrigger) }
         gamepad2.rightTrigger.pressed.command = { Intake.Extender.extendTrigger(gamepad2.gamepad.rightTrigger) }
         gamepad2.leftStickButton.pressed.command = { Intake.Lock.switch }
-        gamepad2.rightStickButton.pressed.command = { Bucket.Latch.switch }
+        gamepad2.rightStickButton.pressed.command = { Bucket.Lock.switch }
         gamepad2.dpadUp.pressed.command = { Lift.Swivel.manualUp }
         gamepad2.dpadUp.released.command = { Lift.Swivel.idle }
         gamepad2.dpadDown.pressed.command = { Lift.Swivel.manualDown }
@@ -71,8 +71,8 @@ object Controls {
 
         gamepad2.a.pressed.command = { Lift.Extender.fullExtend }
         gamepad2.b.pressed.command = { Lift.Extender.retract }
-        gamepad2.x.pressed.command = { Bucket.Latch.open }
-        gamepad2.y.pressed.command = { Bucket.Latch.close }
+        gamepad2.x.pressed.command = { Bucket.Lock.open }
+        gamepad2.y.pressed.command = { Bucket.Lock.close }
         gamepad2.leftBumper.pressed.command = { Bucket.Rotator.score }
         gamepad2.rightBumper.pressed.command = { Bucket.Rotator.collect }
         gamepad2.rightTrigger.pressed.command = { Bucket.Rotator.switch }

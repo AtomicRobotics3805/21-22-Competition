@@ -13,11 +13,11 @@ import kotlin.math.abs
 object Bucket {
 
     fun initialize() {
-        Latch.initialize()
+        Lock.initialize()
         Rotator.initialize()
     }
 
-    object Latch {
+    object Lock {
         enum class Position {
             SCORE,
             COLLECT,
@@ -25,7 +25,7 @@ object Bucket {
         }
 
         @JvmField
-        var LATCH_NAME = "bucketLockServo"
+        var LOCK_NAME = "bucketLockServo"
 
         @JvmField
         var SCORE_POSITION = 0.3
@@ -45,16 +45,16 @@ object Bucket {
 
 
         var position = Position.SCORE
-        private lateinit var latchServo: Servo
+        private lateinit var lockServo: Servo
 
         fun initialize() {
-            latchServo = opMode.hardwareMap.get(Servo::class.java, LATCH_NAME)
+            lockServo = opMode.hardwareMap.get(Servo::class.java, LOCK_NAME)
         }
 
         fun moveServo(position: Double, state: Position) =
             /*Timed*/CustomCommand(/*time = abs(position - latchServo.position),*/
                 _start = {
-                    latchServo.position = position
+                    lockServo.position = position
                     this.position = state
                 })
     }

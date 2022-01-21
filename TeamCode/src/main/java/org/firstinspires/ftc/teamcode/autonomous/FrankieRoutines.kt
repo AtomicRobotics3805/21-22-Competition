@@ -35,7 +35,7 @@ object FrankieRoutines {
                     +Delay(EXTEND_INTAKE_RETRACT_LIFT_DELAY)
                     +Lift.Extender.retractAtStart
                 }
-                +Bucket.Latch.close
+                +Bucket.Lock.close
                 +Intake.Lock.close
             }
             +Lift.Swivel.toPreloadPosition
@@ -52,7 +52,7 @@ object FrankieRoutines {
                 }
                 +Intake.Extender.retract
             }
-            +Bucket.Latch.open
+            +Bucket.Lock.open
             +Delay(OPEN_LATCH_DELAY)
             +parallel {
                 +Lift.Extender.retract
@@ -82,7 +82,7 @@ object FrankieRoutines {
                     +Intake.Spinner.start
                     +Intake.Lock.open
                     +Delay(TRANSFER_DELAY)
-                    +Bucket.Latch.close
+                    +Bucket.Lock.close
                     +Lift.Swivel.toHigh
                     +Lift.Pivot.toPosition(shippingHubPosition)
                     +parallel {
@@ -95,7 +95,7 @@ object FrankieRoutines {
                 }
                 +MecanumDrive.followTrajectory(TrajectoryFactory.insideWarehouseToOutsideWarehouse)
             }
-            +Bucket.Latch.open
+            +Bucket.Lock.open
             +Delay(OPEN_LATCH_DELAY)
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
@@ -130,7 +130,7 @@ object FrankieRoutines {
     val moveLiftTeamHub: AtomicCommand
         get() = sequential {
             +Intake.Spinner.idle
-            +Bucket.Latch.close
+            +Bucket.Lock.close
             +Lift.Swivel.toHigh
             +setTeleOpPosition
             +Lift.Pivot.toPosition(shippingHubPosition)
@@ -148,21 +148,21 @@ object FrankieRoutines {
             +Lift.Extender.collect
             +parallel {
                 +Intake.Lock.close
-                +Bucket.Latch.collect
+                +Bucket.Lock.collect
                 +Bucket.Rotator.collect
             }
         }
 
     val dropAndCollectTeleOpRoutine: AtomicCommand
         get() = sequential {
-            +Bucket.Latch.open
+            +Bucket.Lock.open
             +Delay(OPEN_LATCH_DELAY)
             +Lift.Extender.retract
             +Lift.Pivot.toAngle(0.0)
             +parallel {
                 +Lift.Swivel.toCollect
                 +Intake.Lock.close
-                +Bucket.Latch.collect
+                +Bucket.Lock.collect
                 +Bucket.Rotator.collect
             }
             +Lift.Extender.collect
