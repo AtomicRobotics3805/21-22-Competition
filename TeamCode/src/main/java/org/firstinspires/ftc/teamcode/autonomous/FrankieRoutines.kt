@@ -23,7 +23,7 @@ object FrankieRoutines {
     @JvmField
     var EXTEND_INTAKE_RETRACT_LIFT_DELAY = 0.5
     @JvmField
-    var OPEN_LATCH_DELAY = 1.0
+    var OPEN_LOCK_DELAY = 1.0
     @JvmField
     var TRANSFER_DELAY = 1.0
 
@@ -53,7 +53,7 @@ object FrankieRoutines {
                 +Intake.Extender.retract
             }
             +Bucket.Lock.open
-            +Delay(OPEN_LATCH_DELAY)
+            +Delay(OPEN_LOCK_DELAY)
             +parallel {
                 +Lift.Extender.retract
                 +Bucket.Rotator.collect
@@ -96,7 +96,7 @@ object FrankieRoutines {
                 +MecanumDrive.followTrajectory(TrajectoryFactory.insideWarehouseToOutsideWarehouse)
             }
             +Bucket.Lock.open
-            +Delay(OPEN_LATCH_DELAY)
+            +Delay(OPEN_LOCK_DELAY)
             +parallel {
                 +Lift.Pivot.toAngle(0.0)
                 +Lift.Swivel.ToCollectCareful()
@@ -156,7 +156,7 @@ object FrankieRoutines {
     val dropAndCollectTeleOpRoutine: AtomicCommand
         get() = sequential {
             +Bucket.Lock.open
-            +Delay(OPEN_LATCH_DELAY)
+            +Delay(OPEN_LOCK_DELAY)
             +Lift.Extender.retract
             +Lift.Pivot.toAngle(0.0)
             +parallel {
