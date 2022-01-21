@@ -60,6 +60,7 @@ object FrankieRoutines {
                 +Intake.Spinner.start
                 +Intake.Extender.extend
             }
+            +Lift.Swivel.idle
             +Lift.Pivot.toAngle(0.0)
             +Lift.Swivel.toCollect
             +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)

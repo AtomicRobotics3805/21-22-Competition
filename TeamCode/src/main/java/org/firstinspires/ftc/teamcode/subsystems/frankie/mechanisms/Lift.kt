@@ -246,19 +246,22 @@ object Lift {
                 swivelMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
             })
         val toPreloadPosition: AtomicCommand
-            get() = CustomCommand(
-                getDone = { !swivelMotor.isBusy },
-                _start = {
-                    when (ObjectDetectionMB1220.position) {
-                        ObjectDetectionMB1220.Position.LEFT -> swivelMotor.targetPosition =
-                            LOW_POSITION
-                        ObjectDetectionMB1220.Position.MIDDLE -> swivelMotor.targetPosition =
-                            MIDDLE_POSITION
-                        else -> swivelMotor.targetPosition = HIGH_POSITION
-                    }
-                    swivelMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
-                    swivelMotor.power = SWIVEL_SPEED
-                })
+            get() = sequential {
+                +CustomCommand(
+                    getDone = { !swivelMotor.isBusy },
+                    _start = {
+                        when (ObjectDetectionMB1220.position) {
+                            ObjectDetectionMB1220.Position.LEFT -> swivelMotor.targetPosition =
+                                LOW_POSITION
+                            ObjectDetectionMB1220.Position.MIDDLE -> swivelMotor.targetPosition =
+                                MIDDLE_POSITION
+                            else -> swivelMotor.targetPosition = HIGH_POSITION
+                        }
+                        swivelMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+                        swivelMotor.power = SWIVEL_SPEED
+                    })
+                +idle
+            }
         val toCollect: AtomicCommand
             get() = sequential {
                 +MotorToPosition(swivelMotor, COLLECT_POSITION, SWIVEL_SPEED)
@@ -293,13 +296,13 @@ object Lift {
         var PIVOT_NAME = "armPivot"
 
         @JvmField
-        var PIVOT_SPEED = 0.4
+        var PIVOT_SPEED = 1.0
 
         @JvmField
-        var PIVOT_DIRECTION = DcMotorSimple.Direction.REVERSE
+        var PIVOT_DIRECTION = DcMotorSimple.Direction.FORWARD
 
         private const val PIVOT_GEAR_RATIO = 1.0
-        private const val PIVOT_TICKS_PER_REV: Double = 28 * 19.2
+        private const val PIVOT_TICKS_PER_REV: Double = 28 * 19.2 * 3
         private const val PIVOT_TICKS_PER_DEGREE: Double =
             PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0
         private val RELATIVE_POSITION = Vector2d(-10.0, 0.0)

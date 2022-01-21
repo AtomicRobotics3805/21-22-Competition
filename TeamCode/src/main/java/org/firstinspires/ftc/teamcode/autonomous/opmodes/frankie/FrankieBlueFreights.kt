@@ -24,6 +24,7 @@ class FrankieBlueFreights : LinearOpMode() {
             CommandScheduler.run()
             telemetry.addData("Lift Swivel Encoder Position", Lift.Swivel.swivelMotor.currentPosition)
             telemetry.addData("Lift Pivot Angle", Lift.Pivot.angle)
+            telemetry.addData("Lift Extension Encoder Position", Lift.Extender.extensionMotor.currentPosition)
             telemetry.addData("Tolerance", Lift.Pivot.liftPivotMotor.targetPositionTolerance)
             telemetry.update()
         }
