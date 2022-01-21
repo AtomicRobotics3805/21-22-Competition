@@ -23,7 +23,7 @@ object Intake {
         Extender.initialize()
         Spinner.initialize()
         Lock.initialize()
-        Pushthrough.initialize()
+        //Pushthrough.initialize()
         ColorSensor.initialize()
     }
 

@@ -65,8 +65,8 @@ object Controls {
         gamepad1.rightTrigger.pressed.command = { Intake.Spinner.start }
         gamepad1.rightTrigger.released.command = { Intake.Spinner.stop }
         //gamepad1.leftBumper.pressed.command = { Intake.Rotator.down }
-        gamepad1.rightBumper.pressed.command = { Intake.Pushthrough.push }
-        gamepad1.rightBumper.released.command = { Intake.Pushthrough.idle }
+        //gamepad1.rightBumper.pressed.command = { Intake.Pushthrough.push }
+        //gamepad1.rightBumper.released.command = { Intake.Pushthrough.idle }
         gamepad1.leftTrigger.pressed.command = { Carousel.powerCarouselTrigger(gamepad1.gamepad.leftTrigger) }
 
         gamepad2.a.pressed.command = { Lift.Extender.fullExtend }
