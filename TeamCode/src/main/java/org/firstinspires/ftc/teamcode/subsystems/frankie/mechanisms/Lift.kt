@@ -32,13 +32,13 @@ object Lift {
         var EXTENDER_NAME = "armExtend"
 
         @JvmField
-        var FULL_EXTENSION_DISTANCE = 32.0
+        var FULL_EXTENSION_DISTANCE = 31.0
 
         @JvmField
-        var COLLECT_DISTANCE = 3.5
+        var COLLECT_DISTANCE = 4.5
 
         @JvmField
-        var EXTENDER_SPEED = 0.5
+        var EXTENDER_SPEED = 0.7
 
         @JvmField
         var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
@@ -64,7 +64,7 @@ object Lift {
 
         val fullExtend: AtomicCommand
             get() = sequential {
-                +ToPosition(FULL_EXTENSION_DISTANCE, _fullExtended = true, time = 3.0)
+                +ToPosition(FULL_EXTENSION_DISTANCE, _fullExtended = true, time = 3.0, kP = 0.01)
                 +idle
             }
         val fullExtendStopEarly: AtomicCommand
@@ -172,7 +172,7 @@ object Lift {
         var MIDDLE_DEGREES = 93
 
         @JvmField
-        var HIGH_DEGREES = 100
+        var HIGH_DEGREES = 98
 
         @JvmField
         var ACCEPTABLE_PIVOT_ANGLE = 5.0
@@ -181,7 +181,7 @@ object Lift {
         var ACCEPTABLE_HEIGHT = 90
 
         @JvmField
-        var COLLECT_HEIGHT = 15
+        var COLLECT_HEIGHT = 22
 
 
         private const val SWIVEL_GEAR_RATIO = 6.0
@@ -294,18 +294,17 @@ object Lift {
     object Pivot {
         @JvmField
         var PIVOT_NAME = "armPivot"
-
         @JvmField
         var PIVOT_SPEED = 1.0
-
         @JvmField
         var PIVOT_DIRECTION = DcMotorSimple.Direction.FORWARD
+        @JvmField
+        var RELATIVE_POSITION = Vector2d(-8.0, 0.0)
 
         private const val PIVOT_GEAR_RATIO = 1.0
         private const val PIVOT_TICKS_PER_REV: Double = 28 * 19.2 * 3
         private const val PIVOT_TICKS_PER_DEGREE: Double =
             PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0
-        private val RELATIVE_POSITION = Vector2d(-10.0, 0.0)
 
         lateinit var liftPivotMotor: DcMotorEx
 
@@ -314,9 +313,9 @@ object Lift {
             liftPivotMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             liftPivotMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             liftPivotMotor.direction = PIVOT_DIRECTION
-            liftPivotMotor.setVelocityPIDFCoefficients(18.0, 0.3, 1.0, 0.0)
-            liftPivotMotor.setPositionPIDFCoefficients(7.0)
-            liftPivotMotor.targetPositionTolerance = 10
+            liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
+            liftPivotMotor.setPositionPIDFCoefficients(23.0)
+            liftPivotMotor.targetPositionTolerance = 1
         }
 
         val angle: Double
@@ -343,8 +342,12 @@ object Lift {
                 liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
                 liftPivotMotor.power = PIVOT_SPEED
                 if (angle == 0.0) {
-                    liftPivotMotor.setVelocityPIDFCoefficients(10.0, 0.3, 0.0, 0.0)
-                    liftPivotMotor.setPositionPIDFCoefficients(3.0)
+                    liftPivotMotor.setVelocityPIDFCoefficients(13.0, 0.3, 0.0, 0.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(12.0)
+                }
+                else {
+                    liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(23.0)
                 }
             })
 

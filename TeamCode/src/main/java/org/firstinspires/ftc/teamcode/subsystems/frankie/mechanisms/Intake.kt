@@ -34,9 +34,13 @@ object Intake {
         @JvmField
         var EXTENDED_POSITION_RIGHT = 0.0
         @JvmField
-        var RETRACTED_POSITION_LEFT = 0.58
+        var PARTIALLY_EXTENDED_POSITION_LEFT = 0.8
         @JvmField
-        var RETRACTED_POSITION_RIGHT = 0.42
+        var PARTIALLY_EXTENDED_POSITION_RIGHT = 0.2
+        @JvmField
+        var RETRACTED_POSITION_LEFT = 0.62
+        @JvmField
+        var RETRACTED_POSITION_RIGHT = 0.38
         @JvmField
         var FULLY_RETRACTED_POSITION_LEFT = 0.4
         @JvmField
@@ -53,30 +57,47 @@ object Intake {
         fun initialize() {
             leftExtensionServo = opMode.hardwareMap.get(Servo::class.java, LEFT_EXTENDER_NAME)
             rightExtensionServo = opMode.hardwareMap.get(Servo::class.java, RIGHT_EXTENDER_NAME)
+
         }
 
         val extend: AtomicCommand
-            get() = /*Timed*/CustomCommand(
-                /*time = max(abs(leftExtensionServo.position - EXTENDED_POSITION_LEFT),
-                    abs(rightExtensionServo.position - EXTENDED_POSITION_RIGHT)),*/
+            get() = TimedCustomCommand(
+                time = { max(abs(leftExtensionServo.position - EXTENDED_POSITION_LEFT),
+                    abs(rightExtensionServo.position - EXTENDED_POSITION_RIGHT)) },
+                _start = {
+                    extended = true
+                    leftExtensionServo.position = EXTENDED_POSITION_LEFT
+                    rightExtensionServo.position = EXTENDED_POSITION_RIGHT
+                })
+        val partialExtend: AtomicCommand
+            get() = TimedCustomCommand(
+                time = { max(abs(leftExtensionServo.position - PARTIALLY_EXTENDED_POSITION_LEFT),
+                    abs(rightExtensionServo.position - PARTIALLY_EXTENDED_POSITION_RIGHT)) },
+                _start = {
+                    extended = true
+                    leftExtensionServo.position = PARTIALLY_EXTENDED_POSITION_LEFT
+                    rightExtensionServo.position = PARTIALLY_EXTENDED_POSITION_RIGHT
+                })
+        val instantExtend: AtomicCommand
+            get() = CustomCommand(
                 _start = {
                     extended = true
                     leftExtensionServo.position = EXTENDED_POSITION_LEFT
                     rightExtensionServo.position = EXTENDED_POSITION_RIGHT
                 })
         val retract: AtomicCommand
-            get() = /*Timed*/CustomCommand(
-                /*time = max(abs(leftExtensionServo.position - RETRACTED_POSITION_LEFT),
-                    abs(rightExtensionServo.position - RETRACTED_POSITION_RIGHT)),*/
+            get() = TimedCustomCommand(
+                time = { 1.0 /*max(abs(leftExtensionServo.position - RETRACTED_POSITION_LEFT),
+                    abs(rightExtensionServo.position - RETRACTED_POSITION_RIGHT))*/ },
                 _start = {
                     extended = false
                     leftExtensionServo.position = RETRACTED_POSITION_LEFT
                     rightExtensionServo.position = RETRACTED_POSITION_RIGHT
                 })
         val fullRetract: AtomicCommand
-            get() = /*Timed*/CustomCommand(
-                /*time = max(abs(leftExtensionServo.position - RETRACTED_POSITION_LEFT),
-                    abs(rightExtensionServo.position - RETRACTED_POSITION_RIGHT)),*/
+            get() = TimedCustomCommand(
+                time = { max(abs(leftExtensionServo.position - RETRACTED_POSITION_LEFT),
+                    abs(rightExtensionServo.position - RETRACTED_POSITION_RIGHT)) },
                 _start = {
                     extended = false
                     leftExtensionServo.position = FULLY_RETRACTED_POSITION_LEFT
@@ -145,7 +166,7 @@ object Intake {
         @JvmField
         var SPINNER_INTAKING_SPEED = 1.0
         @JvmField
-        var SPINNER_IDLE_SPEED = 0.2
+        var SPINNER_IDLE_SPEED = 0.8
         @JvmField
         var SPINNER_DIRECTION = DcMotorSimple.Direction.FORWARD
         @JvmField
@@ -164,6 +185,8 @@ object Intake {
 
         val start: AtomicCommand
             get() = powerSpinner(SPINNER_INTAKING_SPEED, true)
+        val reverse: AtomicCommand
+            get() = powerSpinner(-SPINNER_INTAKING_SPEED, true)
         val idle: AtomicCommand
             get() = powerSpinner(SPINNER_IDLE_SPEED, false)
         val stop: AtomicCommand

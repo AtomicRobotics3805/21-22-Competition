@@ -26,12 +26,14 @@ object FrankieRoutines {
     var OPEN_LOCK_DELAY = 1.0
     @JvmField
     var TRANSFER_DELAY = 1.0
+    @JvmField
+    var REVERSE_DELAY = .12
 
     val noCarouselFreightRoutine: AtomicCommand
         get() = sequential {
             +parallel {
                 +sequential {
-                    +Intake.Extender.extend
+                    +Intake.Extender.instantExtend
                     +Delay(EXTEND_INTAKE_RETRACT_LIFT_DELAY)
                     +Lift.Extender.retractAtStart
                 }
@@ -57,13 +59,19 @@ object FrankieRoutines {
             +parallel {
                 +Lift.Extender.retract
                 +Bucket.Rotator.collect
-                +Intake.Spinner.start
                 +Intake.Extender.extend
+                +Bucket.Lock.close
             }
             +Lift.Swivel.idle
             +Lift.Pivot.toAngle(0.0)
             +Lift.Swivel.toCollect
-            +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
+            +parallel {
+                +Bucket.Lock.collect
+                +Lift.Extender.collect
+                +Intake.Extender.partialExtend
+                +Intake.Spinner.idle
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
+            }
             +deliverFreightRoutine
             /*+deliverFreightRoutine
             +deliverFreightRoutine
@@ -75,21 +83,24 @@ object FrankieRoutines {
         get() = sequential {
             +parallel {
                 +sequential {
-                    +parallel {
-                        +Intake.Extender.retract
-                        +Intake.Spinner.idle
-                    }
+                    +Intake.Spinner.reverse
+                    +Delay(REVERSE_DELAY)
+                    +Intake.Spinner.idle
+                    +Intake.Extender.retract
                     +Intake.Spinner.start
                     +Intake.Lock.open
                     +Delay(TRANSFER_DELAY)
                     +Bucket.Lock.close
                     +Lift.Swivel.toHigh
-                    +Lift.Pivot.toPosition(shippingHubPosition)
-                    +parallel {
-                        +Lift.Extender.fullExtend
-                        +sequential {
-                            +Delay(EXTEND_ROTATE_BUCKET_DELAY)
-                            +Bucket.Rotator.score
+                    +Intake.Spinner.stop
+                    +sequential {
+                        +Lift.Pivot.toPosition(shippingHubPosition)
+                        +parallel {
+                            +Lift.Extender.fullExtend
+                            +sequential {
+                                +Delay(EXTEND_ROTATE_BUCKET_DELAY)
+                                +Bucket.Rotator.score
+                            }
                         }
                     }
                 }
@@ -98,12 +109,21 @@ object FrankieRoutines {
             +Bucket.Lock.open
             +Delay(OPEN_LOCK_DELAY)
             +parallel {
-                +Lift.Pivot.toAngle(0.0)
-                +Lift.Swivel.ToCollectCareful()
                 +Lift.Extender.retract
-                +Intake.Extender.extend
                 +Bucket.Rotator.collect
-                +MecanumDrive.followTrajectory(TrajectoryFactory.outsideWarehouseToInsideWarehouse)
+                //+Intake.Spinner.idle
+                +Intake.Extender.extend
+                +Bucket.Lock.close
+                +Intake.Lock.close
+            }
+            +Lift.Swivel.idle
+            +Lift.Pivot.toAngle(0.0)
+            +Lift.Swivel.toCollect
+            +parallel {
+                +Bucket.Lock.collect
+                +Lift.Extender.collect
+                +Intake.Extender.partialExtend
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToInsideWarehouse)
             }
         }
 

@@ -64,6 +64,8 @@ object Controls {
         gamepad1.y.pressed.command = { Intake.Lock.close }
         gamepad1.rightTrigger.pressed.command = { Intake.Spinner.start }
         gamepad1.rightTrigger.released.command = { Intake.Spinner.stop }
+        gamepad1.leftBumper.pressed.command = { Intake.Spinner.idle }
+        gamepad1.leftBumper.released.command = { Intake.Spinner.stop }
         //gamepad1.leftBumper.pressed.command = { Intake.Rotator.down }
         //gamepad1.rightBumper.pressed.command = { Intake.Pushthrough.push }
         //gamepad1.rightBumper.released.command = { Intake.Pushthrough.idle }
