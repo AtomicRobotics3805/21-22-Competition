@@ -40,7 +40,7 @@ object FrankieRoutines {
                 +Bucket.Lock.close
                 +Intake.Lock.close
             }
-            +Lift.Swivel.toPreloadPosition
+            +Lift.Swivel.ToPreloadPosition()
             +parallel {
                 +sequential {
                     +Lift.Pivot.toPosition(shippingHubPosition)

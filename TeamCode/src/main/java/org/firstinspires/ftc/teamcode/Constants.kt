@@ -10,9 +10,16 @@ object Constants {
         BLUE,
         RED
     }
+    enum class ObjectPosition {
+        LEFT,
+        MIDDLE,
+        RIGHT
+    }
 
     var color = Color.BLUE
     val drive = MecanumDrive
     var startPose = Pose2d()
+    var objectPosition = ObjectPosition.RIGHT
+
     lateinit var opMode: OpMode
 }

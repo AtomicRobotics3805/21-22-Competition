@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms
 import com.acmerobotics.dashboard.config.Config
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.qualcomm.robotcore.hardware.*
+import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
@@ -245,23 +246,6 @@ object Lift {
                 swivelMotor.targetPosition = swivelMotor.currentPosition
                 swivelMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
             })
-        val toPreloadPosition: AtomicCommand
-            get() = sequential {
-                +CustomCommand(
-                    getDone = { !swivelMotor.isBusy },
-                    _start = {
-                        when (ObjectDetectionMB1220.position) {
-                            ObjectDetectionMB1220.Position.LEFT -> swivelMotor.targetPosition =
-                                LOW_POSITION
-                            ObjectDetectionMB1220.Position.MIDDLE -> swivelMotor.targetPosition =
-                                MIDDLE_POSITION
-                            else -> swivelMotor.targetPosition = HIGH_POSITION
-                        }
-                        swivelMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
-                        swivelMotor.power = SWIVEL_SPEED
-                    })
-                +idle
-            }
         val toCollect: AtomicCommand
             get() = sequential {
                 +MotorToPosition(swivelMotor, COLLECT_POSITION, SWIVEL_SPEED)
@@ -277,6 +261,16 @@ object Lift {
 
         override fun periodic() {
 
+        }
+
+        class ToPreloadPosition :
+            MotorToPosition(swivelMotor, HIGH_POSITION, SWIVEL_SPEED) {
+            override fun start() {
+                position = if (Constants.objectPosition == Constants.ObjectPosition.LEFT) LOW_POSITION
+                else if (Constants.objectPosition == Constants.ObjectPosition.MIDDLE) MIDDLE_POSITION
+                else HIGH_POSITION
+                super.start()
+            }
         }
 
         class ToCollectCareful :
