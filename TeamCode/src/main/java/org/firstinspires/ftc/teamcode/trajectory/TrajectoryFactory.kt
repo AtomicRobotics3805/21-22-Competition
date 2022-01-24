@@ -71,13 +71,13 @@ object TrajectoryFactory {
 
     fun initializeTrioTrajectories() {
         startToInsideWarehouse = MecanumDrive.trajectoryBuilder(outsideWarehouseStartPose, 0.0.toRadians)
-            .lineToConstantHeading(Vector2d(38.0, 67.0))
+            .lineToConstantHeading(Vector2d(38.0, 66.0))
             .build()
         insideWarehouseToOutsideWarehouse = MecanumDrive.trajectoryBuilder(startToInsideWarehouse.trajectory.end() - Pose2d(0.0, 1.5, 0.0), 0.0.toRadians)
-            .lineToConstantHeading(Vector2d(12.0, 67.0))
+            .lineToConstantHeading(Vector2d(12.0, 66.0))
             .build()
         outsideWarehouseToInsideWarehouse = MecanumDrive.trajectoryBuilder(insideWarehouseToOutsideWarehouse.trajectory.end() - Pose2d(0.0, 1.5, 0.0), 0.0.toRadians)
-            .lineToConstantHeading(Vector2d(38.0, 67.0))
+            .lineToConstantHeading(Vector2d(38.0, 66.0))
             .build()
 
         testTrajectory = MecanumDrive.trajectoryBuilder(Pose2d(), 90.0.toRadians)

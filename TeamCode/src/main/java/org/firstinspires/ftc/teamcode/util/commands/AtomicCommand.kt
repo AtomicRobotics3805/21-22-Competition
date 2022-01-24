@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.util.commands
 
 import org.firstinspires.ftc.teamcode.Constants.opMode
+import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 import org.firstinspires.ftc.teamcode.util.isStopRequested
 
@@ -13,6 +14,12 @@ abstract class AtomicCommand {
     var isStarted = false
 
     open val requirements = mutableSetOf<Subsystem>()
+
+    val i: AtomicCommand
+        get() {
+            isDone = true
+            return this
+        }
 
     // exercise is healthy
     fun run() {

@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 @SuppressWarnings("unused")
 class Delay(private val time: Double): AtomicCommand() {
     override val _isDone: Boolean
-        get() = timer.seconds() > time
+        get() = timer.seconds() > time || time == 0.0
 
     private val timer = ElapsedTime()
 

@@ -166,7 +166,7 @@ object Intake {
         @JvmField
         var SPINNER_INTAKING_SPEED = 1.0
         @JvmField
-        var SPINNER_IDLE_SPEED = 0.8
+        var SPINNER_IDLE_SPEED = 0.75
         @JvmField
         var SPINNER_DIRECTION = DcMotorSimple.Direction.FORWARD
         @JvmField

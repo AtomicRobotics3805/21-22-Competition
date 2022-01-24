@@ -1,8 +1,10 @@
 package org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms
 
 import com.acmerobotics.dashboard.config.Config
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import com.acmerobotics.roadrunner.geometry.Vector2d
 import com.qualcomm.robotcore.hardware.*
+import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.Constants.opMode
 import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
@@ -33,13 +35,16 @@ object Lift {
         var EXTENDER_NAME = "armExtend"
 
         @JvmField
-        var FULL_EXTENSION_DISTANCE = 31.0
+        var FULL_EXTENSION_DISTANCE = 30.5
 
         @JvmField
-        var COLLECT_DISTANCE = 4.5
+        var OPEN_LATCH_DISTANCE = 25.0
 
         @JvmField
-        var EXTENDER_SPEED = 0.7
+        var COLLECT_DISTANCE = 4.3
+
+        @JvmField
+        var EXTENDER_SPEED = 1.0
 
         @JvmField
         var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
@@ -73,6 +78,8 @@ object Lift {
                 +ToPosition(FULL_EXTENSION_DISTANCE, true)
                 +idle
             }
+        val extendOpenLatchDelay: AtomicCommand
+            get() = WaitUntil { extensionMotor.currentPosition >= OPEN_LATCH_DISTANCE * EXTENDER_TICKS_PER_INCH }
         val retractAtStart: AtomicCommand
             get() = sequential {
                 +ToPosition(0.0, minError = 3, kP = 0.08, time = 1.5)
@@ -179,15 +186,15 @@ object Lift {
         var ACCEPTABLE_PIVOT_ANGLE = 5.0
 
         @JvmField
-        var ACCEPTABLE_HEIGHT = 90
+        var ACCEPTABLE_HEIGHT = 50
 
         @JvmField
-        var COLLECT_HEIGHT = 22
+        var COLLECT_HEIGHT = 20
 
 
         private const val SWIVEL_GEAR_RATIO = 6.0
         private const val SWIVEL_TICKS_PER_REV: Double = 28 * 57.6
-        private val SWIVEL_TICKS_PER_DEGREE: Double =
+        val SWIVEL_TICKS_PER_DEGREE: Double =
             SWIVEL_TICKS_PER_REV * SWIVEL_GEAR_RATIO / 360.0
         private val LOW_POSITION: Int
             get() = round(SWIVEL_TICKS_PER_DEGREE * (LOW_DEGREES - START_DEGREES)).toInt()
@@ -236,6 +243,16 @@ object Lift {
                 +MotorToPosition(swivelMotor, UP_SLIGHTLY_POSITION, SWIVEL_SPEED)
                 +idle
             }
+        val toPreloadPosition: AtomicCommand
+            get() = sequential {
+                +ToPreloadPosition()
+                +idle
+            }
+        val toPivotHeight: AtomicCommand
+            get() = sequential {
+                +MotorToPosition(swivelMotor, ACCEPTABLE_HEIGHT_TICKS, SWIVEL_SPEED)
+                +idle
+            }
         val manualUp: AtomicCommand
             get() = powerSwivel(SWIVEL_SPEED)
         val manualDown: AtomicCommand
@@ -251,7 +268,9 @@ object Lift {
                 +MotorToPosition(swivelMotor, COLLECT_POSITION, SWIVEL_SPEED)
                 +idle
             }
-        val pivotHeightDelay: AtomicCommand
+        val downPivotHeightDelay: AtomicCommand
+            get() = WaitUntil { swivelMotor.currentPosition <= ACCEPTABLE_HEIGHT_TICKS }
+        val upPivotHeightDelay: AtomicCommand
             get() = WaitUntil { swivelMotor.currentPosition >= ACCEPTABLE_HEIGHT_TICKS }
 
         fun powerSwivel(power: Double) = CustomCommand(_start = {
@@ -330,31 +349,18 @@ object Lift {
             liftPivotMotor.power = power
         })
 
-        fun toAngle(angle: Double): AtomicCommand = CustomCommand(
-            getDone = { !liftPivotMotor.isBusy }, _start = {
-                liftPivotMotor.targetPosition = round(PIVOT_TICKS_PER_DEGREE * angle).toInt()
-                liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
-                liftPivotMotor.power = PIVOT_SPEED
-                if (angle == 0.0) {
-                    liftPivotMotor.setVelocityPIDFCoefficients(13.0, 0.3, 0.0, 0.0)
-                    liftPivotMotor.setPositionPIDFCoefficients(12.0)
-                }
-                else {
-                    liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
-                    liftPivotMotor.setPositionPIDFCoefficients(23.0)
-                }
-            })
+        fun toAngle(angle: Double): AtomicCommand = ToAngle(angle)
 
         /*MotorToPosition(
             liftPivotMotor,
             round(PIVOT_TICKS_PER_DEGREE * angle).toInt(),
             PIVOT_SPEED
         )*/
-        fun toPosition(position: Vector2d): AtomicCommand =
+        fun toPosition(position: Vector2d, robotPosition: Pose2d = MecanumDrive.poseEstimate): AtomicCommand =
             toAngle(
                 numberToAngle(
                     ((
-                            position angleBetween (MecanumDrive.poseEstimate.vec() + RELATIVE_POSITION))
+                            position angleBetween (robotPosition.vec() + RELATIVE_POSITION))
                             - MecanumDrive.poseEstimate.heading).toDegrees + 90.0
                 )
             )
@@ -364,6 +370,28 @@ object Lift {
             while (angle > 180) angle -= 360
             while (angle <= -180) angle += 360
             return angle
+        }
+
+        class ToAngle(val angle: Double, val timeout: Double = 1.5): AtomicCommand() {
+
+            override val _isDone: Boolean
+                get() = !liftPivotMotor.isBusy || timer.seconds() >= timeout
+
+            val timer = ElapsedTime()
+
+            override fun start() {
+                timer.reset()
+                liftPivotMotor.targetPosition = round(PIVOT_TICKS_PER_DEGREE * angle).toInt()
+                liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
+                liftPivotMotor.power = PIVOT_SPEED
+                if (angle == 0.0) {
+                    liftPivotMotor.setVelocityPIDFCoefficients(10.0, 0.3, 0.0, 0.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(11.0)
+                } else {
+                    liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(25.0)
+                }
+            }
         }
     }
 
