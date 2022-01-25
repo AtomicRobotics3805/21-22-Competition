@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
 @Config
 object Carousel : Subsystem {
     @JvmField
-    var CAROUSEL_NAME = "carousel"
+    var CAROUSEL_NAME = "carouselServo"
 
     @JvmField
     var CAROUSEL_DIRECTION = DcMotorSimple.Direction.REVERSE

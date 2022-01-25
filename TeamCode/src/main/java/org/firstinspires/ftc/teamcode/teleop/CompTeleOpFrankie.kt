@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Intake
 import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
+import org.firstinspires.ftc.teamcode.util.commands.other.TelemetryCommand
 
 @Suppress("unused")
 @TeleOp(name = "Competition Frankie TeleOp")
@@ -21,9 +22,12 @@ class CompTeleOpFrankie: LinearOpMode() {
         Bucket.initialize()
         Intake.initialize()
         Lift.initialize()
+        Carousel.initialize()
         TrajectoryFactory.initializeStartPositions()
         Controls.registerGamepads()
         CommandScheduler.cancelAll()
+
+        Lift.Extender.STARTING_DISTANCE = Lift.Extender.COLLECT_DISTANCE
 
         waitForStart()
 
@@ -31,6 +35,7 @@ class CompTeleOpFrankie: LinearOpMode() {
 
         while (opModeIsActive()) {
             CommandScheduler.run()
+            telemetry.update()
         }
     }
 }

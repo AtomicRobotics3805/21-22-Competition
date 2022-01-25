@@ -30,12 +30,12 @@ object Controls {
         CommandScheduler.commandsToSchedule += MecanumDrive.driverControlled(opMode.gamepad1)
 
         gamepad1.a.pressed.command = { MecanumDrive.switchSpeed }
-        gamepad1.b.pressed.command = { FrankieRoutines.collectAtStartTeleOpRoutine }
+        gamepad1.b.pressed.command = { FrankieRoutines.resetToCollectTeleOpRoutine }
         gamepad1.x.pressed.command = { FrankieRoutines.dropAndCollectTeleOpRoutine }
         gamepad1.y.pressed.command = { FrankieRoutines.transferMoveLiftTeleOpRoutine }
 
         gamepad2.a.pressed.command = { FrankieRoutines.moveLiftTeamHub }
-        gamepad2.b.pressed.command = { FrankieRoutines.collectAtStartTeleOpRoutine }
+        gamepad2.b.pressed.command = { FrankieRoutines.resetToCollectTeleOpRoutine }
         gamepad2.x.pressed.command = { FrankieRoutines.dropAndCollectTeleOpRoutine }
         gamepad2.y.pressed.command = { Bucket.Rotator.switch }
         gamepad2.leftBumper.pressed.command = { Lift.Extender.switch }

@@ -107,7 +107,7 @@ object Intake {
             get() = if (extended) retract else extend
 
         fun extendTrigger(trigger: CustomGamepad.Trigger): AtomicCommand {
-            return CustomCommand(_done = { trigger.released }, _execute = {
+            return CustomCommand(getDone = { trigger.released }, _execute = {
                 leftExtensionServo.position = RETRACTED_POSITION_LEFT + (EXTENDED_POSITION_LEFT -
                         RETRACTED_POSITION_LEFT) * trigger.amount
                 rightExtensionServo.position = RETRACTED_POSITION_RIGHT + (EXTENDED_POSITION_RIGHT -

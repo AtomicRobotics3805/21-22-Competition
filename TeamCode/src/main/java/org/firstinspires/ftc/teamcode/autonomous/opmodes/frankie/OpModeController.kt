@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 object OpModeController {
     fun initialize() {
         Bucket.initialize()
-        //Carousel.initialize()
+        Carousel.initialize()
         Intake.initialize()
         Lift.initialize()
         //ObjectDetectionMB1220.initialize()

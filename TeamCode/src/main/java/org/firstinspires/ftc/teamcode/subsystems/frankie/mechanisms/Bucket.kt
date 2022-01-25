@@ -30,7 +30,7 @@ object Bucket {
         @JvmField
         var SCORE_POSITION = 0.3
         @JvmField
-        var COLLECT_POSITION = 0.4
+        var COLLECT_POSITION = 0.45
         @JvmField
         var LOCK_POSITION = 0.65
 
@@ -72,7 +72,7 @@ object Bucket {
         @JvmField
         var SCORE_POSITION = 0.5
         @JvmField
-        var COLLECT_POSITION = 0.0
+        var COLLECT_POSITION = 0.05
 
         val score: AtomicCommand
             get() = moveServo(SCORE_POSITION, Position.SCORE)

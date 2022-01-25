@@ -25,7 +25,7 @@ object FrankieRoutines {
     @JvmField
     var EXTEND_INTAKE_RETRACT_LIFT_DELAY = 0.3
     @JvmField
-    var OPEN_LOCK_DELAY = 0.0
+    var OPEN_LOCK_DELAY = 1.0
     @JvmField
     var CLOSE_LOCK_DELAY = 0.3
     @JvmField
@@ -170,11 +170,10 @@ object FrankieRoutines {
 
     val moveLiftTeamHub: AtomicCommand
         get() = sequential {
-            +Intake.Spinner.idle
+            +Lift.Extender.idle
             +Bucket.Lock.close
             +Lift.Swivel.toHigh
-            +setTeleOpPosition
-            +Lift.Pivot.toPosition(shippingHubPosition)
+            +Lift.Pivot.toPosition(shippingHubPosition, teleOpAutomaticDepositPosition)
             +parallel {
                 +Lift.Extender.fullExtend
                 +sequential {
@@ -184,10 +183,14 @@ object FrankieRoutines {
             }
         }
 
-    val collectAtStartTeleOpRoutine: AtomicCommand
+    val resetToCollectTeleOpRoutine: AtomicCommand
         get() = sequential {
-            +Lift.Extender.collect
+            if (Lift.Extender.extensionMotor.currentPosition > Lift.Extender.COLLECT_DISTANCE *
+                Lift.Extender.EXTENDER_TICKS_PER_INCH) +Lift.Extender.retract
+            +Lift.Pivot.toAngle(0.0)
+            +Lift.Swivel.toCollect
             +parallel {
+                +Lift.Extender.collect
                 +Intake.Lock.close
                 +Bucket.Lock.collect
                 +Bucket.Rotator.collect
@@ -199,11 +202,11 @@ object FrankieRoutines {
             +Bucket.Lock.open
             +Delay(OPEN_LOCK_DELAY)
             +Lift.Extender.retract
+            +Bucket.Lock.collect.i
             +Lift.Pivot.toAngle(0.0)
             +parallel {
                 +Lift.Swivel.toCollect
                 +Intake.Lock.close
-                +Bucket.Lock.collect
                 +Bucket.Rotator.collect
             }
             +Lift.Extender.collect

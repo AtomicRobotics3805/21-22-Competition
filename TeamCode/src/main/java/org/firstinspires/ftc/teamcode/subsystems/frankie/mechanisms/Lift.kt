@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.hardware.*
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.Constants.opMode
-import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.delays.WaitUntil
@@ -50,7 +49,7 @@ object Lift {
         var EXTENDER_DIRECTION = DcMotorSimple.Direction.REVERSE
 
         @JvmField
-        var startingDistance = 3.5
+        var STARTING_DISTANCE = 3.5
 
         private const val PULLEY_DIAMETER = 1.25
         private const val PULLEY_CIRCUMFERENCE: Double = PULLEY_DIAMETER * PI
@@ -123,7 +122,7 @@ object Lift {
             time: Double = 5.0
         ) : MotorToPosition(
             extensionMotor, round(
-                EXTENDER_TICKS_PER_INCH * (distance - startingDistance)
+                EXTENDER_TICKS_PER_INCH * (distance - STARTING_DISTANCE)
             ).toInt(), overrideSpeed, minError, kP, time = time
         ) {
             override val _isDone: Boolean
