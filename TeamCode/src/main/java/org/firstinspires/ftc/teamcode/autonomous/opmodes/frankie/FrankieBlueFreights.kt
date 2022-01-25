@@ -28,6 +28,8 @@ class FrankieBlueFreights : LinearOpMode() {
             telemetry.addData("Tolerance", Lift.Pivot.liftPivotMotor.targetPositionTolerance)
             telemetry.update()
         }
+
+        Lift.saveOffsets()
     }
 
 }

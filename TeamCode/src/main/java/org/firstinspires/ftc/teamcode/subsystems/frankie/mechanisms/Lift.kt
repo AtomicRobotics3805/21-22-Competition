@@ -22,10 +22,16 @@ import kotlin.math.round
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 @Config
 object Lift {
-    fun initialize() {
-        Extender.initialize()
-        Swivel.initialize()
-        Pivot.initialize()
+    fun initialize(resetPosition: Boolean = true) {
+        Extender.initialize(resetPosition)
+        Swivel.initialize(resetPosition)
+        Pivot.initialize(resetPosition)
+    }
+
+    fun saveOffsets() {
+        Extender.saveOffset()
+        Swivel.saveOffset()
+        Pivot.saveOffset()
     }
 
     @Config
@@ -60,11 +66,14 @@ object Lift {
         lateinit var extensionMotor: DcMotorEx
         private var fullExtended = false
 
-        fun initialize() {
+        var positionOffset = 0
+
+        fun initialize(resetPosition: Boolean = true) {
             extensionMotor = opMode.hardwareMap.get(DcMotorEx::class.java, EXTENDER_NAME)
             extensionMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             extensionMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             extensionMotor.direction = EXTENDER_DIRECTION
+            if (resetPosition) positionOffset = 0
         }
 
         val fullExtend: AtomicCommand
@@ -78,7 +87,7 @@ object Lift {
                 +idle
             }
         val extendOpenLatchDelay: AtomicCommand
-            get() = WaitUntil { extensionMotor.currentPosition >= OPEN_LATCH_DISTANCE * EXTENDER_TICKS_PER_INCH }
+            get() = WaitUntil { extensionMotor.currentPosition + positionOffset >= OPEN_LATCH_DISTANCE * EXTENDER_TICKS_PER_INCH }
         val retractAtStart: AtomicCommand
             get() = sequential {
                 +ToPosition(0.0, minError = 3, kP = 0.08, time = 1.5)
@@ -122,7 +131,7 @@ object Lift {
             time: Double = 5.0
         ) : MotorToPosition(
             extensionMotor, round(
-                EXTENDER_TICKS_PER_INCH * (distance - STARTING_DISTANCE)
+                EXTENDER_TICKS_PER_INCH * (distance - STARTING_DISTANCE) + positionOffset
             ).toInt(), overrideSpeed, minError, kP, time = time
         ) {
             override val _isDone: Boolean
@@ -152,6 +161,10 @@ object Lift {
                     isDone = true
                 }
             }
+        }
+
+        fun saveOffset() {
+            positionOffset = -extensionMotor.currentPosition
         }
     }
 
@@ -208,38 +221,41 @@ object Lift {
         private val UP_SLIGHTLY_POSITION: Int
             get() = round(SWIVEL_TICKS_PER_DEGREE * (UP_SLIGHTLY_DEGREES - START_DEGREES)).toInt()
 
+        var positionOffset = 0
+
         lateinit var swivelMotor: DcMotor
 
-        fun initialize() {
+        fun initialize(resetPosition: Boolean = true) {
             swivelMotor = opMode.hardwareMap.get(DcMotor::class.java, SWIVEL_NAME)
             swivelMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             swivelMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
             swivelMotor.direction = SWIVEL_DIRECTION
+            if (resetPosition) positionOffset = 0
         }
 
         val toStart: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, 0, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, 0 + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val toLow: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, LOW_POSITION, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, LOW_POSITION + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val toMiddle: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, MIDDLE_POSITION, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, MIDDLE_POSITION + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val toHigh: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, HIGH_POSITION, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, HIGH_POSITION + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val upSlightly: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, UP_SLIGHTLY_POSITION, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, UP_SLIGHTLY_POSITION + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val toPreloadPosition: AtomicCommand
@@ -249,7 +265,7 @@ object Lift {
             }
         val toPivotHeight: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, ACCEPTABLE_HEIGHT_TICKS, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, ACCEPTABLE_HEIGHT_TICKS + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val manualUp: AtomicCommand
@@ -264,13 +280,13 @@ object Lift {
             })
         val toCollect: AtomicCommand
             get() = sequential {
-                +MotorToPosition(swivelMotor, COLLECT_POSITION, SWIVEL_SPEED)
+                +MotorToPosition(swivelMotor, COLLECT_POSITION + positionOffset, SWIVEL_SPEED)
                 +idle
             }
         val downPivotHeightDelay: AtomicCommand
-            get() = WaitUntil { swivelMotor.currentPosition <= ACCEPTABLE_HEIGHT_TICKS }
+            get() = WaitUntil { swivelMotor.currentPosition + positionOffset <= ACCEPTABLE_HEIGHT_TICKS }
         val upPivotHeightDelay: AtomicCommand
-            get() = WaitUntil { swivelMotor.currentPosition >= ACCEPTABLE_HEIGHT_TICKS }
+            get() = WaitUntil { swivelMotor.currentPosition + positionOffset >= ACCEPTABLE_HEIGHT_TICKS }
 
         fun powerSwivel(power: Double) = CustomCommand(_start = {
             swivelMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -282,28 +298,32 @@ object Lift {
         }
 
         class ToPreloadPosition :
-            MotorToPosition(swivelMotor, HIGH_POSITION, SWIVEL_SPEED) {
+            MotorToPosition(swivelMotor, HIGH_POSITION + positionOffset, SWIVEL_SPEED) {
             override fun start() {
-                position = if (Constants.objectPosition == Constants.ObjectPosition.LEFT) LOW_POSITION
-                else if (Constants.objectPosition == Constants.ObjectPosition.MIDDLE) MIDDLE_POSITION
-                else HIGH_POSITION
+                position = if (Constants.objectPosition == Constants.ObjectPosition.LEFT) LOW_POSITION + positionOffset
+                else if (Constants.objectPosition == Constants.ObjectPosition.MIDDLE) MIDDLE_POSITION + positionOffset
+                else HIGH_POSITION + positionOffset
                 super.start()
             }
         }
 
         class ToCollectCareful :
-            MotorToPosition(swivelMotor, ACCEPTABLE_HEIGHT_TICKS, SWIVEL_SPEED) {
+            MotorToPosition(swivelMotor, ACCEPTABLE_HEIGHT_TICKS + positionOffset, SWIVEL_SPEED) {
             override fun execute() {
                 position = if (abs(Pivot.angle) > ACCEPTABLE_PIVOT_ANGLE)
                     0
-                else ACCEPTABLE_HEIGHT_TICKS
+                else ACCEPTABLE_HEIGHT_TICKS + positionOffset
                 super.execute()
             }
+        }
+
+        fun saveOffset() {
+            positionOffset = -swivelMotor.currentPosition
         }
     }
 
     @Config
-    object Pivot {
+    object Pivot : Subsystem {
         @JvmField
         var PIVOT_NAME = "armPivot"
         @JvmField
@@ -318,9 +338,11 @@ object Lift {
         private const val PIVOT_TICKS_PER_DEGREE: Double =
             PIVOT_TICKS_PER_REV * PIVOT_GEAR_RATIO / 360.0
 
+        var positionOffset = 0
+
         lateinit var liftPivotMotor: DcMotorEx
 
-        fun initialize() {
+        fun initialize(resetPosition: Boolean = true) {
             liftPivotMotor = opMode.hardwareMap.get(DcMotorEx::class.java, PIVOT_NAME)
             liftPivotMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             liftPivotMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
@@ -328,6 +350,7 @@ object Lift {
             liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
             liftPivotMotor.setPositionPIDFCoefficients(23.0)
             liftPivotMotor.targetPositionTolerance = 1
+            if (resetPosition) positionOffset = 0
         }
 
         val angle: Double
@@ -380,7 +403,7 @@ object Lift {
 
             override fun start() {
                 timer.reset()
-                liftPivotMotor.targetPosition = round(PIVOT_TICKS_PER_DEGREE * angle).toInt()
+                liftPivotMotor.targetPosition = round(PIVOT_TICKS_PER_DEGREE * angle).toInt() + positionOffset
                 liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
                 liftPivotMotor.power = PIVOT_SPEED
                 if (angle == 0.0) {
@@ -391,6 +414,10 @@ object Lift {
                     liftPivotMotor.setPositionPIDFCoefficients(25.0)
                 }
             }
+        }
+
+        fun saveOffset() {
+            positionOffset = -liftPivotMotor.currentPosition
         }
     }
 

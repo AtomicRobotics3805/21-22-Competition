@@ -21,7 +21,7 @@ class CompTeleOpFrankie: LinearOpMode() {
         MecanumDrive.initialize()
         Bucket.initialize()
         Intake.initialize()
-        Lift.initialize()
+        Lift.initialize(resetPosition = false)
         Carousel.initialize()
         TrajectoryFactory.initializeStartPositions()
         Controls.registerGamepads()
