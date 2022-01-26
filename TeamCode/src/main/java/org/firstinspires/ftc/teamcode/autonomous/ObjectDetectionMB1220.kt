@@ -37,7 +37,7 @@ object ObjectDetectionMB1220 {
 
     class DetectCommand : AtomicCommand() {
         override val _isDone: Boolean
-            get() = position != Position.UNKNOWN
+        get() = Constants.opMode.isStarted //position != Position.UNKNOWN
 
         private var triedRight = false
         private val timer = ElapsedTime()

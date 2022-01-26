@@ -36,8 +36,8 @@ class CustomGamepad(private val gamepad: Gamepad) {
             leftBumper, rightBumper, leftTrigger, rightTrigger, leftStick, rightStick)
 
     fun update(gamepad: Gamepad = this.gamepad) {
-        a.update(gamepad.a)
-        b.update(gamepad.b)
+        a.update(gamepad.a && !gamepad.start)
+        b.update(gamepad.b && !gamepad.start)
         x.update(gamepad.x)
         y.update(gamepad.y)
 

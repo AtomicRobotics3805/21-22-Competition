@@ -41,12 +41,12 @@ object Lift {
 
         @JvmField
         var FULL_EXTENSION_DISTANCE = 30.5
-
         @JvmField
         var OPEN_LATCH_DISTANCE = 25.0
-
         @JvmField
         var COLLECT_DISTANCE = 4.3
+        @JvmField
+        var MOSTLY_RETRACTED_DISTANCE = 1.0
 
         @JvmField
         var EXTENDER_SPEED = 1.0
@@ -96,6 +96,11 @@ object Lift {
         val retract: AtomicCommand
             get() = sequential {
                 +ToPosition(0.0, _fullExtended = false, overrideSpeed = 1.0)
+                +idle
+            }
+        val mostlyRetract: AtomicCommand
+            get() = sequential {
+                +ToPosition(MOSTLY_RETRACTED_DISTANCE)
                 +idle
             }
         val collect: AtomicCommand
@@ -181,25 +186,18 @@ object Lift {
 
         @JvmField
         var START_DEGREES = 20
-
         @JvmField
         var UP_SLIGHTLY_DEGREES = 75
-
         @JvmField
         var LOW_DEGREES = 86
-
         @JvmField
         var MIDDLE_DEGREES = 93
-
         @JvmField
         var HIGH_DEGREES = 98
-
         @JvmField
         var ACCEPTABLE_PIVOT_ANGLE = 5.0
-
         @JvmField
-        var ACCEPTABLE_HEIGHT = 50
-
+        var ACCEPTABLE_HEIGHT = 60
         @JvmField
         var COLLECT_HEIGHT = 20
 
@@ -327,7 +325,7 @@ object Lift {
         @JvmField
         var PIVOT_NAME = "armPivot"
         @JvmField
-        var PIVOT_SPEED = 1.0
+        var PIVOT_SPEED = 0.7
         @JvmField
         var PIVOT_DIRECTION = DcMotorSimple.Direction.FORWARD
         @JvmField
@@ -346,10 +344,11 @@ object Lift {
             liftPivotMotor = opMode.hardwareMap.get(DcMotorEx::class.java, PIVOT_NAME)
             liftPivotMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
             liftPivotMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+            liftPivotMotor.zeroPowerBehavior = DcMotor.ZeroPowerBehavior.BRAKE
             liftPivotMotor.direction = PIVOT_DIRECTION
             liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
             liftPivotMotor.setPositionPIDFCoefficients(23.0)
-            liftPivotMotor.targetPositionTolerance = 1
+            liftPivotMotor.targetPositionTolerance = 10
             if (resetPosition) positionOffset = 0
         }
 
@@ -371,7 +370,15 @@ object Lift {
             liftPivotMotor.power = power
         })
 
-        fun toAngle(angle: Double): AtomicCommand = ToAngle(angle)
+        fun toAngle(angle: Double): AtomicCommand = sequential {
+            +MotorToPosition(
+                position = round(PIVOT_TICKS_PER_DEGREE * angle).toInt() + positionOffset,
+                motor = liftPivotMotor,
+                speed = PIVOT_SPEED,
+                minError = 5,
+                kP = if (angle == 0.0) 0.001 else 0.005)
+            +idle
+        }
 
         /*MotorToPosition(
             liftPivotMotor,
@@ -394,7 +401,7 @@ object Lift {
             return angle
         }
 
-        class ToAngle(val angle: Double, val timeout: Double = 1.5): AtomicCommand() {
+        /*class ToAngle(val angle: Double, val timeout: Double = 5.0): AtomicCommand() {
 
             override val _isDone: Boolean
                 get() = !liftPivotMotor.isBusy || timer.seconds() >= timeout
@@ -407,14 +414,21 @@ object Lift {
                 liftPivotMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
                 liftPivotMotor.power = PIVOT_SPEED
                 if (angle == 0.0) {
-                    liftPivotMotor.setVelocityPIDFCoefficients(10.0, 0.3, 0.0, 0.0)
-                    liftPivotMotor.setPositionPIDFCoefficients(11.0)
+                    liftPivotMotor.setVelocityPIDFCoefficients(7.0, 0.3, 1.0, 0.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(3.0)
                 } else {
                     liftPivotMotor.setVelocityPIDFCoefficients(14.0, 0.6, 1.0, 0.0)
-                    liftPivotMotor.setPositionPIDFCoefficients(25.0)
+                    liftPivotMotor.setPositionPIDFCoefficients(8.0)
                 }
             }
-        }
+
+            override fun execute() {
+                opMode.telemetry.addData("Target Angle", angle)
+                opMode.telemetry.addData("Offset", positionOffset)
+                opMode.telemetry.addData("Target Position", liftPivotMotor.targetPosition)
+                opMode.telemetry.addData("Current Position", liftPivotMotor.currentPosition)
+            }
+        }*/
 
         fun saveOffset() {
             positionOffset = -liftPivotMotor.currentPosition

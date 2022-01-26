@@ -52,7 +52,7 @@ object Bucket {
         }
 
         fun moveServo(position: Double, state: Position) =
-            /*Timed*/CustomCommand(/*time = abs(position - latchServo.position),*/
+            CustomCommand(
                 _start = {
                     lockServo.position = position
                     this.position = state

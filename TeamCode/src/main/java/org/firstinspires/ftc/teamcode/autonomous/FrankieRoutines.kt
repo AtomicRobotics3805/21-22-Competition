@@ -34,6 +34,8 @@ object FrankieRoutines {
     var REVERSE_DELAY = .14
     @JvmField
     var EXTEND_INTAKE_PIVOT_DELAY = 1.0
+    @JvmField
+    var SWIVEL_TO_PIVOT_HEIGHT_DELAY = 0.5
 
     val noCarouselFreightRoutine: AtomicCommand
         get() = sequential {
@@ -56,14 +58,16 @@ object FrankieRoutines {
                 +sequential {
                     +Lift.Swivel.upPivotHeightDelay
                     +parallel {
-                        +Lift.Pivot.toPosition(shippingHubPosition)
                         +Lift.Extender.fullExtend
                         +sequential {
                             +Delay(EXTEND_ROTATE_BUCKET_DELAY)
                             +Bucket.Rotator.score
                         }
                         +sequential {
-                            +Lift.Extender.extendOpenLatchDelay
+                            +parallel {
+                                +Lift.Extender.extendOpenLatchDelay
+                                +Lift.Pivot.toPosition(shippingHubPosition)
+                            }
                             +Bucket.Lock.open
                         }
                     }
@@ -81,18 +85,18 @@ object FrankieRoutines {
         get() = sequential {
             +parallel {
                 +sequential {
-                    +Intake.Spinner.reverse
+                    //+Intake.Spinner.reverse
                     +Delay(REVERSE_DELAY)
-                    +Intake.Spinner.idle
+                    //+Intake.Spinner.idle
                     +Intake.Extender.retract
-                    +Intake.Spinner.start
+                    //+Intake.Spinner.start
                     +Intake.Lock.open
                     +Delay(TRANSFER_DELAY)
                     +Bucket.Lock.close
                     +parallel {
                         +Lift.Swivel.toHigh
                         +Lift.Extender.retractAtStart
-                        +Intake.Spinner.stop
+                        //+Intake.Spinner.stop
                         +sequential {
                             // extending intake to avoid hitting the bars when the lift pivots
                             +Intake.Extender.extend.i
@@ -126,16 +130,19 @@ object FrankieRoutines {
         get() = parallel {
             +sequential {
                 +parallel {
-                    +Intake.Spinner.idle
+                    //+Intake.Spinner.idle
                     +Intake.Lock.close
                     +Intake.Extender.extend
                     +Bucket.Rotator.collect
                     +Lift.Extender.retract
-                    +Lift.Swivel.toPivotHeight
                     +Lift.Pivot.toAngle(0.0)
                     +sequential {
-                        Delay(CLOSE_LOCK_DELAY)
-                        Bucket.Lock.close
+                        +Delay(CLOSE_LOCK_DELAY)
+                        +Bucket.Lock.close
+                    }
+                    +sequential {
+                        +Delay(SWIVEL_TO_PIVOT_HEIGHT_DELAY)
+                        +Lift.Swivel.toPivotHeight
                     }
                 }
                 +Lift.Swivel.toCollect
@@ -160,11 +167,11 @@ object FrankieRoutines {
             +Lift.Extender.collect
             +parallel {
                 +Intake.Extender.retract
-                +Intake.Spinner.idle
+                //+Intake.Spinner.idle
             }
             +parallel {
                 +Intake.Lock.open
-                +Intake.Spinner.start
+                //+Intake.Spinner.start
             }
         }
 

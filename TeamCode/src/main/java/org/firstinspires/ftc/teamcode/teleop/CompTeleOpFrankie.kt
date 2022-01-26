@@ -27,8 +27,6 @@ class CompTeleOpFrankie: LinearOpMode() {
         Controls.registerGamepads()
         CommandScheduler.cancelAll()
 
-        Lift.Extender.STARTING_DISTANCE = Lift.Extender.COLLECT_DISTANCE
-
         waitForStart()
 
         Controls.registerFrankieCompetitionCommands()

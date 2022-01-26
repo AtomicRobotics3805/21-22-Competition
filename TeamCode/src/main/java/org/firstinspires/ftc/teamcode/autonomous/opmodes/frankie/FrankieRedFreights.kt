@@ -8,11 +8,11 @@ import org.firstinspires.ftc.teamcode.subsystems.frankie.mechanisms.Lift
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory
 import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
-@Autonomous(name="Frankie Blue Freights Auto")
-class FrankieBlueFreights : LinearOpMode() {
+@Autonomous(name="Frankie Red Freights Auto")
+class FrankieRedFreights : LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
-        Constants.color = Constants.Color.BLUE
+        Constants.color = Constants.Color.RED
         TrajectoryFactory.initializeStartPositions()
         Constants.startPose = TrajectoryFactory.outsideWarehouseStartPose
 
