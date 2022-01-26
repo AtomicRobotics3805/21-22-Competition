@@ -38,7 +38,7 @@ object CommandScheduler {
         }
     }
 
-    fun scheduleCommands() {
+    private fun scheduleCommands() {
         for (command in commandsToSchedule)
             try {
                 initCommand(command)
@@ -46,14 +46,14 @@ object CommandScheduler {
         commandsToSchedule.clear()
     }
 
-    fun cancelCommands() {
+    private fun cancelCommands() {
         for (pair in commandsToCancel)
             cancel(pair.key, pair.value)
         commandsToCancel.clear()
     }
 
     @Throws(SubsystemBusyException::class)
-    fun initCommand(command: AtomicCommand) {
+    private fun initCommand(command: AtomicCommand) {
         for (requirement in command.requirements) {
             val conflicts = findCommands({ it.requirements.contains(requirement) }).toMutableList()
             if (conflicts.contains(command)) {
@@ -72,7 +72,7 @@ object CommandScheduler {
         doActions(initActions, command)
     }
 
-    fun cancel(command: AtomicCommand, interrupted: Boolean = false) {
+    private fun cancel(command: AtomicCommand, interrupted: Boolean = false) {
         command.done(interrupted)
         doActions(finishActions, command)
         commands -= command
@@ -108,9 +108,13 @@ object CommandScheduler {
             this.gamepads += gamepad
     }
 
-    fun doActions(actions: List<(AtomicCommand) -> Unit>, command: AtomicCommand) {
+    private fun doActions(actions: List<(AtomicCommand) -> Unit>, command: AtomicCommand) {
         for (action in actions)
             action.invoke(command)
+    }
+
+    fun scheduleCommand(command: AtomicCommand) {
+        commandsToSchedule += command
     }
 
     fun findCommand(check: (AtomicCommand) -> Boolean, list: List<AtomicCommand> = commands) = findCommands(check, list).firstOrNull()

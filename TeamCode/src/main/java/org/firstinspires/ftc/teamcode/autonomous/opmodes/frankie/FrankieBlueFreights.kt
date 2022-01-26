@@ -18,7 +18,7 @@ class FrankieBlueFreights : LinearOpMode() {
 
         OpModeController.initialize()
 
-        CommandScheduler.commandsToSchedule += FrankieRoutines.noCarouselFreightRoutine
+        CommandScheduler.scheduleCommand(FrankieRoutines.noCarouselFreightRoutine)
 
         while (opModeIsActive() && (CommandScheduler.commandsToSchedule.isNotEmpty() || CommandScheduler.commands.isNotEmpty())) {
             CommandScheduler.run()
