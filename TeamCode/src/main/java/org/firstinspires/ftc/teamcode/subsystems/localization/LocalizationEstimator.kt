@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.localization
 
+/*
 import com.acmerobotics.roadrunner.geometry.Pose2d as RoadRunnerPose2d
 import com.acmerobotics.roadrunner.localization.Localizer
 import edu.wpi.first.wpilibj.estimator.ExtendedKalmanFilter
@@ -14,6 +15,12 @@ import edu.wpi.first.wpiutil.math.VecBuilder
 import edu.wpi.first.wpiutil.math.numbers.*
 import java.util.function.BiConsumer
 import java.util.function.BiFunction
+import edu.wpi.first.wpiutil.math.numbers.N1
+
+import edu.wpi.first.wpiutil.math.numbers.N5
+
+
+
 
 
 /**
@@ -22,7 +29,7 @@ import java.util.function.BiFunction
  * This file has been altered to work in Kotlin and with the newest
  * wpilib versions, but the original creator is Spartronics4915
  */
-/*
+
 object LocalizationEstimator : Localizer {
     override var poseEstimate: RoadRunnerPose2d
         get() = TODO("Not yet implemented")
@@ -98,5 +105,18 @@ object LocalizationEstimator : Localizer {
         TODO("Not yet implemented")
     }
 
+    private fun fillStateVector(
+        pose: Pose2d,
+        leftDist: Double,
+        rightDist: Double
+    ): Matrix<N5?, N1?>? {
+        return VecBuilder.fill(
+            pose.translation.x,
+            pose.translation.y,
+            pose.rotation.radians,
+            leftDist,
+            rightDist
+        )
+    }
 }
 */

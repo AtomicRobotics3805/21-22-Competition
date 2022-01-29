@@ -13,6 +13,6 @@ object Constants {
 
     var color = Color.BLUE
     val drive = MecanumDrive
-    lateinit var startPose: Pose2d
+    var startPose = Pose2d()
     lateinit var opMode: OpMode
 }

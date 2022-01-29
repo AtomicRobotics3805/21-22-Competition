@@ -84,8 +84,7 @@ class ParallelCommandGroup: CommandGroup() {
 
     private fun cancel(command: AtomicCommand, interrupted: Boolean) {
         command.done(interrupted)
-        CommandScheduler.doActions(CommandScheduler.finishActions, command)
-        CommandScheduler.commands -= command
+        commands -= command
     }
 
 }
