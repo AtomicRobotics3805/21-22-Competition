@@ -19,9 +19,9 @@ object Arm : Subsystem {
     @JvmField
     var ARM_POSITION_HIGH = 22.0 // in
     @JvmField
-    var ARM_POSITION_MEDIUM = 13.8 // in
+    var ARM_POSITION_MEDIUM = 14.5 // in
     @JvmField
-    var ARM_POSITION_LOW = 9.0 // in
+    var ARM_POSITION_LOW = 11.0 // in
 
     private const val PULLEY_WIDTH = 2.0 // in
     private const val COUNTS_PER_REV = 537.6
@@ -44,12 +44,13 @@ object Arm : Subsystem {
     val stop: AtomicCommand
         get() = halt()
 
-    private lateinit var armMotor: DcMotorEx
+    lateinit var armMotor: DcMotorEx
 
     fun initialize() {
         armMotor = opMode.hardwareMap.get(DcMotorEx::class.java, ARM_NAME)
         armMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
         armMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+
     }
 
     fun halt() = CustomCommand(_start = {

@@ -146,7 +146,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
      */
 
     @JvmField
-    var LATERAL_MULTIPLIER = 1.46
+    var LATERAL_MULTIPLIER = 1.5
 
     @JvmField
     var DRIFT_MULTIPLIER = 1.0

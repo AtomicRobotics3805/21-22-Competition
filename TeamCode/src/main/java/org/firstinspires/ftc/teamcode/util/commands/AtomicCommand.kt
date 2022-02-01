@@ -13,6 +13,11 @@ abstract class AtomicCommand {
     var isStarted = false
 
     open val requirements = mutableSetOf<Subsystem>()
+    val i: AtomicCommand
+        get() {
+            isDone = true
+            return this
+        }
 
     // exercise is healthy
     fun run() {

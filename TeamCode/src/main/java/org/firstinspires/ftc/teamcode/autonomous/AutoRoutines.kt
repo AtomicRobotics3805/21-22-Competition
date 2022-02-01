@@ -122,6 +122,45 @@ object AutoRoutines {
             +MecanumDrive.followTrajectory(TrajectoryFactory.warehouseToParkIn)
             +OdometryServo.resetTranslationalPID
         }
+    val carouselHubBottomDuckStorageUnitRoutine: AtomicCommand
+        get() = sequential {
+            +parallel {
+                +Bucket.up
+                +CapArm.up
+                +OdometryServo.down
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+            }
+            +Carousel.fullRotation
+            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+            +dropFreightRoutineFast
+            +Intake.start
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToDucks)
+            +MecanumDrive.followTrajectory(TrajectoryFactory.ducksToHubBottom)
+            +Intake.stop
+            +dropDuckRoutine
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToStorageUnit)
+        }
+    val carouselHubBottomDuckWarehouseMiddleRoutine: AtomicCommand
+        get() = sequential {
+            +parallel {
+                +Bucket.up
+                +CapArm.up
+                +OdometryServo.down
+                +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+            }
+            +Carousel.fullRotation
+            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+            +dropFreightRoutineFast
+            +Intake.start
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToDucks)
+            +MecanumDrive.followTrajectory(TrajectoryFactory.ducksToHubBottom)
+            +Intake.stop
+            +dropDuckRoutine
+            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToWarehouseMiddle)
+            +OdometryServo.upAutonomous
+            +MecanumDrive.followTrajectory(TrajectoryFactory.warehouseMiddleToPark)
+            +OdometryServo.resetTranslationalPID
+        }
     val carouselHubBottomParkOutRoutine: AtomicCommand
         get() = sequential {
             +parallel {
@@ -154,13 +193,32 @@ object AutoRoutines {
     private val dropFreightRoutine: AtomicCommand
         get() = sequential {
             +Arm.moveArmAutonomous()
-            +Delay(1.0)
             +BucketLock.open
             +Bucket.drop
-            +Delay(1.6)
+            +Delay(1.0)
             +parallel {
                 +Bucket.up
                 +Arm.toStart
             }
+        }
+
+    private val dropFreightRoutineFast: AtomicCommand
+        get() = sequential {
+            +Arm.moveArmAutonomous()
+            +BucketLock.open
+            +Bucket.drop
+            +Delay(1.0)
+            +Bucket.up.i
+            +Arm.toStart.i
+        }
+
+    private val dropDuckRoutine: AtomicCommand
+        get() = sequential {
+            +Arm.toHigh
+            +BucketLock.open
+            +Bucket.drop
+            +Delay(1.0)
+            +Bucket.up.i
+            +Arm.toStart.i
         }
 }

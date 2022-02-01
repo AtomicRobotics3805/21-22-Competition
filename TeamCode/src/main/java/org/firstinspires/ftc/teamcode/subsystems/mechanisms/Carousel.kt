@@ -16,9 +16,9 @@ import kotlin.math.abs
 @Config
 object Carousel : Subsystem {
     @JvmField
-    var CAROUSEL_SLOW_POSITION = 13.0 * Math.PI
+    var CAROUSEL_SLOW_POSITION = 12.5 * Math.PI
     @JvmField
-    var CAROUSEL_FAST_POSITION = 24.0 * Math.PI
+    var CAROUSEL_FAST_POSITION = 20.0 * Math.PI
     @JvmField
     var COUNTS_PER_MOTOR_REV = 537.6
     @JvmField
@@ -35,7 +35,7 @@ object Carousel : Subsystem {
     @JvmField
     var CAROUSEL_DIRECTION = DcMotorSimple.Direction.REVERSE
     @JvmField
-    var CAROUSEL_SLOW_SPEED = 0.4
+    var CAROUSEL_SLOW_SPEED = 0.5
     @JvmField
     var CAROUSEL_FAST_SPEED = 1.0
 

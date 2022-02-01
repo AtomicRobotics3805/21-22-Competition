@@ -17,9 +17,9 @@ object OdometryServo {
     var DEAD_WHEEL_SERVO_NAME = "deadWheelServo"
 
     @JvmField
-    var DOWN_POSITION = 0.5
+    var DOWN_POSITION = 0.6
     @JvmField
-    var UP_POSITION = 0.3
+    var UP_POSITION = 0.2
 
     enum class Position {
         UP,

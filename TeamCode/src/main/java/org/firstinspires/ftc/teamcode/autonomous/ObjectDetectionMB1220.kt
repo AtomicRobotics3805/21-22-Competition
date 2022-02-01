@@ -6,6 +6,8 @@ import com.qualcomm.robotcore.hardware.Servo
 import com.qualcomm.robotcore.util.ElapsedTime
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
+import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
+import org.firstinspires.ftc.teamcode.util.commands.other.TelemetryCommand
 
 @Config
 object ObjectDetectionMB1220 {
@@ -31,7 +33,7 @@ object ObjectDetectionMB1220 {
     @JvmField
     var rightVoltage = 0.087
     @JvmField
-    var middleServoPosition = 0.26
+    var middleServoPosition = 0.3
     @JvmField
     var middleVoltage = 0.087
 
@@ -70,9 +72,7 @@ object ObjectDetectionMB1220 {
                         Position.MIDDLE
                     else Position.LEFT
                 }
-                Constants.opMode.telemetry.addData("Voltage", mb1220.voltage)
-                Constants.opMode.telemetry.addData("Position", position)
-                Constants.opMode.telemetry.update()
+                CommandScheduler.commandsToSchedule += TelemetryCommand(1.0, "Position", position.toString())
             }
         }
     }

@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 
 @Suppress("unused")
 @TeleOp(name = "Competition Testing")
-@Disabled
 class CompTeleOp: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
