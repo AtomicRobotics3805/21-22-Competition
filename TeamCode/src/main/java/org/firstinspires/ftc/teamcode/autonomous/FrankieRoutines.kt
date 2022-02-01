@@ -36,6 +36,8 @@ object FrankieRoutines {
     var EXTEND_INTAKE_PIVOT_DELAY = 1.0
     @JvmField
     var SWIVEL_TO_PIVOT_HEIGHT_DELAY = 0.5
+    @JvmField
+    var TRANSFER_FREIGHT_DELAY = 0.25
 
     val noCarouselFreightRoutine: AtomicCommand
         get() = sequential {
@@ -48,31 +50,7 @@ object FrankieRoutines {
                 +Bucket.Lock.close
                 +Intake.Lock.close
             }
-            +parallel {
-                +Lift.Swivel.toPreloadPosition
-                +sequential {
-                    +Delay(EXTEND_INTAKE_PIVOT_DELAY)
-                    // retracting intake to be completely outside the warehouse when depositing
-                    +Intake.Extender.retract
-                }
-                +sequential {
-                    +Lift.Swivel.upPivotHeightDelay
-                    +parallel {
-                        +Lift.Extender.fullExtend
-                        +sequential {
-                            +Delay(EXTEND_ROTATE_BUCKET_DELAY)
-                            +Bucket.Rotator.score
-                        }
-                        +sequential {
-                            +parallel {
-                                +Lift.Extender.extendOpenLatchDelay
-                                +Lift.Pivot.toPosition(shippingHubPosition)
-                            }
-                            +Bucket.Lock.open
-                        }
-                    }
-                }
-            }
+            +scorePreload
             +dropFreightAndGoToWarehouse
             +deliverFreightRoutine
             +deliverFreightRoutine
@@ -80,16 +58,41 @@ object FrankieRoutines {
             //+deliverFreightRoutine
             //+deliverFreightRoutine
         }
-
+    val scorePreload: AtomicCommand
+        get() = parallel {
+            +Lift.Swivel.toPreloadPosition
+            +sequential {
+                +Delay(EXTEND_INTAKE_PIVOT_DELAY)
+                // retracting intake to be completely outside the warehouse when depositing
+                +Intake.Extender.retract
+            }
+            +sequential {
+                +Lift.Swivel.upPivotHeightDelay
+                +parallel {
+                    +Lift.Extender.fullExtend
+                    +sequential {
+                        +Delay(EXTEND_ROTATE_BUCKET_DELAY)
+                        +Bucket.Rotator.score
+                    }
+                    +sequential {
+                        +parallel {
+                            +Lift.Extender.extendOpenLatchDelay
+                            +Lift.Pivot.toPosition(shippingHubPosition)
+                        }
+                        +Bucket.Lock.open
+                    }
+                }
+            }
+        }
     val deliverFreightRoutine: AtomicCommand
         get() = sequential {
             +parallel {
                 +sequential {
-                    //+Intake.Spinner.reverse
+                    +Intake.Spinner.reverse
                     +Delay(REVERSE_DELAY)
-                    //+Intake.Spinner.idle
+                    +Intake.Spinner.idle
                     +Intake.Extender.retract
-                    //+Intake.Spinner.start
+                    +Intake.Spinner.start
                     +Intake.Lock.open
                     +Delay(TRANSFER_DELAY)
                     +Bucket.Lock.close
@@ -107,7 +110,10 @@ object FrankieRoutines {
                         +sequential {
                             +Lift.Swivel.upPivotHeightDelay
                             +parallel {
-                                +Lift.Pivot.toPosition(shippingHubPosition, TrajectoryFactory.outsideWarehouseStartPose)
+                                +sequential {
+                                    +Lift.Pivot.toPosition(shippingHubPosition, TrajectoryFactory.outsideWarehouseStartPose)
+                                    +Lift.Pivot.idle
+                                }
                                 +Lift.Extender.fullExtend
                                 +sequential {
                                     +Delay(EXTEND_ROTATE_BUCKET_DELAY)
