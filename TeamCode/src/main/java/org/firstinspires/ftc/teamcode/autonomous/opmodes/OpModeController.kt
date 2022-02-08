@@ -22,6 +22,7 @@ object OpModeController {
         BucketLock.initialize()
         ObjectDetectionMB1220.initialize()
         CapArm.initialize()
+        ContainerSensor.initialize()
         OdometryServo.initialize()
         TrajectoryFactory.initializeTrajectories()
 

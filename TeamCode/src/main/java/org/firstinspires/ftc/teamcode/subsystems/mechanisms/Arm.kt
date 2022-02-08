@@ -8,6 +8,7 @@ import org.firstinspires.ftc.teamcode.autonomous.ObjectDetectionMB1220
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.subsystems.Subsystem
+import kotlin.math.abs
 
 @Suppress("Unused", "MemberVisibilityCanBePrivate")
 @Config
@@ -19,7 +20,7 @@ object Arm : Subsystem {
     @JvmField
     var ARM_POSITION_HIGH = 22.0 // in
     @JvmField
-    var ARM_POSITION_MEDIUM = 14.5 // in
+    var ARM_POSITION_MEDIUM = 15.5 // in
     @JvmField
     var ARM_POSITION_LOW = 11.0 // in
 
@@ -65,16 +66,20 @@ object Arm : Subsystem {
     })
 
     fun moveArmToPosition(position: Int) = CustomCommand(
-            getDone = { !armMotor.isBusy },
+            getDone = { abs(armMotor.targetPosition - armMotor.currentPosition) <= armMotor.targetPositionTolerance },
             _start = {
                 armMotor.targetPosition = position
                 armMotor.mode = DcMotor.RunMode.RUN_TO_POSITION
                 armMotor.power = ARM_SPEED
+            },
+            _done = {
+                if (position == 0)
+                    armMotor.power = 0.0
             }
     )
 
     fun moveArmAutonomous() = CustomCommand(
-        getDone = { !armMotor.isBusy },
+        getDone = { abs(armMotor.targetPosition - armMotor.currentPosition) <= armMotor.targetPositionTolerance },
         _start = {
             if (ObjectDetectionMB1220.position == ObjectDetectionMB1220.Position.LEFT)
                 armMotor.targetPosition = (ARM_POSITION_LOW * COUNTS_PER_INCH).toInt()

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous.opmodes
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Autonomous(group = "Blue", name = "Blue Carousel Hub Bottom Storage Unit")
-//@Disabled
+@Disabled
 class BlueCarouselHubBottomStorageUnit: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this
@@ -26,6 +27,7 @@ class BlueCarouselHubBottomStorageUnit: LinearOpMode() {
             +ObjectDetectionMB1220.DetectCommand()
             +AutoRoutines.carouselHubBottomStorageUnitRoutine
         }
+
         while (opModeIsActive()) {
             CommandScheduler.run()
         }

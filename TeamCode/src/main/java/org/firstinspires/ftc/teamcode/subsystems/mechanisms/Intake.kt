@@ -30,6 +30,13 @@ object Intake : Subsystem {
         get() = powerIntake(0.0)
     val switch: AtomicCommand
         get() = if (on) stop else start
+    val intakeIfEmpty: AtomicCommand
+        get() = CustomCommand(_start = {
+            if (ContainerSensor.containerState == ContainerSensor.ContainerState.EMPTY) {
+                intakeMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
+                intakeMotor.power = INTAKE_SPEED
+            }
+        })
     val intakeOne: AtomicCommand
         get() = IntakeOne()
 
@@ -38,13 +45,12 @@ object Intake : Subsystem {
 
     fun initialize() {
         intakeMotor = opMode.hardwareMap.get(DcMotorEx::class.java, INTAKE_NAME)
-        intakeMotor.mode = DcMotor.RunMode.STOP_AND_RESET_ENCODER
-        intakeMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        intakeMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         intakeMotor.direction = DcMotorSimple.Direction.REVERSE
     }
 
     fun powerIntake(power: Double) = CustomCommand(_start = {
-        intakeMotor.mode = DcMotor.RunMode.RUN_USING_ENCODER
+        intakeMotor.mode = DcMotor.RunMode.RUN_WITHOUT_ENCODER
         intakeMotor.power = power
         on = power != 0.0
     })

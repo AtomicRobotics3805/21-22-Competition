@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.autonomous.opmodes
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous
+import com.qualcomm.robotcore.eventloop.opmode.Disabled
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.autonomous.AutoRoutines
@@ -12,7 +13,7 @@ import org.firstinspires.ftc.teamcode.util.commands.CommandScheduler
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
 @Autonomous(group = "Red", name = "Red Hub Top Park In")
-//@Disabled
+@Disabled
 class RedHubTopParkIn: LinearOpMode() {
     override fun runOpMode() {
         Constants.opMode = this

@@ -16,9 +16,9 @@ import kotlin.math.abs
 @Config
 object Carousel : Subsystem {
     @JvmField
-    var CAROUSEL_SLOW_POSITION = 12.5 * Math.PI
+    var CAROUSEL_SLOW_POSITION = 12.0 * Math.PI
     @JvmField
-    var CAROUSEL_FAST_POSITION = 20.0 * Math.PI
+    var CAROUSEL_FAST_POSITION = 19.0 * Math.PI
     @JvmField
     var COUNTS_PER_MOTOR_REV = 537.6
     @JvmField
@@ -70,7 +70,7 @@ object Carousel : Subsystem {
         on = power != 0.0
     })
 
-    class FullRotation(direction: Int) : MotorToPosition(carouselMotor, CAROUSEL_FAST_ROTATION_COUNTS * direction + carouselMotor.currentPosition, CAROUSEL_SLOW_SPEED) {
+    class FullRotation(direction: Int) : MotorToPosition(carouselMotor, CAROUSEL_FAST_ROTATION_COUNTS * direction + carouselMotor.currentPosition, CAROUSEL_SLOW_SPEED, kP = 1.0) {
         override fun execute() {
             super.execute()
             if (abs(error) < CAROUSEL_FAST_ROTATION_COUNTS - CAROUSEL_SLOW_ROTATION_COUNTS)

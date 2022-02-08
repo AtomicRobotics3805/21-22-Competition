@@ -29,13 +29,15 @@ object ObjectDetectionMB1220 {
     var mb1220Name =  "mb1220"
 
     @JvmField
-    var rightServoPosition = 0.21
+    var rightServoPosition = 0.17
     @JvmField
     var rightVoltage = 0.087
     @JvmField
-    var middleServoPosition = 0.3
+    var middleServoPosition = 0.32
     @JvmField
     var middleVoltage = 0.087
+    @JvmField
+    var maxVoltage = 0.2
 
     fun initialize() {
         servo = Constants.opMode.hardwareMap.get(Servo::class.java, servoName)
@@ -72,7 +74,8 @@ object ObjectDetectionMB1220 {
                         Position.MIDDLE
                     else Position.LEFT
                 }
-                CommandScheduler.commandsToSchedule += TelemetryCommand(1.0, "Position", position.toString())
+                if (position != Position.UNKNOWN)
+                    CommandScheduler.commandsToSchedule += TelemetryCommand(5.0, "Position", position.toString())
             }
         }
     }

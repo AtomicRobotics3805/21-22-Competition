@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.autonomous
 
+import com.acmerobotics.roadrunner.geometry.Pose2d
 import org.firstinspires.ftc.teamcode.Constants
 import org.firstinspires.ftc.teamcode.subsystems.driving.MecanumDrive
 import org.firstinspires.ftc.teamcode.subsystems.mechanisms.*
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.switchColorAn
 import org.firstinspires.ftc.teamcode.trajectory.TrajectoryFactory.toRadians
 import org.firstinspires.ftc.teamcode.util.commands.AtomicCommand
 import org.firstinspires.ftc.teamcode.util.commands.delays.Delay
+import org.firstinspires.ftc.teamcode.util.commands.other.CustomCommand
 import org.firstinspires.ftc.teamcode.util.commands.parallel
 import org.firstinspires.ftc.teamcode.util.commands.sequential
 
@@ -123,43 +125,74 @@ object AutoRoutines {
             +OdometryServo.resetTranslationalPID
         }
     val carouselHubBottomDuckStorageUnitRoutine: AtomicCommand
-        get() = sequential {
-            +parallel {
-                +Bucket.up
-                +CapArm.up
-                +OdometryServo.down
-                +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+        get() = parallel {
+            +ContainerSensor.detect
+            +sequential {
+                +Bucket.up.i
+                +CapArm.up.i
+                +BucketLock.open.i
+                +OdometryServo.down.i
+                if (Constants.color == Constants.Color.RED) {
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+                    +Carousel.fullRotation
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+                    +dropFreightRoutineFast
+                    +Intake.intakeIfEmpty
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToDucks)
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.ducksToHubBottom)
+                }
+                else {
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubBottom)
+                    +dropFreightRoutineFast
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToCarousel)
+                    +Intake.intakeIfEmpty
+                    +Carousel.fullRotation
+                    +Delay(0.8)
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+                }
+                +Intake.stop
+                +dropDuckRoutine
+                +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToStorageUnit)
             }
-            +Carousel.fullRotation
-            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
-            +dropFreightRoutineFast
-            +Intake.start
-            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToDucks)
-            +MecanumDrive.followTrajectory(TrajectoryFactory.ducksToHubBottom)
-            +Intake.stop
-            +dropDuckRoutine
-            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToStorageUnit)
         }
     val carouselHubBottomDuckWarehouseMiddleRoutine: AtomicCommand
-        get() = sequential {
-            +parallel {
-                +Bucket.up
-                +CapArm.up
-                +OdometryServo.down
-                +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+        get() = parallel {
+            +ContainerSensor.detect
+            +sequential {
+                +Bucket.up.i
+                +CapArm.up.i
+                +BucketLock.open.i
+                +OdometryServo.down.i
+                if (Constants.color == Constants.Color.RED) {
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.startToCarousel)
+                    +Carousel.fullRotation
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+                    +dropFreightRoutineFast
+                    +Intake.intakeIfEmpty
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToDucks)
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.ducksToHubBottom)
+                } else {
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.startToHubBottom)
+                    +dropFreightRoutineFast
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToCarousel)
+                    +Intake.intakeIfEmpty
+                    +Carousel.fullRotation
+                    +Delay(0.8)
+                    +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
+                }
+                +Intake.stop
+                +dropDuckRoutine
+                +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToWarehouseMiddle)
+                +parallel {
+                    +OdometryServo.upAutonomous
+                    +CustomCommand(_start = { MecanumDrive.setDrivePower(Pose2d(-1.0, 0.0, 0.0)) })
+                    +Delay(1.0)
+                }
+                +CustomCommand(_start = { MecanumDrive.setMotorPowers(0.5, -0.5, 0.5, -0.5) })
+                +Delay(0.3)
+                +CustomCommand(_start = { MecanumDrive.setDrivePower(Pose2d(0.0, 0.0, 0.0)) })
+                +OdometryServo.resetTranslationalPID
             }
-            +Carousel.fullRotation
-            +MecanumDrive.followTrajectory(TrajectoryFactory.carouselToHubBottom)
-            +dropFreightRoutineFast
-            +Intake.start
-            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToDucks)
-            +MecanumDrive.followTrajectory(TrajectoryFactory.ducksToHubBottom)
-            +Intake.stop
-            +dropDuckRoutine
-            +MecanumDrive.followTrajectory(TrajectoryFactory.hubBottomToWarehouseMiddle)
-            +OdometryServo.upAutonomous
-            +MecanumDrive.followTrajectory(TrajectoryFactory.warehouseMiddleToPark)
-            +OdometryServo.resetTranslationalPID
         }
     val carouselHubBottomParkOutRoutine: AtomicCommand
         get() = sequential {
@@ -193,7 +226,6 @@ object AutoRoutines {
     private val dropFreightRoutine: AtomicCommand
         get() = sequential {
             +Arm.moveArmAutonomous()
-            +BucketLock.open
             +Bucket.drop
             +Delay(1.0)
             +parallel {
@@ -205,7 +237,6 @@ object AutoRoutines {
     private val dropFreightRoutineFast: AtomicCommand
         get() = sequential {
             +Arm.moveArmAutonomous()
-            +BucketLock.open
             +Bucket.drop
             +Delay(1.0)
             +Bucket.up.i
@@ -215,9 +246,8 @@ object AutoRoutines {
     private val dropDuckRoutine: AtomicCommand
         get() = sequential {
             +Arm.toHigh
-            +BucketLock.open
             +Bucket.drop
-            +Delay(1.0)
+            +Delay(1.5)
             +Bucket.up.i
             +Arm.toStart.i
         }

@@ -110,10 +110,10 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
      */
 
     @JvmField
-    var kV = 0.018
+    var kV = 0.017
 
     @JvmField
-    var kA = 0.0025
+    var kA = 0.0023
 
     @JvmField
     var kStatic = 0.01
@@ -134,7 +134,7 @@ object MecanumDrive : RoadRunnerMecanumDrive(0.018, 0.0025, 0.01, 18.0, 13.0, 1.
     var MAX_ACCEL = 30.0
 
     @JvmField
-    var MAX_ANG_VEL = 3.1
+    var MAX_ANG_VEL = 2.5
 
     @JvmField
     var MAX_ANG_ACCEL = Math.toRadians(120.0)
