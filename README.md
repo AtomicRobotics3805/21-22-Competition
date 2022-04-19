@@ -1,8 +1,8 @@
 # 2021-2022 Competition Repository
 ## Singleplayer Controls
 - Right Trigger: Speed mode (hold for slow)
-- X: Intake
-- Right Bumper: Reverse Intake & Move lift to intake position
+- X: Reverse Intake
+- Right Bumper: Intake & Move lift to intake position
 - DPad Left: Raise deadwheels
 - DPad Up/Down: Raise/lower lift manually
 - Y: Lift to score
